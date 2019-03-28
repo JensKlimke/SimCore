@@ -1,0 +1,39 @@
+//
+// Created by klimke on 14.03.2019.
+//
+
+#ifndef SIMULATION_FRAMEWORK_EXCEPTIONS_H
+#define SIMULATION_FRAMEWORK_EXCEPTIONS_H
+
+#include <utility>
+#include <exception>
+#include <string>
+
+
+class ProcessException : public std::exception
+{
+
+    std::string _msg;
+
+public:
+
+
+    explicit ProcessException(const char* msg) : _msg(msg) {}
+
+    ProcessException(const ProcessException& ex) noexcept {
+        _msg = ex._msg;
+    }
+
+    ProcessException& operator=(const ProcessException& ex) noexcept {
+        _msg = ex._msg;
+        return *this;
+    }
+
+    ~ProcessException() noexcept override = default;
+
+    const char* what() const noexcept override {
+        return _msg.c_str();
+    }
+};
+
+#endif //SIMULATION_FRAMEWORK_SIMULATIONERRORS_H
