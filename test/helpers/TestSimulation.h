@@ -8,16 +8,17 @@
 #include <tuple>
 #include <core/Loop.h>
 #include <models/VehicleModel.h>
-#include <models/BasicTimer.h>
-#include <models/RealTimeTimer.h>
-#include <models/TimeIsUp.h>
-#include <models/JsonReporter.h>
+#include <models/timers/BasicTimer.h>
+#include <models/timers/RealTimeTimer.h>
+#include <models/timers/TimeIsUp.h>
+#include <models/reporters/JsonReporter.h>
 #include <models/PrimaryController.h>
 #include <models/agent/AgentModel.h>
 #include <models/agent/AgentModelAdapter.h>
 #include <models/agent/AgentInjection.h>
 #include <models/agent/AgentsLogger.h>
-#include <models/TimeReporter.h>
+#include <models/reporters/TimeReporter.h>
+#include <models/value/ValueExceed.h>
 #include <core/Loop.h>
 #include "AgentStandardParameters.h"
 
@@ -39,7 +40,8 @@ public:
         };
 
         double stepSize = 0.01;
-        double endTime;
+        double endTime = INFINITY;
+        double endDistance = INFINITY;
         bool realTime = false;
         bool timeReport = false;
         bool liveLog = false;
@@ -48,9 +50,6 @@ public:
         std::vector<Agent> agents{};
 
     };
-
-
-protected:
 
     struct Agent {
 
@@ -72,17 +71,15 @@ protected:
 
     };
 
-    sim::Loop sim{};
+    sim::Loop loop{};
 
     BasicTimer *timer = nullptr;
-    TimeIsUp   *stop  = nullptr;
+    TimeIsUp   *stopTime  = nullptr;
+    ValueExceed<double> *stopDist = nullptr;
     TimeReporter *rep = nullptr;
     JsonReporter *jsonLog = nullptr;
     AgentsLogger *liveLog = nullptr;
     std::vector<Agent> agents{};
-
-
-public:
 
 
     TestSimulation() = default;
@@ -91,7 +88,8 @@ public:
     ~TestSimulation() {
 
         delete timer;
-        delete stop;
+        delete stopTime;
+        delete stopDist;
         delete rep;
         delete jsonLog;
 
@@ -116,24 +114,26 @@ public:
         timer->setTimeStepSize(setup.stepSize);
 
         // add timer
-        sim.setTimer(timer);
+        loop.setTimer(timer);
 
         // time report
         if(setup.timeReport) {
 
             rep = new TimeReporter;
-            sim.addModel(rep);
+            loop.addModel(rep);
             rep->setTimeStepSize(1.0);
 
         }
 
-        // set stop condition
-        stop = new TimeIsUp;
-        stop->setStopTime(setup.endTime);
+        // set stop condition (time)
+        if(setup.endTime < 1e9) {
+            stopTime = new TimeIsUp;
+            stopTime->setStopTime(setup.endTime);
+        }
 
         // add stop condition
-        sim.addStopCondition(stop);
-        sim.addModel(stop);
+        loop.addStopCondition(stopTime);
+        loop.addModel(stopTime);
 
         // create JSON log
         jsonLog = new JsonReporter;
@@ -160,7 +160,7 @@ public:
             unit.vehicle = new VehicleModel;
 
             // add vehicle model
-            sim.addModel(unit.vehicle);
+            loop.addModel(unit.vehicle);
 
             // link state, input and parameters
             unit.vehicle->getState(reinterpret_cast<void**>(&unit.vehState));
@@ -196,7 +196,7 @@ public:
 
             }
 
-            // add json logger
+            // something which is only for agent 0
             if(i == 0) {
 
                 // create report model
@@ -207,6 +207,12 @@ public:
                 jsonLog->addValue("dPsi", &unit.vehState->dPsi);
                 jsonLog->addValue("pedal", &unit.vehInput->pedal);
                 jsonLog->addValue("steer", &unit.vehInput->steer);
+
+                // set stop condition (distance)
+                if(setup.endDistance < 1e9) {
+                    stopDist = new ValueExceed<double>();
+                    stopDist->setValueAndLimit(&unit.vehState->s, setup.endDistance);
+                }
 
             }
 
@@ -221,7 +227,7 @@ public:
 
                     // add to injection and adapter
                     setup.injection->setAgent(unit.agent, unit.vehicle);
-                    sim.addModel(setup.injection);
+                    loop.addModel(setup.injection);
 
                 }
 
@@ -245,14 +251,14 @@ public:
 
                 // steering controller
                 unit.steer = new PrimaryController;
-                unit.steer->setParamters(1.0, 0.0, 0.0);
+                unit.steer->setParamters(3.0, 0.0, 0.0);
                 unit.steer->setValues(&unit.vehState->dPsi, &unit.agState->subConscious.dPsiDes, &unit.vehInput->steer);
 
                 // add models
-                sim.addModel(unit.adapter);
-                sim.addModel(unit.agent);
-                sim.addModel(unit.pedal);
-                sim.addModel(unit.steer);
+                loop.addModel(unit.adapter);
+                loop.addModel(unit.agent);
+                loop.addModel(unit.pedal);
+                loop.addModel(unit.steer);
 
                 // set live log values
                 if(setup.liveLog) {
@@ -270,6 +276,7 @@ public:
                     jsonLog->addValue("vDes",    &unit.agState->conscious.vDes);
                     jsonLog->addValue("aDes",    &unit.agState->subConscious.aDes);
                     jsonLog->addValue("dPsiDes", &unit.agState->subConscious.dPsiDes);
+                    jsonLog->addValue("aux",     &unit.agState->aux);
 
                 }
 
@@ -294,8 +301,8 @@ public:
                 unit.steer->setValues(&unit.vehState->dPsi, ag.control[1], &unit.vehInput->steer);
 
                 // add models to sim
-                sim.addModel(unit.pedal);
-                sim.addModel(unit.steer);
+                loop.addModel(unit.pedal);
+                loop.addModel(unit.steer);
 
             }
 
@@ -311,11 +318,17 @@ public:
 
         }
 
+        // add stop condition (distance)
+        if(stopDist != nullptr) {
+            loop.addStopCondition(stopDist);
+            loop.addModel(stopDist);
+        }
+
         // add loggers to sim
         if(setup.liveLog)
-            sim.addModel(liveLog);
+            loop.addModel(liveLog);
 
-        sim.addModel(jsonLog);
+        loop.addModel(jsonLog);
 
     }
 

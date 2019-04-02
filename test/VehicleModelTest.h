@@ -33,7 +33,7 @@ TEST_F(VehicleModelTest, SteadyTurn) {
     create(setup);
 
     // run simulation
-    sim.run();
+    loop.run();
 
     // get vehicle state
     auto state = agents[0].vehState;
@@ -60,7 +60,7 @@ TEST_F(VehicleModelTest, Controlled) {
     create(setup);
 
     // run simulation
-    sim.run();
+    loop.run();
 
     // get vehicle state
     auto state = agents[0].vehState;

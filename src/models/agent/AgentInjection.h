@@ -41,14 +41,6 @@ public:
         _agent = ag;
         _vehicle = veh;
 
-    }
-
-
-    void initialize(double initTime) override {
-
-        // start timer if needed in derived class
-        IModel::initializeTimer(initTime);
-
         // get agent state, input and parameter pointer
         _agent->getState(reinterpret_cast<void**>(&_drState));
         _agent->getInput(reinterpret_cast<void**>(&_drInput));
@@ -59,6 +51,14 @@ public:
         _vehicle->getState(reinterpret_cast<void**>(&_vehState));
         _vehicle->getInput(reinterpret_cast<void**>(&_vehInput));
         _vehicle->getParameters(reinterpret_cast<void**>(&_vehParam));
+
+    }
+
+
+    void initialize(double initTime) override {
+
+        // start timer if needed in derived class
+        IModel::initializeTimer(initTime);
 
     }
 

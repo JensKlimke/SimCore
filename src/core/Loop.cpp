@@ -6,6 +6,7 @@
 #include "IModel.h"
 #include "ITimer.h"
 #include "IStopCondition.h"
+#include <exception>
 
 using namespace sim;
 
@@ -46,9 +47,7 @@ void Loop::run() {
         for (auto &m : _models) {
 
             // ... and run model step
-            auto success = m->step(_timer->time());
-            if (!success)
-                _stop = true;
+            m->step(_timer->time());
 
         }
 
@@ -96,6 +95,14 @@ void Loop::initialize() {
 
     // reset timer
     _timer->reset();
+
+    // iterate over stop conditions ...
+    for(auto &sc : _stop_conditions) {
+
+        // ... and reset
+        sc->reset();
+
+    }
 
     // iterate over models ...
     for(auto &m : _models) {

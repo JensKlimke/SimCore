@@ -28,12 +28,14 @@ public:
 
     struct Input {
         agmod::EgoPerception ego;
+        agmod::Environment   environment;
     };
 
 
     struct State {
         agmod::SubConscious subConscious;
         agmod::Conscious    conscious;
+        double              aux;
     };
 
 

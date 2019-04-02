@@ -2,11 +2,12 @@ set(SOURCE_FILES
         main.cpp
         SimTest.h
         VehicleModelTest.h
-        AgentModelTest.h
+        AlgoTest.h
         helpers/TestSimulation.h
-        ModelTest.h
         helpers/AgentStandardParameters.h
-        )
+        agent/AMT_PriInputs.h
+        agent/AMT_VelControl.h
+        agent/AMT_VelChoice.h)
 
 
 enable_testing()

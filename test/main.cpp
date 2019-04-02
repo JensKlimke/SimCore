@@ -1,9 +1,11 @@
 #include <gtest/gtest.h>
 
-#include "ModelTest.h"
+#include "AlgoTest.h"
 #include "SimTest.h"
 #include "VehicleModelTest.h"
-#include "AgentModelTest.h"
+#include "agent/AMT_PriInputs.h"
+#include "agent/AMT_VelControl.h"
+#include "agent/AMT_VelChoice.h"
 
 
 int main(int argc, char **argv) {

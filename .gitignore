@@ -2,4 +2,5 @@ cmake-*
 .idea
 backup
 log
-
+.DS_Store
+./log/*

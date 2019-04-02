@@ -7,6 +7,7 @@
 
 #include "AgentModel.h"
 #include <cmath>
+#include <limits>
 
 
 namespace agmod {
@@ -41,6 +42,34 @@ namespace agmod {
         injection.input.ego.d = INFINITY;
         injection.input.ego.dPsi = INFINITY;
         injection.input.ego.psi = INFINITY;
+
+        for (auto &hor : injection.input.environment.horizon) {
+            hor.ds = INFINITY;
+            hor.xy.x = INFINITY;
+            hor.xy.y = INFINITY;
+            hor.psi = INFINITY;
+            hor.kappa = INFINITY;
+            hor.width.ego   = -1.0;
+            hor.width.left  = -1.0;
+            hor.width.right = -1.0;
+        }
+
+        for(auto &ln : injection.input.environment.lanes) {
+            ln.id = -127;
+            ln.width = -1.0;
+            ln.route = INFINITY;
+            ln.closed = INFINITY;
+            ln.dir = DD_NOT_SET;
+            ln.access = ACC_NOT_SET;
+        }
+
+
+        for(auto &sig : injection.input.environment.signals) {
+            sig.id    = std::numeric_limits<uint32_t>::max();
+            sig.ds    = INFINITY;
+            sig.value = INFINITY;
+            sig.type  = SIGNAL_NOT_SET;
+        }
 
         injection.state.conscious.vDes = INFINITY;
         injection.state.conscious.dsStop = INFINITY;

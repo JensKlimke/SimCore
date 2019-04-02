@@ -36,4 +36,16 @@ public:
     }
 };
 
+
+class ModelNotInitialized : public ProcessException
+{
+
+public:
+
+    explicit ModelNotInitialized(const char* msg)
+        : ProcessException(msg) {}
+
+};
+
+
 #endif //SIMULATION_FRAMEWORK_SIMULATIONERRORS_H

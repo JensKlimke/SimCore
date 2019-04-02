@@ -4,12 +4,17 @@
 
 #include "ModelCollection.h"
 
+#ifndef SIGN
+#define SIGN(X) X == 0.0 ? 0.0 : (X < 0.0 ? -1.0 : 1.0)
+#endif
+
 namespace agmod {
 
 
     double IDMspeedReaction(double v, double v0, double delta) {
 
-        return 1.0 - pow(v / v0, delta);
+        auto dv = v0 - v;
+        return SIGN(dv) * (1.0 - pow(1.0 - fabs(dv) / v0, delta));
 
     }
 

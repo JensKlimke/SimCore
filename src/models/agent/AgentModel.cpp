@@ -53,23 +53,47 @@ void AgentModel::getInjection(AgentModel::Injection **inj) {
 void AgentModel::consciousSpeed() {
 
 
-    STATE(conscious.vDes, 0.0, INFINITY);
 
+
+    STATE(conscious.vDes, 20.0, INFINITY);
+    STATE(conscious.vAntic.ds, INFINITY, -INFINITY);
+    STATE(conscious.vAntic.value, 20.0, INFINITY);
 
 }
 
 
 void AgentModel::subconsciousSpeed() {
 
+
+    // calculate ratio
+    auto ratio = 1.0;
+    auto ap = 0.0;
+
+    // only calculate prediction, when relevant
+    if (_state.conscious.vAntic.ds >= 0.0) {
+
+        // calculate ratio
+        ratio = _state.conscious.vAntic.ds / (_param.cruise.thwMax * _state.conscious.vAntic.value);
+        ratio = std::pow(std::min(1.0, std::max(0.0, ratio)), _param.cruise.deltaPred);
+
+        // calculate reaction
+        ap = ::agmod::IDMspeedReaction(_input.ego.v.x, _state.conscious.vAntic.value, _param.cruise.delta);
+        ap *= ap < 0.0 ? -_param.cruise.b : _param.cruise.a;
+
+    }
+
     // calculate reaction on local desired speed
-    auto a = std::max(_param.cruise.b, std::min(_param.cruise.a,
-            _param.cruise.a * ::agmod::IDMspeedReaction(_input.ego.v.x, _state.conscious.vDes, _param.cruise.delta)));
+    auto a = ::agmod::IDMspeedReaction(_input.ego.v.x, _state.conscious.vDes, _param.cruise.delta);
+    a *= a < 0.0 ? -_param.cruise.b : _param.cruise.a;
+
+    // calculate acceleration
+    a = ap * (1.0 - ratio) + ratio * a;
 
     // calculate dPsi
     double dPsi = 0.0;
 
     // injections
-    STATE(subConscious.aDes,    a,    INFINITY);
+    STATE(subConscious.aDes, a, INFINITY);
     STATE(subConscious.dPsiDes, dPsi, INFINITY);
 
 }
