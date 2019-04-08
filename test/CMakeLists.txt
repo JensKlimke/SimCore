@@ -7,7 +7,7 @@ set(SOURCE_FILES
         helpers/AgentStandardParameters.h
         agent/AMT_PriInputs.h
         agent/AMT_VelControl.h
-        agent/AMT_VelChoice.h)
+        agent/AMT_VelChoice.h agent/AMT_Stop.h)
 
 
 enable_testing()

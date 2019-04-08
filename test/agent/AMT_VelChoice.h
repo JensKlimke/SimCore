@@ -28,8 +28,6 @@ public:
 
     bool step(double simTime) override {
 
-        auto crv = curvature.where(_vehState->s);
-
         for(unsigned int i = 0; i < agmod::NOH; ++i) {
 
             auto ds = (double) i * (200.0 / agmod::NOH);
@@ -39,6 +37,7 @@ public:
             _drInject->input.environment.horizon[i].kappa = curvature.interpolate(s);
 
         }
+
 
         return true;
 

@@ -18,25 +18,25 @@
 TEST(AlgoTest, IDMFree) {
 
     // velocity is zero
-    EXPECT_DOUBLE_EQ(1.0, agmod::IDMspeedReaction(0.0, 10.0, 4.0));
-    EXPECT_DOUBLE_EQ(1.0, agmod::IDMspeedReaction(0.0, 100.0, 4.0));
+    EXPECT_DOUBLE_EQ(1.0, agmod::IDMSpeedReaction(0.0, 10.0, 4.0));
+    EXPECT_DOUBLE_EQ(1.0, agmod::IDMSpeedReaction(0.0, 100.0, 4.0));
 
     // desired velocity is zero
-    EXPECT_DOUBLE_EQ(INFINITY, agmod::IDMspeedReaction(10.0, 0.0, 4.0));
-    EXPECT_DOUBLE_EQ(0.0, agmod::IDMspeedReaction(0.0, 0.0, 4.0));
+    EXPECT_DOUBLE_EQ(INFINITY, agmod::IDMSpeedReaction(10.0, 0.0, 4.0));
+    EXPECT_DOUBLE_EQ(0.0, agmod::IDMSpeedReaction(0.0, 0.0, 4.0));
 
     // parameter is zero
-    EXPECT_DOUBLE_EQ(0.0, agmod::IDMspeedReaction(10.0, 20.0, 0.0));
+    EXPECT_DOUBLE_EQ(0.0, agmod::IDMSpeedReaction(10.0, 20.0, 0.0));
 
     // desired and current velocity are equal
-    EXPECT_DOUBLE_EQ(0.0, agmod::IDMspeedReaction(10.0, 10.0, 4.0));
-    EXPECT_DOUBLE_EQ(0.0, agmod::IDMspeedReaction(100.0, 100.0, 4.0));
+    EXPECT_DOUBLE_EQ(0.0, agmod::IDMSpeedReaction(10.0, 10.0, 4.0));
+    EXPECT_DOUBLE_EQ(0.0, agmod::IDMSpeedReaction(100.0, 100.0, 4.0));
 
     // some checks
-    EXPECT_NEAR( 0.9375, agmod::IDMspeedReaction(10.0, 20.0, 4.0), 1e-4);
-    EXPECT_NEAR( 0.9877, agmod::IDMspeedReaction(10.0, 30.0, 4.0), 1e-4);
-    EXPECT_NEAR(-1.0,    agmod::IDMspeedReaction(20.0, 10.0, 4.0), 1e-4);
-    EXPECT_NEAR( 0.8025, agmod::IDMspeedReaction(20.0, 30.0, 4.0), 1e-4);
+    EXPECT_NEAR( 0.9375, agmod::IDMSpeedReaction(10.0, 20.0, 4.0), 1e-4);
+    EXPECT_NEAR( 0.9877, agmod::IDMSpeedReaction(10.0, 30.0, 4.0), 1e-4);
+    EXPECT_NEAR(-1.0, agmod::IDMSpeedReaction(20.0, 10.0, 4.0), 1e-4);
+    EXPECT_NEAR( 0.8025, agmod::IDMSpeedReaction(20.0, 30.0, 4.0), 1e-4);
 
 }
 

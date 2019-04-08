@@ -10,9 +10,9 @@
 #include "AgentModelInterface.h"
 
 
-#define STATE(key, value, dummy)                                               \
-    _state.key = _injection.state.key != dummy ? _injection.state.key : value; \
-    _injection.state.key = value;                                              \
+#define STATE(key, value)                                                                           \
+    _state.key = _injection.state.key != _dummyInjection.state.key ? _injection.state.key : value;  \
+    _injection.state.key = value;                                                                   \
 
 
 
@@ -22,6 +22,7 @@ public:
 
     struct Parameters {
         agmod::ParamCruise  cruise;
+        agmod::ParamFollow  follow;
         agmod::ParamVehicle vehicle;
     };
 
@@ -84,9 +85,15 @@ public:
 
 protected:
 
+
+    void consciousStop();
+
     void consciousSpeed();
 
-    void subconsciousSpeed();
+
+    void subconsciousStop(double &aRes, double &fRes);
+
+    void subconsciousSpeed(double &aRes);
 
 
 };

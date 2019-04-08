@@ -6,6 +6,7 @@
 #include "agent/AMT_PriInputs.h"
 #include "agent/AMT_VelControl.h"
 #include "agent/AMT_VelChoice.h"
+#include "agent/AMT_Stop.h"
 
 
 int main(int argc, char **argv) {

@@ -21,13 +21,18 @@ namespace agmod {
         AgentModel::Injection injection{};
 
         injection.parameters.cruise.a = INFINITY;
+        injection.parameters.cruise.aScale = INFINITY;
+        injection.parameters.cruise.ayMax = INFINITY;
         injection.parameters.cruise.b = INFINITY;
-        injection.parameters.cruise.vScale = INFINITY;
-        injection.parameters.cruise.thwMin = INFINITY;
-        injection.parameters.cruise.thwMax = INFINITY;
         injection.parameters.cruise.delta = INFINITY;
         injection.parameters.cruise.deltaPred = INFINITY;
-        injection.parameters.cruise.aScale = INFINITY;
+        injection.parameters.cruise.thwMax = INFINITY;
+        injection.parameters.cruise.thwMin = INFINITY;
+        injection.parameters.cruise.vMax = INFINITY;
+        injection.parameters.cruise.vScale = INFINITY;
+
+        injection.parameters.follow.dsStopped = INFINITY;
+        injection.parameters.follow.timeHeadway = INFINITY;
 
         injection.parameters.vehicle.pos.x = INFINITY;
         injection.parameters.vehicle.pos.y = INFINITY;
@@ -71,16 +76,18 @@ namespace agmod {
             sig.type  = SIGNAL_NOT_SET;
         }
 
-        injection.state.conscious.vDes = INFINITY;
+        injection.state.conscious.dsFollow = INFINITY;
         injection.state.conscious.dsStop = INFINITY;
         injection.state.conscious.latOffset = INFINITY;
-        injection.state.conscious.vMin = INFINITY;
+        injection.state.conscious.stopped = INFINITY;
         injection.state.conscious.vAntic.ds = -INFINITY;
         injection.state.conscious.vAntic.value = INFINITY;
         injection.state.conscious.xyRef[0].x = INFINITY;
         injection.state.conscious.xyRef[0].y = INFINITY;
         injection.state.conscious.xyRef[1].x = INFINITY;
         injection.state.conscious.xyRef[1].y = INFINITY;
+        injection.state.conscious.vDes = INFINITY;
+        injection.state.conscious.vMin = INFINITY;
 
         injection.state.subConscious.aDes = INFINITY;
         injection.state.subConscious.dPsiDes = INFINITY;
