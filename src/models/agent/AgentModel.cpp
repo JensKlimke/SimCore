@@ -27,11 +27,16 @@ bool AgentModel::step(double) {
 
     // conscious calculation
     consciousSpeed();
+    consciousFollow();
     consciousStop();
 
     // calculate stop reaction
     double aStop, fStop;
     subconsciousStop(aStop, fStop);
+
+    // calculate stop reaction
+    double aFollow, fFollow;
+    subConsciousFollow(aFollow, fFollow);
 
     // calculate speed reaction
     double aSpeed;
@@ -39,7 +44,7 @@ bool AgentModel::step(double) {
 
     // calculate acceleration and yaw rate
     auto dPsi = 0.0;
-    auto aRes = fStop * aSpeed + aStop;
+    auto aRes = fFollow * aSpeed + aFollow;
 
     // injections
     STATE(subConscious.aDes, aRes)
@@ -151,21 +156,33 @@ void AgentModel::consciousStop() {
 }
 
 
+void AgentModel::consciousFollow() {
+
+    STATE(conscious.follow.ds, INFINITY);
+    STATE(conscious.follow.value, INFINITY);
+
+}
+
+
 void AgentModel::consciousSpeed() {
 
-    STATE(conscious.vDes, 20.0)
+    STATE(conscious.vDes, INFINITY)
     STATE(conscious.vAntic.ds, INFINITY)
-    STATE(conscious.vAntic.value, 20.0)
+    STATE(conscious.vAntic.value, INFINITY)
 
 }
 
 
 void AgentModel::subconsciousStop(double &aRes, double &fRes) {
 
-    STATE(conscious.dsStop, INFINITY)
+    if(_state.conscious.dsStop > 1e9) {
 
-    // get desired distance
-    auto dsDes = _param.follow.timeHeadway * _input.ego.v.x;
+        aRes = 0.0;
+        fRes = 1.0;
+
+        return;
+
+    }
 
     // abort if stopped
     if(_state.conscious.stopped < INFINITY) {
@@ -182,36 +199,41 @@ void AgentModel::subconsciousStop(double &aRes, double &fRes) {
     auto ds = std::max(0.0, _state.conscious.dsStop);
 
     // calculate reaction
-    fRes = agmod::IDMFollowReaction(aRes, ds, 0.0, v, dsDes, _param.follow.dsStopped, _param.cruise.a, _param.cruise.b);
+    fRes = agmod::IDMFollowReaction(aRes, ds, 0.0, v, _param.follow.timeHeadway, _param.follow.dsStopped,
+            _param.cruise.a, _param.cruise.b);
+
+    // apply maximum comfortable acceleration
+    aRes *= aRes < 0.0 ? -_param.cruise.b : _param.cruise.a;
 
 }
+
+
+void AgentModel::subConsciousFollow(double &aRes, double &fRes) {
+
+    // calculate reaction
+    fRes = agmod::IDMFollowReaction(aRes, _state.conscious.follow.ds, _state.conscious.follow.value, _input.ego.v.x,
+            _param.follow.timeHeadway, _param.follow.dsStopped, _param.cruise.a, _param.cruise.b);
+
+}
+
 
 
 void AgentModel::subconsciousSpeed(double &aRes) {
 
 
     // calculate ratio
-    auto ratio = 1.0;
-    auto ap = 0.0;
+    auto aResPred = 0.0;
 
-    // only calculate prediction, when relevant
-    if (_state.conscious.vAntic.ds >= 0.0) {
-
-        // calculate ratio
-        ratio = _state.conscious.vAntic.ds / (_param.cruise.thwMax * _state.conscious.vAntic.value);
-        ratio = std::pow(std::min(1.0, std::max(0.0, ratio)), _param.cruise.deltaPred);
-
-        // calculate reaction
-        ap = ::agmod::IDMSpeedReaction(_input.ego.v.x, _state.conscious.vAntic.value, _param.cruise.delta);
-        ap *= ap < 0.0 ? -_param.cruise.b : _param.cruise.a;
-
-    }
+    // calculate prediction reaction
+    double ratio = agmod::IDMSpeedPredictionReaction(aResPred, _state.conscious.vAntic.ds,
+            _state.conscious.vAntic.value, _input.ego.v.x, _param.cruise.thwMax, _param.cruise.deltaPred,
+            _param.cruise.delta, _param.cruise.a, _param.cruise.b);
 
     // calculate reaction on local desired speed
-    aRes = ::agmod::IDMSpeedReaction(_input.ego.v.x, _state.conscious.vDes, _param.cruise.delta);
-    aRes *= aRes < 0.0 ? -_param.cruise.b : _param.cruise.a;
+    aRes = ::agmod::IDMSpeedReaction(_input.ego.v.x, _state.conscious.vDes, _param.cruise.delta, _param.cruise.a,
+            _param.cruise.b);
 
     // calculate acceleration
-    aRes = ap * (1.0 - ratio) + ratio * aRes;
+    aRes = aResPred * (1.0 - ratio) + ratio * aRes;
 
 }

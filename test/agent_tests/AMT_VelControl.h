@@ -29,6 +29,7 @@ public:
     bool step(double simTime) override {
 
         auto pred = vDes.where(_vehState->s);
+
         _drInject->state.conscious.vAntic = {pred.ds1, pred.v1};
         _drInject->state.conscious.vDes = vDes.previous(_vehState->s);
 

@@ -189,7 +189,7 @@ namespace agmod {
         double  vDes;        //!< Desired velocity (in *m/s*). The speed can only be reached if no further influences force the driver to drive slower.
         double  vMin;        //!< Minimum velocity (in *m/s*). The value describes the speed a driver accepts when performing manoeuvres, such as dropping back when changing lanes.
         Point   vAntic;      //!< Anticipated velocity step ahead. //TODO
-        double  dsFollow;    //!< The desired following distance for the relevant target (*m*)
+        Point   follow;      //!< The distance and speed of the vehicle to be followed
         double  dsStop;      //!< Stop distance (in *m*). This value describes the distance the driver stops in front of a stop line or another point. The distance is measured relative to the _front of the vehicle_ (NOT THE DISTANCE TO THE DRIVER'S POSITION)
         double  stopped;     //!< The time since the driver has stopped
         Point2D xyRef[NORP]; //!< Reference points (in *m*). These points describe reference points the driver uses to control the vehicle laterally

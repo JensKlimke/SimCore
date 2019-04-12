@@ -72,11 +72,12 @@ namespace agmod {
         for(auto &sig : injection.input.environment.signals) {
             sig.id    = std::numeric_limits<uint32_t>::max();
             sig.ds    = INFINITY;
-            sig.value = INFINITY;
+            sig.value = std::numeric_limits<int32_t>::infinity();
             sig.type  = SIGNAL_NOT_SET;
         }
 
-        injection.state.conscious.dsFollow = INFINITY;
+        injection.state.conscious.follow.ds = INFINITY;
+        injection.state.conscious.follow.value = INFINITY;
         injection.state.conscious.dsStop = INFINITY;
         injection.state.conscious.latOffset = INFINITY;
         injection.state.conscious.stopped = INFINITY;

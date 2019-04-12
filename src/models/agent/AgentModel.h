@@ -12,7 +12,7 @@
 
 #define STATE(key, value)                                                                           \
     _state.key = _injection.state.key != _dummyInjection.state.key ? _injection.state.key : value;  \
-    _injection.state.key = value;                                                                   \
+
 
 
 
@@ -88,10 +88,14 @@ protected:
 
     void consciousStop();
 
+    void consciousFollow();
+
     void consciousSpeed();
 
 
     void subconsciousStop(double &aRes, double &fRes);
+
+    void subConsciousFollow(double &aRes, double &fRes);
 
     void subconsciousSpeed(double &aRes);
 

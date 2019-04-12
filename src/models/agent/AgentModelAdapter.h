@@ -28,7 +28,7 @@ protected:
         VehicleModel::State *state;
         _vehicle->getState((void**) &state);
 
-        // get agent input
+        // get agent_tests input
         AgentModel::Input *input;
         _agent->getInput((void**) &input);
 
@@ -56,7 +56,7 @@ protected:
         VehicleModel::Parameters *param;
         _vehicle->getParameters((void**) &param);
 
-        // get agent parameters
+        // get agent_tests parameters
         AgentModel::Parameters *input;
         _agent->getInput((void**) &input);
 

@@ -41,7 +41,7 @@ public:
         _agent = ag;
         _vehicle = veh;
 
-        // get agent state, input and parameter pointer
+        // get agent_tests state, input and parameter pointer
         _agent->getState(reinterpret_cast<void**>(&_drState));
         _agent->getInput(reinterpret_cast<void**>(&_drInput));
         _agent->getParameters(reinterpret_cast<void**>(&_drParam));

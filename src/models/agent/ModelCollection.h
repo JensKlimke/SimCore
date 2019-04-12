@@ -10,6 +10,10 @@
 namespace agmod {
 
 
+    double IDMSpeedPredictionReaction(double &aRes, double ds, double vDes, double v, double thwMax, double deltaPred,
+                                      double delta, double a, double b);
+
+
     /**
      * The reaction based on the current speed and the desired speed. The model is defined in
      * the free part of the IDM model.
@@ -20,19 +24,11 @@ namespace agmod {
      * @param v  Current velocity (in *m/s*)
      * @param v0 Desired velocity (in *m/s*)
      * @param delta The parameter \delta
+     * @param a maximum comfortable acceleration
+     * @param b maximum comfortable deceleration
      * @return acceleration value
      */
-    double IDMSpeedReaction(double v, double v0, double delta);
-
-
-    /**
-     * Calculates the down-scale factor dependent on the distance
-     * @param ds Distance
-     * @param dsMax Maximum distance
-     * @param delta Parameter
-     * @return down-scale factor
-     */
-    double distanceDownscale(double ds, double dsMax, double delta);
+    double IDMSpeedReaction(double v, double v0, double delta, double a, double b);
 
 
 
@@ -48,6 +44,7 @@ namespace agmod {
      * @return The resultant acceleration and the scale down factor for cruising
      */
     double IDMFollowReaction(double &aRes, double ds, double vTar, double v, double dsDes, double dsStop, double a, double b);
+
 
 
     /**

@@ -20,7 +20,7 @@
 #include <models/reporters/TimeReporter.h>
 #include <models/value/ValueExceed.h>
 #include <core/Loop.h>
-#include "AgentStandardParameters.h"
+#include "AgentTestParameters.h"
 
 
 
@@ -155,7 +155,7 @@ public:
         unsigned int i = 0;
         for(auto &ag : setup.agents) {
 
-            // create agent
+            // create agent_tests
             Agent unit{};
             unit.vehicle = new VehicleModel;
 
@@ -185,7 +185,7 @@ public:
             AgentsLogger::Agent la{};
             if(setup.liveLog) {
 
-                // create agent and add
+                // create agent_tests and add
                 la.x = &unit.vehState->xy[0];
                 la.y = &unit.vehState->xy[1];
                 la.psi = &unit.vehState->psi;
@@ -196,7 +196,7 @@ public:
 
             }
 
-            // something which is only for agent 0
+            // something which is only for agent_tests 0
             if(i == 0) {
 
                 // create report model
@@ -217,10 +217,10 @@ public:
             }
 
 
-            // create agent model
+            // create agent_tests model
             if(ag.agent) {
 
-                // create agent
+                // create agent_tests
                 unit.agent = new AgentModel;
 
                 if(i == 0 && setup.injection != nullptr) {
@@ -263,7 +263,7 @@ public:
                 // set live log values
                 if(setup.liveLog) {
 
-                    // create agent and add;
+                    // create agent_tests and add;
                     la.driverPosX = &unit.agParam->vehicle.pos.x;
                     la.driverPosY = &unit.agParam->vehicle.pos.y;
 
@@ -306,7 +306,7 @@ public:
 
             }
 
-            // add agent to live log
+            // add agent_tests to live log
             if(liveLog)
                 liveLog->addAgent(la);
 

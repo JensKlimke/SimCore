@@ -28,7 +28,11 @@ public:
 
     bool step(double simTime) override {
 
-        auto ds = stops.next(_vehState->s);
+        auto st = stops.where(_vehState->s);
+
+        auto ds = st.ds1;
+        auto id = (int) st.v1;
+
         _drInject->state.conscious.dsStop = ds;
 
         return true;
@@ -42,7 +46,7 @@ public:
 TEST_F(AMT_Stop, Stop) {
 
     // create state curve
-    stops.define({0.0, 100.0, 200.0, 500.0}, {0.0, 1.0, 2.0, 0.0});
+    stops.define({0.0, 50.0, 200.0, 500.0}, {0.0, 1.0, 2.0, 0.0});
 
     // create setup
     TestSimulation::SimSetup setup{};
@@ -51,11 +55,15 @@ TEST_F(AMT_Stop, Stop) {
     setup.endDistance = 400.0;
     setup.logFile     = "log/veh_driver_stop.json";
     setup.injection   = this;
-    setup.agents.push_back({0.0, 0.0, 5.0, true, {nullptr, nullptr}});
+    setup.agents.push_back({0.0, 0.0, 20.0, true, {nullptr, nullptr}});
 
     // create simulation
     sim.create(setup);
     sim.loop.run();
+
+    // check values
+    EXPECT_EQ(0.0,   _vehState->v);
+    EXPECT_EQ(100.0, _vehState->s);
 
 }
 

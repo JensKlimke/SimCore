@@ -1,45 +1,12 @@
 //
-// Created by Jens Klimke on 2019-03-24.
+// Created by klimke on 12.04.2019.
 //
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "cert-err58-cpp"
-#pragma clang diagnostic ignored "-Wunknown-pragmas"
-#pragma ide diagnostic ignored "cppcoreguidelines-avoid-goto"
-
-#ifndef SIMULATION_FRAMEWORK_MODELTEST_H
-#define SIMULATION_FRAMEWORK_MODELTEST_H
+#ifndef SIMCORE_ALGOTEST_H
+#define SIMCORE_ALGOTEST_H
 
 #include <gtest/gtest.h>
-#include <models/agent/ModelCollection.h>
-#include <cmath>
-#include "models/value/SignalCurve.h"
-
-TEST(AlgoTest, IDMFree) {
-
-    // velocity is zero
-    EXPECT_DOUBLE_EQ(1.0, agmod::IDMSpeedReaction(0.0, 10.0, 4.0));
-    EXPECT_DOUBLE_EQ(1.0, agmod::IDMSpeedReaction(0.0, 100.0, 4.0));
-
-    // desired velocity is zero
-    EXPECT_DOUBLE_EQ(INFINITY, agmod::IDMSpeedReaction(10.0, 0.0, 4.0));
-    EXPECT_DOUBLE_EQ(0.0, agmod::IDMSpeedReaction(0.0, 0.0, 4.0));
-
-    // parameter is zero
-    EXPECT_DOUBLE_EQ(0.0, agmod::IDMSpeedReaction(10.0, 20.0, 0.0));
-
-    // desired and current velocity are equal
-    EXPECT_DOUBLE_EQ(0.0, agmod::IDMSpeedReaction(10.0, 10.0, 4.0));
-    EXPECT_DOUBLE_EQ(0.0, agmod::IDMSpeedReaction(100.0, 100.0, 4.0));
-
-    // some checks
-    EXPECT_NEAR( 0.9375, agmod::IDMSpeedReaction(10.0, 20.0, 4.0), 1e-4);
-    EXPECT_NEAR( 0.9877, agmod::IDMSpeedReaction(10.0, 30.0, 4.0), 1e-4);
-    EXPECT_NEAR(-1.0, agmod::IDMSpeedReaction(20.0, 10.0, 4.0), 1e-4);
-    EXPECT_NEAR( 0.8025, agmod::IDMSpeedReaction(20.0, 30.0, 4.0), 1e-4);
-
-}
-
+#include <models/value/SignalCurve.h>
 
 TEST(AlgoTest, SignalCurve) {
 
@@ -90,6 +57,5 @@ TEST(AlgoTest, SignalCurve) {
 
 }
 
-#endif //SIMULATION_FRAMEWORK_MODELTEST_H
 
-#pragma clang diagnostic pop
+#endif //SIMCORE_ALGOTEST_H
