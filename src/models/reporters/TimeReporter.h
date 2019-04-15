@@ -11,7 +11,7 @@
 class TimeReporter : public sim::ISynchronized {
 
 
-    std::ostream &_stream = std::cout;
+    std::ostream *_stream = nullptr;
 
 
 public:
@@ -22,7 +22,14 @@ public:
 
     void initialize(double initTime) override {
 
+        // take std::cout if no stream is set
+        if(_stream == nullptr)
+            _stream = &std::cout;
+
     }
+
+    void terminate(double simTime) override {}
+
 
     bool step(double simTime) override {
 
@@ -31,13 +38,20 @@ public:
             return true;
 
         // put sim time to stream
-        _stream << simTime << "s" << std::endl;
+        (*_stream) << simTime << "s" << std::endl;
 
         return true;
 
     }
 
-    void terminate(double simTime) override {
+
+    /**
+     * Sets the stream on which the time is logged
+     * @param str Stream the time is to be logged in
+     */
+    void ostream(std::ostream &str) {
+
+        _stream = &str;
 
     }
 

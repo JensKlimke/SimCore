@@ -7,6 +7,10 @@
 
 #include "IModel.h"
 
+#ifndef EPS_TIME
+#define EPS_TIME 1e-9
+#endif
+
 namespace sim {
 
     class ISynchronized : public sim::IModel {
@@ -24,7 +28,7 @@ namespace sim {
 
         bool step(double simTime) override {
 
-            if(simTime >= _nextExecTime) {
+            if(simTime + EPS_TIME >= _nextExecTime) {
 
                 _nextExecTime += _timeStepSize;
                 return true;
@@ -50,6 +54,6 @@ namespace sim {
     };
 
 
-}; // namespace ::sim
+} // namespace ::sim
 
 #endif //SIMULATION_FRAMEWORK_SYNCHRONIZED_H

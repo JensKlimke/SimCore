@@ -12,7 +12,11 @@ namespace sim {
     class IModel {
 
 
+        double _last_time_step{};
+
+
     public:
+
 
         /**
          * Default constructor
@@ -50,8 +54,6 @@ namespace sim {
 
     protected:
 
-
-        double _last_time_step{};
 
 
         /**
@@ -95,7 +97,7 @@ namespace sim {
 
 
 
-}; // namespace sim::model;
+} // namespace sim::model;
 
 
 #endif //SIMULATION_FRAMEWORK_IPLUGIN_H

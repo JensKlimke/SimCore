@@ -17,6 +17,7 @@
 #include <core/DataManager.h>
 #include <models/timers/BasicTimer.h>
 #include <models/timers/TimeIsUp.h>
+#include <models/reporters/TimeReporter.h>
 
 
 /**
@@ -62,6 +63,7 @@ public:
 
     SimTest() = default;
 
+
     ~SimTest() override = default;
 
 
@@ -79,6 +81,7 @@ public:
 
     }
 
+
     bool step(double simTime) override {
 
         dt = IModel::timeStep(simTime);
@@ -90,6 +93,7 @@ public:
 
     }
 
+
     void terminate(double simTime) override {
 
         wasTerminated = true;
@@ -97,32 +101,44 @@ public:
 
     }
 
+
     bool getParameters(void **param) override {
+
         try {
             *param = &_param;
         } catch(...) {
             return false;
         }
+
         return true;
     }
 
+
     bool getInput(void **input) override {
+
         try {
             *input = &_input;
         } catch(...) {
             return false;
         }
+
         return true;
+
     }
 
+
     bool getState(void **state) override {
+
         try {
             *state = &_state;
         } catch(...) {
             return false;
         }
+
         return true;
+
     }
+
 
     std::vector<DataEntry> getData(Context context) override {
 
@@ -131,16 +147,16 @@ public:
 
         switch(context) {
             case Context::PARAMETER:
-                ADD(ret, pa, _param);
-                ADD(ret, pb, _param);
+                ADD(ret, pa, _param)
+                ADD(ret, pb, _param)
                 break;
             case Context::INPUT:
-                ADD(ret, ia, _input);
-                ADD(ret, ib, _input);
+                ADD(ret, ia, _input)
+                ADD(ret, ib, _input)
                 break;
             case Context::STATE:
-                ADD(ret, sa, _state);
-                ADD(ret, sb, _state);
+                ADD(ret, sa, _state)
+                ADD(ret, sb, _state)
                 break;
             default:
                 break;
@@ -151,99 +167,6 @@ public:
     }
 
 };
-
-
-
-/*TEST_F(SimTest, TimerPlugin) {
-
-
-    // load library
-    void* handle = dlopen((std::string("plugins/libtest_plugin.") + PLUGIN_EXTENSION).c_str(), RTLD_LAZY);
-    ASSERT_NE(nullptr, handle);
-
-
-    // create function pointer to create function
-    TestPlugin* (*create)();
-    void (*destroy)(TestPlugin*);
-    create = (TestPlugin* (*)())dlsym(handle, "create");
-    destroy = (void (*)(TestPlugin*))dlsym(handle, "destroy");
-
-    // check if function pointers exist
-    ASSERT_NE(nullptr, create);
-    ASSERT_NE(nullptr, destroy);
-
-    // create timer
-    TestPlugin* timer = create();
-    ASSERT_NE(nullptr, timer);
-
-    // start the timer
-    timer->start();
-    EXPECT_DOUBLE_EQ(0.0, timer->time());
-
-    // set parameters
-    TestPlugin::Parameters p{0.1};
-    timer->setParameters(&p);
-    timer->step();
-    EXPECT_DOUBLE_EQ(0.1, timer->time());
-
-    // timer step
-    timer->step();
-    EXPECT_DOUBLE_EQ(0.2, timer->time());
-
-
-    // create a second one
-
-    // create timer
-    TestPlugin* timer2 = create();
-    ASSERT_NE(nullptr, timer2);
-
-    // start timer and set parameters
-    timer2->start();
-    timer2->setParameters(&p);
-    timer2->step();
-    EXPECT_DOUBLE_EQ(0.1, timer2->time());
-
-    // timer step
-    timer->step();
-    EXPECT_DOUBLE_EQ(0.3, timer->time());
-
-
-    destroy(timer);
-    destroy(timer2);
-
-
-}
-
-
-TEST_F(SimTest, PluginManager) {
-
-
-    ::sim::PluginManager pm;
-    EXPECT_FALSE(pm.loadPlugin("na", "lib_that_doesnt_exist"));
-    ASSERT_TRUE(pm.loadPlugin("basic_timer", std::string("plugins/libtest_plugin.") + PLUGIN_EXTENSION));
-
-    // create instance
-    auto timer = (TestPlugin *) pm.instance("basic_timer");
-    ASSERT_NE(nullptr, timer);
-
-    // start timer
-    timer->start();
-    EXPECT_DOUBLE_EQ(0.0, timer->time());
-
-    // set parameters
-    double *p;
-    timer->getParameters((void **) &p);
-    *p = 0.1;
-
-    timer->step();
-    EXPECT_DOUBLE_EQ(0.1, timer->time());
-
-    // step timer
-    timer->step();
-    EXPECT_DOUBLE_EQ(0.2, timer->time());
-
-}
-    */
 
 
 TEST_F(SimTest, SimProcess) {
@@ -289,34 +212,32 @@ TEST_F(SimTest, SimProcess) {
     EXPECT_EQ(101, this->steps);
 
     // check data in data manager
-    EXPECT_NEAR(0.1,  *((double*) data.getValue("Test.state.sa")), 1e-9);
-    EXPECT_NEAR(10.0, *((double*) data.getValue("Test.state.sb")), 1e-9);
-    EXPECT_DOUBLE_EQ(2.0,  *((double*) data.getValue("Test.input.ia")));
-    EXPECT_DOUBLE_EQ(3.0,  *((double*) data.getValue("Test.input.ib")));
-    EXPECT_DOUBLE_EQ(4.0,  *((double*) data.getValue("Test.parameter.pa")));
-    EXPECT_DOUBLE_EQ(5.0,  *((double*) data.getValue("Test.parameter.pb")));
+    EXPECT_NEAR(0.1,  *((double*) data.getValue("Test.state.sa")),     1e-9);
+    EXPECT_NEAR(10.0, *((double*) data.getValue("Test.state.sb")),     1e-9);
+    EXPECT_NEAR(2.0,  *((double*) data.getValue("Test.input.ia")),     1e-9);
+    EXPECT_NEAR(3.0,  *((double*) data.getValue("Test.input.ib")),     1e-9);
+    EXPECT_NEAR(4.0,  *((double*) data.getValue("Test.parameter.pa")), 1e-9);
+    EXPECT_NEAR(5.0,  *((double*) data.getValue("Test.parameter.pb")), 1e-9);
 
     EXPECT_THROW(data.getValue("another_value"), std::exception);
 
 }
 
 
-TEST_F(SimTest, Models) {
+TEST_F(SimTest, Synchronized) {
 
     using namespace ::sim;
 
     // create objects
     BasicTimer timer;
     TimeIsUp stop;
+    Loop sim;
 
     // set parameters
     timer.setTimeStepSize(0.1);
 
     // set parameters
     stop.setStopTime(10.0);
-
-    // create loop
-    Loop sim;
 
     // set timer
     sim.setTimer(&timer);
@@ -325,15 +246,36 @@ TEST_F(SimTest, Models) {
     sim.addStopCondition(&stop);
     sim.addModel(&stop);
 
+    // create out-stream
+    std::stringstream ostr{};
+
+    // create synchronized model (in this case time reporter)
+    TimeReporter timeRep;
+    sim.addModel(&timeRep);
+
+    // setup for time reporter
+    timeRep.setTimeStepSize(5.0, 1.0);
+    timeRep.ostream(ostr);
+
+    // add another time reporter (for output in console)
+    TimeReporter timeRepConsole;
+    sim.addModel(&timeRepConsole);
+
+    // setup for time reporter
+    timeRepConsole.setTimeStepSize(1.0);
+
     // check status
     EXPECT_EQ(Loop::Status::STOPPED, sim.getStatus());
 
     // initialize simulation
     sim.run();
 
+    // check time and status
     EXPECT_NEAR(10.0, timer.time(), 1e-8);
     EXPECT_EQ(Loop::Status::STOPPED, sim.getStatus());
 
+    // check output of timer
+    EXPECT_EQ("1s\n6s\n", ostr.str());
 
 }
 

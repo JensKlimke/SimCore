@@ -19,7 +19,11 @@ private:
 public:
 
 
+    /**
+     * Default constructor
+     */
     BasicTimer() = default;
+
 
     ~BasicTimer() override = default;
 

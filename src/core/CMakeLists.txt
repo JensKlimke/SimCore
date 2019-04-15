@@ -7,7 +7,8 @@ set(SOURCE_FILES
         IParameterizable.h
         IStorable.h
         DataManager.h
-        ISynchronized.h functions.h)
+        ISynchronized.h
+        functions.h)
 
 
 add_library(core ${SOURCE_FILES})

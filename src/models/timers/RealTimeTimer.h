@@ -13,7 +13,7 @@ class RealTimeTimer : public BasicTimer {
 private:
 
     std::chrono::system_clock::time_point _refTime;
-    unsigned long _steps;
+    unsigned long _steps = 0;
 
 
 public:

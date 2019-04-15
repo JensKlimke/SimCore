@@ -19,9 +19,15 @@ namespace sim {
     public:
 
 
+        /**
+         * Default constructor
+         */
         DataManager() = default;
 
 
+        /**
+         * Default deconstructor
+         */
         virtual ~DataManager() = default;
 
 
@@ -79,7 +85,7 @@ namespace sim {
 
     };
 
-};
+} // namespace
 
 
 #endif //SIMULATION_FRAMEWORK_SATAMANAGER_H

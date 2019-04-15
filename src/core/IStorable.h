@@ -7,7 +7,7 @@
 
 
 #define ADD(vector, name, structure)                        \
-    vector.push_back(DataEntry{#name, &structure.name});    \
+    vector.push_back(DataEntry{#name, &(structure).name});    \
 
 
 #include <vector>
@@ -19,14 +19,17 @@ class IStorable {
 
 public:
 
+
     enum Context {
         PARAMETER, STATE, INPUT
     };
+
 
     struct DataEntry {
         std::string name;
         void *data;
     };
+
 
     /**
      * Returns a vector with data entries
@@ -36,7 +39,7 @@ public:
 
 };
 
-}; // namespace ::sim
+} // namespace ::sim
 
 
 #endif //SIMULATION_FRAMEWORK_ISTORABLE_H
