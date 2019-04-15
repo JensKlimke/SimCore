@@ -1,15 +1,6 @@
 set(SOURCE_FILES
         main.cpp
         SimTest.h
-        VehicleModelTest.h
-        DMAlgoTest.h
-        helpers/TestSimulation.h
-        helpers/AgentTestParameters.h
-        agent_tests/AMT_PriInputs.h
-        agent_tests/AMT_VelControl.h
-        agent_tests/AMT_VelChoice.h
-        agent_tests/AMT_Stop.h
-        agent_tests/AMT_Follow.h
         AlgoTest.h)
 
 if(EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
