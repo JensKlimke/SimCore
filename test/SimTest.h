@@ -42,7 +42,6 @@ public:
 
     bool wasInitialized = false;
     int steps = 0;
-    double dt = INFINITY;
     bool wasTerminated = false;
 
 
@@ -79,7 +78,7 @@ public:
 
     bool step(double simTime) override {
 
-        dt = IModel::timeStep(simTime);
+        auto dt = IModel::timeStep(simTime);
         steps++;
 
         _state.sa = dt;
@@ -188,6 +187,7 @@ TEST(SimTestBasic, SimpleProcess) {
 
     // initialize simulation
     EXPECT_NO_THROW(sim.run());
+    EXPECT_EQ(IStopCondition::StopCode::SIM_ENDED, stop.getCode());
 
 }
 

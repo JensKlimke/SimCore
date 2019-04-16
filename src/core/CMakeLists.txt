@@ -1,3 +1,8 @@
+cmake_minimum_required(VERSION 3.5)
+project(core CXX)
+
+set(CMAKE_CXX_STANDARD 14)
+
 set(SOURCE_FILES
         IModel.h
         Loop.cpp Loop.h
@@ -10,6 +15,5 @@ set(SOURCE_FILES
         ISynchronized.h
         functions.h)
 
-
-add_library(core ${SOURCE_FILES})
-target_include_directories(core PUBLIC ../../lib)
+add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
+target_include_directories(${PROJECT_NAME} PRIVATE ../)

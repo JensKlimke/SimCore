@@ -1,7 +1,5 @@
-#include <gtest/gtest.h>
-
 #include "SimTest.h"
-#include "AlgoTest.h"
+#include "SignalTest.h"
 
 int main(int argc, char **argv) {
 

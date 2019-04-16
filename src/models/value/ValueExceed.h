@@ -11,17 +11,23 @@
 template<typename T>
 class ValueExceed : public ::sim::IStopCondition, public ::sim::IModel {
 
-    const T* _value;
-    T _limit;
+    IStopCondition::StopCode _mode = IStopCondition::StopCode::SIM_ENDED;
+
+    const T* _value = nullptr;
+    T _limit{};
 
 public:
 
-    void setValueAndLimit(const T* value, const T &limit) {
+    typedef IStopCondition::StopCode Mode;
+
+    void setValueAndLimit(const T* value, const T &limit, Mode mode = Mode::SIM_ENDED) {
 
         _value = value;
         _limit = limit;
+        _mode  = mode;
 
     }
+
 
     void initialize(double initTime) override {
 
@@ -29,14 +35,17 @@ public:
 
     }
 
+
     bool step(double simTime) override {
 
+        // the limit has been reached
         if(*_value > _limit)
-            end();
+            stop(_mode);
 
         return true;
 
     }
+
 
     void terminate(double simTime) override {
 

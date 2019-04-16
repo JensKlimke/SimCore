@@ -12,10 +12,14 @@
 
 class ValueOutOfTube : public SignalTube, public sim::IStopCondition, public sim::IModel {
 
+    IStopCondition::StopCode _mode = IStopCondition::StopCode::OBJECTIVES_MISSED;
+
     const double *_x = nullptr;
     const double *_y = nullptr;
 
 public:
+
+    typedef IStopCondition::StopCode Mode;
 
     ValueOutOfTube() = default;
 
@@ -45,10 +49,11 @@ public:
      * @param x x-value
      * @param y y-value
      */
-    void setValues(const double *x, const double *y) {
+    void setValues(const double *x, const double *y, Mode mode = Mode::OBJECTIVES_MISSED) {
 
         _x = x;
         _y = y;
+        _mode  = mode;
 
     }
 

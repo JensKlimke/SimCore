@@ -74,6 +74,17 @@ namespace sim {
 
 
         /**
+         * Call stop command with given code
+         * @param code Code to be set
+         */
+        void stop(StopCode code) {
+
+            _code = code;
+
+        }
+
+
+        /**
          * Call stop command (with objectives missed)
          */
         void failed() {

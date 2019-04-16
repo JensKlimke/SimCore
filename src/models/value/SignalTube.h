@@ -43,6 +43,18 @@ public:
 
 
     /**
+     * Returns the center value between the upper and the lower curve at the given position
+     * @param x Position
+     * @return The center value at x
+     */
+    double center(double x) const {
+
+        return 0.5 * (lower.interpolate(x) + upper.interpolate(x));
+
+    }
+
+
+    /**
      * Checks if the value is within the band
      * @param x x-value
      * @param y y-value
@@ -50,7 +62,7 @@ public:
      */
     bool in(double x, double y) const {
 
-        return lower.previous(x) <= y && y <= upper.previous(x);
+        return lower.interpolate(x) <= y && y <= upper.interpolate(x);
 
     }
 

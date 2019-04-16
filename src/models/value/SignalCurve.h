@@ -151,7 +151,7 @@ public:
      * @param eps Tolerance (in y-direction, half band width)
      * @return Flag
      */
-    bool hit(double x, double y, double eps) const {
+    bool hit(double x, double y, double eps = EPS_DISTANCE) const {
 
         return fabs(interpolate(x) - y) < eps;
 
