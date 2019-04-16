@@ -95,43 +95,10 @@ public:
 
     }
 
-
-    bool getParameters(void **param) override {
-
-        try {
-            *param = &_param;
-        } catch(...) {
-            return false;
-        }
-
-        return true;
-    }
-
-
-    bool getInput(void **input) override {
-
-        try {
-            *input = &_input;
-        } catch(...) {
-            return false;
-        }
-
-        return true;
-
-    }
-
-
-    bool getState(void **state) override {
-
-        try {
-            *state = &_state;
-        } catch(...) {
-            return false;
-        }
-
-        return true;
-
-    }
+    // accessors
+    PARAM_ACCESS(param)
+    INPUT_ACCESS(input)
+    STATE_ACCESS(state)
 
 
     std::vector<DataEntry> getData(Context context) override {

@@ -175,8 +175,12 @@ protected:
 private:
 
     bool step(double simTime) override {
+
         x += 1.0;
         value = x * x;
+
+        return true;
+
     }
 
 

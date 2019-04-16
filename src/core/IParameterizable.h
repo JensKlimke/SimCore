@@ -6,7 +6,7 @@
 #define SIMULATION_FRAMEWORK_PARAMETERIZABLE_H
 
 
-#define PARAM_ACCESS(type, var)                                         \
+#define PARAM_ACCESS(var)                                               \
 bool getParameters(void **param) override {                             \
     try {                                                               \
         *param = &var;                                                  \
@@ -17,7 +17,7 @@ bool getParameters(void **param) override {                             \
 }                                                                       \
 
 
-#define INPUT_ACCESS(type, var)                                         \
+#define INPUT_ACCESS(var)                                               \
 bool getInput(void **input) override {                                  \
     try {                                                               \
         *input = &var;                                                  \
@@ -28,7 +28,7 @@ bool getInput(void **input) override {                                  \
 }                                                                       \
 
 
-#define STATE_ACCESS(type, var)                                         \
+#define STATE_ACCESS(var)                                               \
 bool getState(void **state) override {                                  \
     try {                                                               \
         *state = &var;                                                  \
