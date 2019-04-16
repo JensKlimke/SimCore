@@ -6,11 +6,15 @@
 #define SIMCORE_SIGNALTEST_H
 
 #include <gtest/gtest.h>
+#include <core/IModel.h>
+#include <core/Loop.h>
+#include <core/IStopCondition.h>
 #include <models/value/SignalCurve.h>
 #include <models/value/SignalTube.h>
 #include <models/value/ValueExceed.h>
 #include <models/value/ValueOutOfTube.h>
-#include <core/IStopCondition.h>
+#include <models/timers/BasicTimer.h>
+#include <models/timers/TimeIsUp.h>
 
 
 TEST(SignalTestBasic, SignalCurve) {
@@ -173,9 +177,6 @@ private:
     bool step(double simTime) override {
         x += 1.0;
         value = x * x;
-
-        std::cout << x << " " << value << std::endl;
-
     }
 
 

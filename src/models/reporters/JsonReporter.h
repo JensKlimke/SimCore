@@ -14,8 +14,7 @@
 
 class JsonReporter : public sim::IModel {
 
-    std::string _filename = "";
-    std::ofstream _file;
+    std::ostream *_outstream;
     std::map<std::string, const double*> _values{};
 
     bool _hasContent = false;
@@ -37,17 +36,19 @@ public:
      * @param key Key to be used in json
      */
     void addValue(const std::string &key, const double *val) {
+
         _values[key] = val;
+
     }
 
 
     /**
-     * Sets the filename of the json file
-     * @param filename Filename to be set
+     * Sets the stream in which the data shall be written
+     * @param os Outstream
      */
-    void setFilename(const std::string& filename) {
+    void setOutstream(std::ostream &os) {
 
-        _filename = filename;
+        _outstream = &os;
 
     }
 
@@ -58,15 +59,15 @@ protected:
     bool step(double simTime) override {
 
         // save time and open object brackets
-        _file << (_hasContent ? ",\n" : "[\n") << "\t" << R"({"time":)" << simTime << R"(,"data":{)";
+        (*_outstream) << (_hasContent ? ",\n" : "[\n") << "\t" << R"({"time":)" << simTime << R"(,"data":{)";
 
         // write data
         unsigned int i = 0;
         for(auto &p : _values)
-            _file << (i++ == 0 ? "" : ",") << "\"" << p.first << "\":" << *p.second;
+            (*_outstream) << (i++ == 0 ? "" : ",") << "\"" << p.first << "\":" << *p.second;
 
         // close object brackets
-        _file << "}}";
+        (*_outstream) << "}}";
 
         // save that data was already written
         _hasContent = true;
@@ -79,8 +80,6 @@ protected:
 
     void initialize(double initTime) override {
 
-        // open file
-        _file.open(_filename, std::ofstream::out | std::ofstream::trunc);
         _hasContent = false;
 
     }
@@ -90,10 +89,7 @@ protected:
 
         // close brackets
         if(_hasContent)
-            _file << "\n]" << std::endl;
-
-        // close file
-        _file.close();
+            (*_outstream) << "\n]" << std::endl;
 
     }
 

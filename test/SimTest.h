@@ -17,7 +17,7 @@
 #include <core/DataManager.h>
 #include <models/timers/BasicTimer.h>
 #include <models/timers/TimeIsUp.h>
-#include <models/reporters/TimeReporter.h>
+
 
 
 class SimTest : public ::testing::Test, public sim::IModel, public sim::IParameterizable, public sim::IStorable {
@@ -188,62 +188,6 @@ TEST(SimTestBasic, SimpleProcess) {
     // initialize simulation
     EXPECT_NO_THROW(sim.run());
     EXPECT_EQ(IStopCondition::StopCode::SIM_ENDED, stop.getCode());
-
-}
-
-
-TEST(SimTestBasic, Synchronized) {
-
-    using namespace ::sim;
-
-    // create objects
-    BasicTimer timer;
-    TimeIsUp stop;
-    Loop sim;
-
-    // set parameters
-    timer.setTimeStepSize(0.1);
-
-    // set parameters
-    stop.setStopTime(10.0);
-
-    // set timer
-    sim.setTimer(&timer);
-
-    // set stop condition
-    sim.addStopCondition(&stop);
-    sim.addModel(&stop);
-
-    // create out-stream
-    std::stringstream ostr{};
-
-    // create synchronized model (in this case time reporter)
-    TimeReporter timeRep;
-    sim.addModel(&timeRep);
-
-    // setup for time reporter
-    timeRep.setTimeStepSize(5.0, 1.0);
-    timeRep.ostream(ostr);
-
-    // add another time reporter (for output in console)
-    TimeReporter timeRepConsole;
-    sim.addModel(&timeRepConsole);
-
-    // setup for time reporter
-    timeRepConsole.setTimeStepSize(1.0);
-
-    // check status
-    EXPECT_EQ(Loop::Status::STOPPED, sim.getStatus());
-
-    // initialize simulation
-    sim.run();
-
-    // check time and status
-    EXPECT_NEAR(10.0, timer.time(), 1e-8);
-    EXPECT_EQ(Loop::Status::STOPPED, sim.getStatus());
-
-    // check output of timer
-    EXPECT_EQ("1s\n6s\n", ostr.str());
 
 }
 
