@@ -20,11 +20,6 @@
 #include <models/reporters/TimeReporter.h>
 
 
-/**
- * TODO:
- * * uncomment first test, and check problems
- * * Create model to test stop condition with objectives (Objectives reached/missed)
- */
 class SimTest : public ::testing::Test, public sim::IModel, public sim::IParameterizable, public sim::IStorable {
 
 
@@ -169,7 +164,7 @@ public:
 };
 
 
-TEST_F(SimTest, SimProcess) {
+TEST(SimTestBasic, SimpleProcess) {
 
     using namespace ::sim;
 
@@ -178,12 +173,11 @@ TEST_F(SimTest, SimProcess) {
     TimeIsUp stop;
 
     // set parameters
-    timer.setTimeStepSize(0.1);
+    timer.setTimeStepSize(1.0);
     stop.setStopTime(10.0);
 
     // create loop
     Loop sim;
-    DataManager data;
 
     // set timer and stop condition
     sim.setTimer(&timer);
@@ -191,40 +185,14 @@ TEST_F(SimTest, SimProcess) {
 
     // models
     sim.addModel(&stop);
-    sim.addModel(this);
-
-    // register model to data manager
-    data.registerValues("Test", *this);
-
-    // check status
-    EXPECT_EQ(Loop::Status::STOPPED, sim.getStatus());
 
     // initialize simulation
-    sim.run();
-
-    // check time and status
-    EXPECT_NEAR(10.0, timer.time(), 1e-8);
-    EXPECT_EQ(Loop::Status::STOPPED, sim.getStatus());
-
-    // check values
-    EXPECT_TRUE(this->wasInitialized);
-    EXPECT_TRUE(this->wasTerminated);
-    EXPECT_EQ(101, this->steps);
-
-    // check data in data manager
-    EXPECT_NEAR(0.1,  *((double*) data.getValue("Test.state.sa")),     1e-9);
-    EXPECT_NEAR(10.0, *((double*) data.getValue("Test.state.sb")),     1e-9);
-    EXPECT_NEAR(2.0,  *((double*) data.getValue("Test.input.ia")),     1e-9);
-    EXPECT_NEAR(3.0,  *((double*) data.getValue("Test.input.ib")),     1e-9);
-    EXPECT_NEAR(4.0,  *((double*) data.getValue("Test.parameter.pa")), 1e-9);
-    EXPECT_NEAR(5.0,  *((double*) data.getValue("Test.parameter.pb")), 1e-9);
-
-    EXPECT_THROW(data.getValue("another_value"), std::exception);
+    EXPECT_NO_THROW(sim.run());
 
 }
 
 
-TEST_F(SimTest, Synchronized) {
+TEST(SimTestBasic, Synchronized) {
 
     using namespace ::sim;
 
@@ -278,6 +246,62 @@ TEST_F(SimTest, Synchronized) {
     EXPECT_EQ("1s\n6s\n", ostr.str());
 
 }
+
+
+TEST_F(SimTest, DataHandling) {
+
+    using namespace ::sim;
+
+    // create objects
+    BasicTimer timer;
+    TimeIsUp stop;
+
+    // set parameters
+    timer.setTimeStepSize(0.1);
+    stop.setStopTime(10.0);
+
+    // create loop
+    Loop sim;
+    DataManager data;
+
+    // set timer and stop condition
+    sim.setTimer(&timer);
+    sim.addStopCondition(&stop);
+
+    // models
+    sim.addModel(&stop);
+    sim.addModel(this);
+
+    // register model to data manager
+    data.registerValues("Test", *this);
+
+    // check status
+    EXPECT_EQ(Loop::Status::STOPPED, sim.getStatus());
+
+    // initialize simulation
+    sim.run();
+
+    // check time and status
+    EXPECT_NEAR(10.0, timer.time(), 1e-8);
+    EXPECT_EQ(Loop::Status::STOPPED, sim.getStatus());
+
+    // check values
+    EXPECT_TRUE(this->wasInitialized);
+    EXPECT_TRUE(this->wasTerminated);
+    EXPECT_EQ(101, this->steps);
+
+    // check data in data manager
+    EXPECT_NEAR(0.1,  *((double*) data.getValue("Test.state.sa")),     1e-9);
+    EXPECT_NEAR(10.0, *((double*) data.getValue("Test.state.sb")),     1e-9);
+    EXPECT_NEAR(2.0,  *((double*) data.getValue("Test.input.ia")),     1e-9);
+    EXPECT_NEAR(3.0,  *((double*) data.getValue("Test.input.ib")),     1e-9);
+    EXPECT_NEAR(4.0,  *((double*) data.getValue("Test.parameter.pa")), 1e-9);
+    EXPECT_NEAR(5.0,  *((double*) data.getValue("Test.parameter.pb")), 1e-9);
+
+    EXPECT_THROW(data.getValue("another_value"), std::exception);
+
+}
+
 
 
 #endif //SIMULATION_FRAMEWORK_PLUGINTEST_H

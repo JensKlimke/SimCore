@@ -6,7 +6,7 @@
 #define SIMULATION_FRAMEWORK_ISTORABLE_H
 
 
-#define ADD(vector, name, structure)                        \
+#define ADD(vector, name, structure)                          \
     vector.push_back(DataEntry{#name, &(structure).name});    \
 
 

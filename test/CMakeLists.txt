@@ -1,7 +1,7 @@
 set(SOURCE_FILES
         main.cpp
         SimTest.h
-        AlgoTest.h)
+        AlgoTest.h SignalTest.h)
 
 if(EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
     include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
