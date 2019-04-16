@@ -13,7 +13,9 @@ set(SOURCE_FILES
         IStorable.h
         DataManager.h
         ISynchronized.h
-        functions.h)
+        functions.h
+        IPlugin.h
+        Plugin.h )
 
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
 target_include_directories(${PROJECT_NAME} PRIVATE ../)
