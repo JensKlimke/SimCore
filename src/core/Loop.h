@@ -2,8 +2,8 @@
 // Created by Jens Klimke on 2019-03-19.
 //
 
-#ifndef SIMULATION_FRAMEWORK_LOOP_H
-#define SIMULATION_FRAMEWORK_LOOP_H
+#ifndef SIMCORE_LOOP_H
+#define SIMCORE_LOOP_H
 
 #include "Exceptions.h"
 #include <string>
@@ -115,4 +115,4 @@ namespace sim {
 }; // namespace ::sim
 
 
-#endif //SIMULATION_FRAMEWORK_LOOP_H
+#endif //SIMCORE_LOOP_H

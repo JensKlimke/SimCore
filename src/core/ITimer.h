@@ -2,8 +2,8 @@
 // Created by Jens Klimke on 2019-03-19.
 //
 
-#ifndef SIMULATION_FRAMEWORK_ITIMER_H
-#define SIMULATION_FRAMEWORK_ITIMER_H
+#ifndef SIMCORE_ITIMER_H
+#define SIMCORE_ITIMER_H
 
 namespace sim {
 
@@ -59,4 +59,4 @@ namespace sim {
 } // namespace ::sim
 
 
-#endif //SIMULATION_FRAMEWORK_TIMER_H
+#endif //SIMCORE_TIMER_H

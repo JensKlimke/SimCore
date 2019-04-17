@@ -2,8 +2,8 @@
 // Created by Jens Klimke on 2019-03-20.
 //
 
-#ifndef SIMULATION_FRAMEWORK_PARAMETERIZABLE_H
-#define SIMULATION_FRAMEWORK_PARAMETERIZABLE_H
+#ifndef SIMCORE_PARAMETERIZABLE_H
+#define SIMCORE_PARAMETERIZABLE_H
 
 
 #define PARAM_ACCESS(var)                                               \
@@ -84,4 +84,4 @@ public:
 
 }; // namespace sim
 
-#endif //SIMULATION_FRAMEWORK_PARAMETERIZABLE_H
+#endif //SIMCORE_PARAMETERIZABLE_H

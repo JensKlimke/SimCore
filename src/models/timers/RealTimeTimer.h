@@ -2,8 +2,8 @@
 // Created by klimke on 27.03.2019.
 //
 
-#ifndef SIMULATION_FRAMEWORK_REALTIMETIMER_H
-#define SIMULATION_FRAMEWORK_REALTIMETIMER_H
+#ifndef SIMCORE_REALTIMETIMER_H
+#define SIMCORE_REALTIMETIMER_H
 
 #include "BasicTimer.h"
 #include <chrono>
@@ -32,4 +32,4 @@ public:
 };
 
 
-#endif //SIMULATION_FRAMEWORK_REALTIMETIMER_H
+#endif //SIMCORE_REALTIMETIMER_H

@@ -15,7 +15,7 @@ set(SOURCE_FILES
         ISynchronized.h
         functions.h
         IPlugin.h
-        Plugin.h )
+        Plugin.h DataNode.h)
 
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
 target_include_directories(${PROJECT_NAME} PRIVATE ../)

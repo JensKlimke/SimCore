@@ -2,8 +2,8 @@
 // Created by Jens Klimke on 2019-04-01.
 //
 
-#ifndef SIMULATION_FRAMEWORK_VALUEOUTOFTUBE_H
-#define SIMULATION_FRAMEWORK_VALUEOUTOFTUBE_H
+#ifndef SIMCORE_VALUEOUTOFTUBE_H
+#define SIMCORE_VALUEOUTOFTUBE_H
 
 #include <core/IStopCondition.h>
 #include <core/IModel.h>
@@ -60,4 +60,4 @@ public:
 
 };
 
-#endif //SIMULATION_FRAMEWORK_VALUEOUTOFTUBE_H
+#endif //SIMCORE_VALUEOUTOFTUBE_H

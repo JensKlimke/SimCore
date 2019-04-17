@@ -2,8 +2,8 @@
 // Created by Jens Klimke on 2019-03-19.
 //
 
-#ifndef SIMULATION_FRAMEWORK_BASICTIMER_H
-#define SIMULATION_FRAMEWORK_BASICTIMER_H
+#ifndef SIMCORE_BASICTIMER_H
+#define SIMCORE_BASICTIMER_H
 
 #include <core/ITimer.h>
 
@@ -66,4 +66,4 @@ protected:
 
 
 
-#endif //SIMULATION_FRAMEWORK_STEADYTIMER_H
+#endif //SIMCORE_STEADYTIMER_H

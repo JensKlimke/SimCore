@@ -2,8 +2,8 @@
 // Created by Jens Klimke on 2019-03-16.
 //
 
-#ifndef SIMULATION_FRAMEWORK_JSONREPORTER_H
-#define SIMULATION_FRAMEWORK_JSONREPORTER_H
+#ifndef SIMCORE_JSONREPORTER_H
+#define SIMCORE_JSONREPORTER_H
 
 #include <map>
 #include <fstream>
@@ -97,4 +97,4 @@ protected:
 };
 
 
-#endif //SIMULATION_FRAMEWORK_JSONREPORTER_H
+#endif //SIMCORE_JSONREPORTER_H

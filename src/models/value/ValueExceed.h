@@ -2,8 +2,8 @@
 // Created by Jens Klimke on 2019-03-30.
 //
 
-#ifndef SIMULATION_FRAMEWORK_VALUEEXCEED_H
-#define SIMULATION_FRAMEWORK_VALUEEXCEED_H
+#ifndef SIMCORE_VALUEEXCEED_H
+#define SIMCORE_VALUEEXCEED_H
 
 #include <core/IStopCondition.h>
 #include <core/IModel.h>
@@ -54,4 +54,4 @@ public:
 };
 
 
-#endif //SIMULATION_FRAMEWORK_VALUEEXCEED_H
+#endif //SIMCORE_VALUEEXCEED_H

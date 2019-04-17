@@ -2,8 +2,8 @@
 // Created by Jens Klimke on 2019-03-17.
 //
 
-#ifndef SIMULATION_FRAMEWORK_VEHICLEMODEL_H
-#define SIMULATION_FRAMEWORK_VEHICLEMODEL_H
+#ifndef SIMCORE_VEHICLEMODEL_H
+#define SIMCORE_VEHICLEMODEL_H
 
 
 #include <core/IModel.h>
@@ -72,4 +72,4 @@ public:
 };
 
 
-#endif //SIMULATION_FRAMEWORK_VEHICLEMODEL_H
+#endif //SIMCORE_VEHICLEMODEL_H

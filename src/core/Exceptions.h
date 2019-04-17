@@ -2,8 +2,8 @@
 // Created by klimke on 14.03.2019.
 //
 
-#ifndef SIMULATION_FRAMEWORK_EXCEPTIONS_H
-#define SIMULATION_FRAMEWORK_EXCEPTIONS_H
+#ifndef SIMCORE_EXCEPTIONS_H
+#define SIMCORE_EXCEPTIONS_H
 
 #include <utility>
 #include <exception>
@@ -48,4 +48,4 @@ public:
 };
 
 
-#endif //SIMULATION_FRAMEWORK_SIMULATIONERRORS_H
+#endif //SIMCORE_SIMULATIONERRORS_H

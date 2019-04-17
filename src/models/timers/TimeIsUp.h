@@ -2,8 +2,8 @@
 // Created by Jens Klimke on 2019-03-20.
 //
 
-#ifndef SIMULATION_FRAMEWORK_TIMEISUP_H
-#define SIMULATION_FRAMEWORK_TIMEISUP_H
+#ifndef SIMCORE_TIMEISUP_H
+#define SIMCORE_TIMEISUP_H
 
 #include <core/IStopCondition.h>
 #include <core/IModel.h>
@@ -43,4 +43,4 @@ public:
 };
 
 
-#endif //SIMULATION_FRAMEWORK_TIMEISUP_H
+#endif //SIMCORE_TIMEISUP_H

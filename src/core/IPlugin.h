@@ -2,8 +2,8 @@
 // Created by Jens Klimke on 2019-03-20.
 //
 
-#ifndef SIMULATION_FRAMEWORK_IPLUGIN_H
-#define SIMULATION_FRAMEWORK_IPLUGIN_H
+#ifndef SIMCORE_IPLUGIN_H
+#define SIMCORE_IPLUGIN_H
 
 
 namespace sim {
@@ -20,4 +20,4 @@ namespace plugin {
 }} // namespace ::sim::plugin
 
 
-#endif //SIMULATION_FRAMEWORK_IPLUGIN_H
+#endif //SIMCORE_IPLUGIN_H

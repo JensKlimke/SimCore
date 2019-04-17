@@ -2,8 +2,8 @@
 // Created by klimke on 27.03.2019.
 //
 
-#ifndef SIMULATION_FRAMEWORK_TIMEREPORTER_H
-#define SIMULATION_FRAMEWORK_TIMEREPORTER_H
+#ifndef SIMCORE_TIMEREPORTER_H
+#define SIMCORE_TIMEREPORTER_H
 
 #include <core/ISynchronized.h>
 #include <iostream>
@@ -58,4 +58,4 @@ public:
 };
 
 
-#endif //SIMULATION_FRAMEWORK_TIMEREPORTER_H
+#endif //SIMCORE_TIMEREPORTER_H

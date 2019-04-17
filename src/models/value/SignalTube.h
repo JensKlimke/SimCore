@@ -2,8 +2,8 @@
 // Created by Jens Klimke on 2019-04-01.
 //
 
-#ifndef SIMULATION_FRAMEWORK_SIGNALTUBE_H
-#define SIMULATION_FRAMEWORK_SIGNALTUBE_H
+#ifndef SIMCORE_SIGNALTUBE_H
+#define SIMCORE_SIGNALTUBE_H
 
 #include "SignalTube.h"
 
@@ -81,4 +81,4 @@ public:
 
 };
 
-#endif //SIMULATION_FRAMEWORK_SIGNALTUBE_H
+#endif //SIMCORE_SIGNALTUBE_H

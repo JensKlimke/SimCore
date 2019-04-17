@@ -2,8 +2,8 @@
 // Created by klimke on 27.03.2019.
 //
 
-#ifndef SIMULATION_FRAMEWORK_SYNCHRONIZED_H
-#define SIMULATION_FRAMEWORK_SYNCHRONIZED_H
+#ifndef SIMCORE_SYNCHRONIZED_H
+#define SIMCORE_SYNCHRONIZED_H
 
 #include "IModel.h"
 
@@ -56,4 +56,4 @@ namespace sim {
 
 } // namespace ::sim
 
-#endif //SIMULATION_FRAMEWORK_SYNCHRONIZED_H
+#endif //SIMCORE_SYNCHRONIZED_H

@@ -6,8 +6,8 @@
 #pragma ide diagnostic ignored "cert-err58-cpp"
 #pragma ide diagnostic ignored "cppcoreguidelines-avoid-goto"
 
-#ifndef SIMULATION_FRAMEWORK_PLUGINTEST_H
-#define SIMULATION_FRAMEWORK_PLUGINTEST_H
+#ifndef SIMCORE_PLUGINTEST_H
+#define SIMCORE_PLUGINTEST_H
 
 #include <gtest/gtest.h>
 #include <core/IModel.h>
@@ -215,6 +215,6 @@ TEST_F(SimTest, DataHandling) {
 
 
 
-#endif //SIMULATION_FRAMEWORK_PLUGINTEST_H
+#endif //SIMCORE_PLUGINTEST_H
 
 #pragma clang diagnostic pop

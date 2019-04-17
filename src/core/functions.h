@@ -2,8 +2,8 @@
 // Created by Jens Klimke on 2019-03-27.
 //
 
-#ifndef SIMULATION_FRAMEWORK_FUNCTIONS_H
-#define SIMULATION_FRAMEWORK_FUNCTIONS_H
+#ifndef SIMCORE_FUNCTIONS_H
+#define SIMCORE_FUNCTIONS_H
 
 #include <string>
 
@@ -27,4 +27,4 @@ namespace sim {
 
 }; // namespace ::sim
 
-#endif //SIMULATION_FRAMEWORK_FUNCTIONS_H
+#endif //SIMCORE_FUNCTIONS_H

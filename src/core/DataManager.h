@@ -2,8 +2,8 @@
 // Created by klimke on 22.03.2019.
 //
 
-#ifndef SIMULATION_FRAMEWORK_DATAMANAGER_H
-#define SIMULATION_FRAMEWORK_DATAMANAGER_H
+#ifndef SIMCORE_DATAMANAGER_H
+#define SIMCORE_DATAMANAGER_H
 
 #include <unordered_map>
 #include <iostream>
@@ -88,4 +88,4 @@ namespace sim {
 } // namespace
 
 
-#endif //SIMULATION_FRAMEWORK_SATAMANAGER_H
+#endif //SIMCORE_SATAMANAGER_H

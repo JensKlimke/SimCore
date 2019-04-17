@@ -2,8 +2,8 @@
 // Created by Jens Klimke on 2019-03-19.
 //
 
-#ifndef SIMULATION_FRAMEWORK_PLUGIN_H
-#define SIMULATION_FRAMEWORK_PLUGIN_H
+#ifndef SIMCORE_PLUGIN_H
+#define SIMCORE_PLUGIN_H
 
 
 #ifdef WIN32
@@ -51,4 +51,4 @@ namespace plugin {
 
 }} // namespace ::sim::plugin
 
-#endif //SIMULATION_FRAMEWORK_PLUGIN_H
+#endif //SIMCORE_PLUGIN_H

@@ -2,8 +2,8 @@
 // Created by Jens Klimke on 2019-03-19.
 //
 
-#ifndef SIMULATION_FRAMEWORK_IMODEL_H
-#define SIMULATION_FRAMEWORK_IMODEL_H
+#ifndef SIMCORE_IMODEL_H
+#define SIMCORE_IMODEL_H
 
 
 namespace sim {
@@ -100,4 +100,4 @@ namespace sim {
 } // namespace sim::model;
 
 
-#endif //SIMULATION_FRAMEWORK_IPLUGIN_H
+#endif //SIMCORE_IPLUGIN_H

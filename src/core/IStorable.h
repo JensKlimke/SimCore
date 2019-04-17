@@ -2,8 +2,8 @@
 // Created by klimke on 25.03.2019.
 //
 
-#ifndef SIMULATION_FRAMEWORK_ISTORABLE_H
-#define SIMULATION_FRAMEWORK_ISTORABLE_H
+#ifndef SIMCORE_ISTORABLE_H
+#define SIMCORE_ISTORABLE_H
 
 
 #define ADD(vector, name, structure)                          \
@@ -42,4 +42,4 @@ public:
 } // namespace ::sim
 
 
-#endif //SIMULATION_FRAMEWORK_ISTORABLE_H
+#endif //SIMCORE_ISTORABLE_H
