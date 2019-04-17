@@ -2,14 +2,14 @@
 // Created by Jens Klimke on 2019-03-19.
 //
 
-#ifndef SIMCORE_IMODEL_H
-#define SIMCORE_IMODEL_H
+#ifndef SIMCORE_ICOMPONENT_H
+#define SIMCORE_ICOMPONENT_H
 
 
 namespace sim {
 
 
-    class IModel {
+    class IComponent {
 
 
         double _last_time_step{};
@@ -21,13 +21,13 @@ namespace sim {
         /**
          * Default constructor
          */
-        IModel() = default;
+        IComponent() = default;
 
 
         /**
          * Default destructor
          */
-        virtual ~IModel() = default;
+        virtual ~IComponent() = default;
 
 
         /**

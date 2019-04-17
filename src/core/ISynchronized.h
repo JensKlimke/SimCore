@@ -5,7 +5,7 @@
 #ifndef SIMCORE_SYNCHRONIZED_H
 #define SIMCORE_SYNCHRONIZED_H
 
-#include "IModel.h"
+#include "IComponent.h"
 
 #ifndef EPS_TIME
 #define EPS_TIME 1e-9
@@ -13,7 +13,7 @@
 
 namespace sim {
 
-    class ISynchronized : public sim::IModel {
+    class ISynchronized : public sim::IComponent {
 
         double _timeStepSize;
         double _nextExecTime;

@@ -10,7 +10,7 @@
 #define SIMCORE_PLUGINTEST_H
 
 #include <gtest/gtest.h>
-#include <core/IModel.h>
+#include <core/IComponent.h>
 #include <core/Loop.h>
 #include <core/IParameterizable.h>
 #include <core/IStorable.h>
@@ -20,7 +20,7 @@
 
 
 
-class SimTest : public ::testing::Test, public sim::IModel, public sim::IParameterizable, public sim::IStorable {
+class SimTest : public ::testing::Test, public sim::IComponent, public sim::IParameterizable, public sim::IStorable {
 
 
 public:
@@ -63,7 +63,7 @@ public:
 
     void initialize(double initTime) override {
 
-        IModel::initializeTimer(initTime);
+        IComponent::initializeTimer(initTime);
         wasInitialized = true;
 
         _state.sa = 1.0;
@@ -78,7 +78,7 @@ public:
 
     bool step(double simTime) override {
 
-        auto dt = IModel::timeStep(simTime);
+        auto dt = IComponent::timeStep(simTime);
         steps++;
 
         _state.sa = dt;

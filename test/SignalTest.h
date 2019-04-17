@@ -6,7 +6,7 @@
 #define SIMCORE_SIGNALTEST_H
 
 #include <gtest/gtest.h>
-#include <core/IModel.h>
+#include <core/IComponent.h>
 #include <core/Loop.h>
 #include <core/IStopCondition.h>
 #include <models/value/SignalCurve.h>
@@ -144,7 +144,7 @@ TEST(SignalTestBasic, SignalTube) {
 
 
 
-class SignalTest : public ::testing::Test, public sim::IModel {
+class SignalTest : public ::testing::Test, public sim::IComponent {
 
 protected:
 

@@ -6,10 +6,10 @@
 #define SIMCORE_VALUEEXCEED_H
 
 #include <core/IStopCondition.h>
-#include <core/IModel.h>
+#include <core/IComponent.h>
 
 template<typename T>
-class ValueExceed : public ::sim::IStopCondition, public ::sim::IModel {
+class ValueExceed : public ::sim::IStopCondition, public ::sim::IComponent {
 
     IStopCondition::StopCode _mode = IStopCondition::StopCode::SIM_ENDED;
 

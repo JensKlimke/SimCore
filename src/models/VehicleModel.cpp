@@ -18,24 +18,24 @@
 
 bool VehicleModel::step(double simTime) {
 
-    // copy data
-    _stateIn = _state;
+    // copy old state
+    auto st = _state;
 
     // get step size
     auto dt = timeStep(simTime);
 
     // calculate yaw rate
-    _state.dPsi = _stateIn.v * (_param.steerTransmission * _input.steer) / _param.wheelBase;
+    _state.dPsi = st.v * (_param.steerTransmission * _input.steer) / _param.wheelBase;
     _state.psi += _state.dPsi * dt;
 
     // calculate distance and velocity
-    _state.ds = std::max(0.0, _stateIn.v * dt + 0.5 * _stateIn.a * dt * dt);
-    _state.v = std::max(0.0, _stateIn.v + _stateIn.a * dt);
+    _state.ds = std::max(0.0, st.v * dt + 0.5 * st.a * dt * dt);
+    _state.v = std::max(0.0, st.v + st.a * dt);
 
     // calculate distance
     _state.s += _state.ds;
-    _state.xy[0] += cos(_stateIn.psi) * _state.ds;
-    _state.xy[1] += sin(_stateIn.psi) * _state.ds;
+    _state.xy[0] += cos(st.psi) * _state.ds;
+    _state.xy[1] += sin(st.psi) * _state.ds;
 
     // squared velocity
     auto v2 = _state.v * _state.v;
@@ -63,7 +63,7 @@ bool VehicleModel::step(double simTime) {
 
 void VehicleModel::initialize(double initTime) {
 
-    IModel::initializeTimer(initTime);
+    IComponent::initializeTimer(initTime);
 
 }
 

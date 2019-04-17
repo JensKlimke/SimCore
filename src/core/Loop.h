@@ -14,7 +14,7 @@
 namespace sim {
 
     // pre-declare classes for usage in Loop
-    class IModel;
+    class IComponent;
     class IStopCondition;
     class ITimer;
 
@@ -32,7 +32,7 @@ namespace sim {
         bool   _stop   = true;
 
         // TODO: model names
-        std::vector<IModel*> _models{};
+        std::vector<IComponent*> _models{};
         std::vector<IStopCondition*> _stop_conditions{};
 
         ITimer *_timer = nullptr;
@@ -71,7 +71,7 @@ namespace sim {
          * @param name Name of the model
          * @param model Model to be set
          */
-        void addModel(sim::IModel *model);
+        void addModel(sim::IComponent *model);
 
 
         /**

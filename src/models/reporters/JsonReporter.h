@@ -8,11 +8,11 @@
 #include <map>
 #include <fstream>
 #include <string>
-#include <core/IModel.h>
+#include <core/IComponent.h>
 #include <core/Exceptions.h>
 
 
-class JsonReporter : public sim::IModel {
+class JsonReporter : public sim::IComponent {
 
     std::ostream *_outstream;
     std::map<std::string, const double*> _values{};

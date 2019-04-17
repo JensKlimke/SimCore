@@ -6,11 +6,11 @@
 #define SIMCORE_VALUEOUTOFTUBE_H
 
 #include <core/IStopCondition.h>
-#include <core/IModel.h>
+#include <core/IComponent.h>
 #include <core/Exceptions.h>
 #include "SignalTube.h"
 
-class ValueOutOfTube : public SignalTube, public sim::IStopCondition, public sim::IModel {
+class ValueOutOfTube : public SignalTube, public sim::IStopCondition, public sim::IComponent {
 
     IStopCondition::StopCode _mode = IStopCondition::StopCode::OBJECTIVES_MISSED;
 

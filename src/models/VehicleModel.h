@@ -6,12 +6,11 @@
 #define SIMCORE_VEHICLEMODEL_H
 
 
-#include <core/IModel.h>
-#include <core/IParameterizable.h>
+#include <core/SimModel.h>
 #include <cmath>
 
 
-class VehicleModel : public ::sim::IModel, public ::sim::IParameterizable {
+class VehicleModel : public ::sim::SimModel {
 
 public:
 
@@ -49,9 +48,7 @@ private:
 
     Parameters _param;
     State      _state{};
-    State      _stateIn{};
     Input      _input;
-
 
 public:
 
@@ -68,6 +65,37 @@ public:
     INPUT_ACCESS(_input)
     STATE_ACCESS(_state)
 
+
+    std::vector<DataEntry> getData(Context context) override {
+
+        std::vector<DataEntry> ret;
+        ret.reserve(2);
+
+        switch(context) {
+            case Context::PARAMETER:
+                /*
+                    double steerTransmission  = 0.474;
+                    double wheelBase          = 2.7;
+                    double cwA                = 0.6;
+                    double mass               = 1.8e3;
+                    double power              = 1.2e5;
+                    double rollCoefficient[3] = {9.91e-3, 1.95e-5, 1.76e-9};
+                    double size[2]            = {5.0, 2.2};
+                    double driverPos[2]       = {0.5, 0.5};
+                 */
+                ADD(ret, steerTransmission, _param);
+                break;
+            case Context::INPUT:
+                break;
+            case Context::STATE:
+                break;
+            default:
+                break;
+        }
+
+        return ret;
+
+    }
 
 };
 

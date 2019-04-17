@@ -6,7 +6,7 @@
 #define SIMCORE_REPORTERTEST_H
 
 #include <gtest/gtest.h>
-#include <core/IModel.h>
+#include <core/IComponent.h>
 #include <core/Loop.h>
 #include <core/IStopCondition.h>
 #include <models/value/SignalCurve.h>
@@ -18,7 +18,7 @@
 #include <models/reporters/TimeReporter.h>
 #include <models/reporters/JsonReporter.h>
 
-class ReporterTest : public ::testing::Test, public sim::IModel {
+class ReporterTest : public ::testing::Test, public sim::IComponent {
 
 protected:
 

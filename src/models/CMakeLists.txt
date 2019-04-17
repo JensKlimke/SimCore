@@ -16,3 +16,7 @@ set(SOURCE_FILES
 
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
 target_include_directories(${PROJECT_NAME} PRIVATE ../)
+
+install(TARGETS ${PROJECT_NAME}
+        DESTINATION lib
+        PUBLIC_HEADER DESTINATION include)

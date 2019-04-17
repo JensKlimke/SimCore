@@ -3,7 +3,7 @@
 //
 
 #include "Loop.h"
-#include "IModel.h"
+#include "IComponent.h"
 #include "ITimer.h"
 #include "IStopCondition.h"
 #include <exception>
@@ -25,7 +25,7 @@ void Loop::addStopCondition(sim::IStopCondition *stop) {
 }
 
 
-void Loop::addModel(sim::IModel *model) {
+void Loop::addModel(sim::IComponent *model) {
 
     _models.push_back(model);
 

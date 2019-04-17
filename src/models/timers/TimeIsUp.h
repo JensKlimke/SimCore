@@ -6,11 +6,11 @@
 #define SIMCORE_TIMEISUP_H
 
 #include <core/IStopCondition.h>
-#include <core/IModel.h>
+#include <core/IComponent.h>
 #include <cmath>
 
 
-class TimeIsUp : public ::sim::IStopCondition, public ::sim::IModel {
+class TimeIsUp : public ::sim::IStopCondition, public ::sim::IComponent {
 
 public:
 

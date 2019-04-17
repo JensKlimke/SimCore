@@ -19,5 +19,5 @@ else()
 endif()
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
-target_include_directories(${PROJECT_NAME} PUBLIC ../src)
 target_link_libraries(${PROJECT_NAME} core models ${CONAN_LIBS})
+include_directories(../src)
