@@ -20,9 +20,7 @@ public:
 
     explicit ProcessException(const char* msg) : _msg(msg) {}
 
-    ProcessException(const ProcessException& ex) noexcept {
-        _msg = ex._msg;
-    }
+    ProcessException(const ProcessException& ex) noexcept : _msg(ex._msg) {}
 
     ProcessException& operator=(const ProcessException& ex) noexcept {
         _msg = ex._msg;
