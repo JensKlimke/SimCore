@@ -20,9 +20,6 @@ set(HEADER_FILES
         ISynchronized.h
         functions.h
         IPlugin.h
-        Plugin.h SimModel.h)
+        Plugin.h IModel.h)
 
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})
-
-install(TARGETS ${PROJECT_NAME} DESTINATION lib)
-install(FILES ${HEADER_FILES} DESTINATION include)

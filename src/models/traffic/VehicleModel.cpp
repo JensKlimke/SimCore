@@ -67,6 +67,6 @@ void VehicleModel::initialize(double initTime) {
 
 }
 
-void VehicleModel::terminate(double simTime) {
+void VehicleModel::terminate(double) {
 
 }
