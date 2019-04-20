@@ -9,7 +9,7 @@ set(SOURCE_FILES
         SignalTest.h
         ReporterTest.h
         PluginTest.h
-        )
+        VirtualHorizonTest.h)
 
 if(EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
     include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
@@ -19,5 +19,4 @@ else()
 endif()
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
-target_link_libraries(${PROJECT_NAME} core components ${CONAN_LIBS})
-include_directories(../src)
+target_link_libraries(${PROJECT_NAME} core components odrfw ${CONAN_LIBS})

@@ -8,3 +8,6 @@ enable_testing()
 add_subdirectory(src/core)
 add_subdirectory(src/components)
 add_subdirectory(test)
+add_subdirectory(lib/SimMap)
+
+include_directories(src/)

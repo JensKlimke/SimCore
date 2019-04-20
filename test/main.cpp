@@ -1,6 +1,7 @@
 #include "SimTest.h"
 #include "SignalTest.h"
 #include "ReporterTest.h"
+#include "VirtualHorizonTest.h"
 
 int main(int argc, char **argv) {
 
