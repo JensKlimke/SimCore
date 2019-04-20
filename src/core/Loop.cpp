@@ -27,7 +27,7 @@ void Loop::addStopCondition(sim::IStopCondition *stop) {
 
 void Loop::addModel(sim::IComponent *model) {
 
-    _models.push_back(model);
+    _components.push_back(model);
 
 }
 
@@ -43,8 +43,8 @@ void Loop::run() {
     // iterate while stop flag is not set
     while(!_stop) {
 
-        // iterate over models ...
-        for (auto &m : _models) {
+        // iterate over components ...
+        for (auto &m : _components) {
 
             // ... and run model step
             m->step(_timer->time());
@@ -104,8 +104,8 @@ void Loop::initialize() {
 
     }
 
-    // iterate over models ...
-    for(auto &m : _models) {
+    // iterate over components ...
+    for(auto &m : _components) {
 
         // ... and initialize models
         m->initialize(_timer->time());
@@ -124,8 +124,8 @@ void Loop::initialize() {
 void Loop::terminate() {
 
 
-    // iterate over models ...
-    for (auto &m : _models) {
+    // iterate over components ...
+    for (auto &m : _components) {
 
         // ... and terminate
         m->terminate(_timer->time());

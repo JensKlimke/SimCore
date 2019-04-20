@@ -11,7 +11,7 @@
 #endif
 
 
-void TimeIsUp::initialize(double initTime) {
+void TimeIsUp::initialize(double) {
 
     reset();
 
@@ -27,7 +27,7 @@ bool TimeIsUp::step(double simTime) {
 
 }
 
-void TimeIsUp::terminate(double simTime) {
+void TimeIsUp::terminate(double) {
 
     // Nothing to do
 

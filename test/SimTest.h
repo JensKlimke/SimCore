@@ -15,8 +15,8 @@
 #include <core/IParameterizable.h>
 #include <core/IStorable.h>
 #include <core/DataManager.h>
-#include <models/timers/BasicTimer.h>
-#include <models/timers/TimeIsUp.h>
+#include <components/timers/BasicTimer.h>
+#include <components/timers/TimeIsUp.h>
 
 
 

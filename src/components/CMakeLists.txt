@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(models CXX)
+project(components CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -12,7 +12,7 @@ set(SOURCE_FILES
         reporters/TimeReporter.h
         value/ValueExceed.h
         value/ValueOutOfTube.h
-        value/SignalTube.h)
+        value/SignalTube.h environment/VirtualHorizon.h)
 
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
 target_include_directories(${PROJECT_NAME} PRIVATE ../)

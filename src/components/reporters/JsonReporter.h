@@ -14,7 +14,7 @@
 
 class JsonReporter : public sim::IComponent {
 
-    std::ostream *_outstream;
+    std::ostream *_outstream = nullptr;
     std::map<std::string, const double*> _values{};
 
     bool _hasContent = false;

@@ -9,14 +9,14 @@
 #include <core/IComponent.h>
 #include <core/Loop.h>
 #include <core/IStopCondition.h>
-#include <models/value/SignalCurve.h>
-#include <models/value/SignalTube.h>
-#include <models/value/ValueExceed.h>
-#include <models/value/ValueOutOfTube.h>
-#include <models/timers/BasicTimer.h>
-#include <models/timers/TimeIsUp.h>
-#include <models/reporters/TimeReporter.h>
-#include <models/reporters/JsonReporter.h>
+#include <components/value/SignalCurve.h>
+#include <components/value/SignalTube.h>
+#include <components/value/ValueExceed.h>
+#include <components/value/ValueOutOfTube.h>
+#include <components/timers/BasicTimer.h>
+#include <components/timers/TimeIsUp.h>
+#include <components/reporters/TimeReporter.h>
+#include <components/reporters/JsonReporter.h>
 
 class ReporterTest : public ::testing::Test, public sim::IComponent {
 

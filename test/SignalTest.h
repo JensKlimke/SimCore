@@ -1,3 +1,6 @@
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-pragmas"
+#pragma ide diagnostic ignored "cert-err58-cpp"
 //
 // Created by klimke on 16.04.2019.
 //
@@ -9,12 +12,12 @@
 #include <core/IComponent.h>
 #include <core/Loop.h>
 #include <core/IStopCondition.h>
-#include <models/value/SignalCurve.h>
-#include <models/value/SignalTube.h>
-#include <models/value/ValueExceed.h>
-#include <models/value/ValueOutOfTube.h>
-#include <models/timers/BasicTimer.h>
-#include <models/timers/TimeIsUp.h>
+#include <components/value/SignalCurve.h>
+#include <components/value/SignalTube.h>
+#include <components/value/ValueExceed.h>
+#include <components/value/ValueOutOfTube.h>
+#include <components/timers/BasicTimer.h>
+#include <components/timers/TimeIsUp.h>
 
 
 TEST(SignalTestBasic, SignalCurve) {
@@ -278,3 +281,5 @@ TEST_F(SignalTest, OutOfTube) {
 
 
 #endif //SIMCORE_SIGNALTEST_H
+
+#pragma clang diagnostic pop

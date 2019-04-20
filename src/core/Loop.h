@@ -31,8 +31,7 @@ namespace sim {
         Status _status = Status::STOPPED;
         bool   _stop   = true;
 
-        // TODO: model names
-        std::vector<IComponent*> _models{};
+        std::vector<IComponent*> _components{};
         std::vector<IStopCondition*> _stop_conditions{};
 
         ITimer *_timer = nullptr;
