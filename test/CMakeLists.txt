@@ -9,7 +9,7 @@ set(SOURCE_FILES
         SignalTest.h
         DataTest.h
         PluginTest.h
-        VirtualHorizonTest.h PublishTest.h)
+        EnvironmentTest.h PublishTest.h)
 
 if(EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
     include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)

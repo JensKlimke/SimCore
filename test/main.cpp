@@ -2,7 +2,7 @@
 #include "SignalTest.h"
 #include "DataTest.h"
 #include "PublishTest.h"
-#include "VirtualHorizonTest.h"
+#include "EnvironmentTest.h"
 
 int main(int argc, char **argv) {
 

@@ -5,27 +5,46 @@
 #ifndef SIMCORE_AGENT_H
 #define SIMCORE_AGENT_H
 
-#include <core/IComponent.h>
-#include <map>
+#include <vector>
+#include <string>
 #include <cmath>
+#include <SimMap/lib_wrapper/odrfw.h>
 
-class Agent : public sim::IComponent {
+
+#ifndef VEH_DEFAULT_LENGTH
+#define VEH_DEFAULT_LENGTH 5.0;
+#endif
+
+#ifndef VEH_DEFAULT_WIDTH
+#define VEH_DEFAULT_WIDTH 2.2;
+#endif
+
+
+class Agent {
 
     unsigned int _id = 0;
-    static std::map<unsigned int, Agent*> _index;
+    simmap::Position _pos{};
+
+    double _length = VEH_DEFAULT_LENGTH;
+    double _width  = VEH_DEFAULT_WIDTH;
+
+    double _velocity = 0.0;
+    double _acceleration = 0.0;
 
 
 public:
 
-    Agent() = default;
-    ~Agent() override = default;
+    typedef simmap::Position Position;
+
+    explicit Agent(unsigned int id);
+    virtual ~Agent() = default;
 
 
     /**
-     * Register agent
-     * @param id ID of the agent
+     * Returns the ID of the agent
+     * @return ID
      */
-    void create(unsigned int id);
+    unsigned int getID() const;
 
 
     /**
@@ -42,25 +61,52 @@ public:
      * @param s Longitudinal position in road
      * @param t Relative lateral position from lane center
      */
-    void setPosition(const std::string &roadID, int laneID, double s, double t);
+    void setMapPosition(const std::string &roadID, int laneID, double s, double t);
 
 
     /**
      * Sets the absolute position of the agent
-     * @param x x-position
-     * @param y y-position
-     * @param z z-position
+     * @param pos Position to be set
      * @param rMax Maximum moved distance from last positioning
      */
-    void setPosition(double x, double y, double z, double rMax = INFINITY);
+    void setPosition(const Position &pos, double rMax);
+
+
+    /**
+     * Returns the position of the agent
+     * @return Position of the agent
+     */
+    Position getPosition() const;
+
+
+    /**
+     * Moves the agent along the road by distance *\Delta s* and to the lateral offset *t*
+     * @param ds Distance to be moved
+     * @param t Lateral offset to be set
+     */
+    void move(double s, double t);
+
+
+    /**
+     * Sets the current velocity and acceleration of the agents vehicle
+     * @param velocity Velocity to be set
+     * @param acceleration Acceleration to be set
+     */
+    void setDynamics(double velocity, double acceleration);
+
+
+    /**
+     * Sets the dimensions of the agents vehicle
+     * @param length Length to be set
+     * @param width Width to be set
+     */
+    void setDimensions(double length, double width);
 
 
 
-    void initialize(double initTime) override;
+protected:
 
-    bool step(double simTime) override;
-
-    void terminate(double simTime) override;
+    virtual std::pair<double, double> getPathLengths() const;
 
 
 };

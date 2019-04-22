@@ -1,7 +1,7 @@
 set(SOURCE_FILES
         traffic/VehicleModel.h traffic/VehicleModel.cpp
         traffic/Agent.h traffic/Agent.cpp
-        traffic/Environment.h
+        traffic/Environment.h traffic/Environment.cpp
         timers/BasicTimer.h timers/BasicTimer.cpp
         timers/TimeIsUp.h timers/TimeIsUp.cpp
         timers/RealTimeTimer.h timers/RealTimeTimer.cpp
