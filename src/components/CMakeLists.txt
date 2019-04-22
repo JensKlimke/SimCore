@@ -1,5 +1,7 @@
 set(SOURCE_FILES
-        VehicleModel.h VehicleModel.cpp
+        traffic/VehicleModel.h traffic/VehicleModel.cpp
+        traffic/Agent.h traffic/Agent.cpp
+        traffic/Environment.h
         timers/BasicTimer.h timers/BasicTimer.cpp
         timers/TimeIsUp.h timers/TimeIsUp.cpp
         timers/RealTimeTimer.h timers/RealTimeTimer.cpp
@@ -9,8 +11,6 @@ set(SOURCE_FILES
         value/ValueExceed.h
         value/ValueOutOfTube.h
         value/SignalTube.h
-        environment/VirtualHorizon.h
-        environment/Agent.h
         data/DataPublisher.h)
 
 add_library(components STATIC ${SOURCE_FILES})

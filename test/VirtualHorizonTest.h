@@ -6,9 +6,9 @@
 #define SIMCORE_VIRTUALHORIZONTEST_H
 
 #include <gtest/gtest.h>
-#include <components/environment/VirtualHorizon.h>
+#include <components/traffic/Environment.h>
 
-class VirtualHorizonTest : public ::testing::Test, public VirtualHorizon {
+class VirtualHorizonTest : public ::testing::Test, public Environment {
 
 
 protected:

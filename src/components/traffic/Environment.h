@@ -2,8 +2,8 @@
 // Created by Jens Klimke on 2019-04-20.
 //
 
-#ifndef SIMCORE_VIRTUALHORIZON_H
-#define SIMCORE_VIRTUALHORIZON_H
+#ifndef SIMCORE_ENVIRONMENT_H
+#define SIMCORE_ENVIRONMENT_H
 
 #include <core/Model.h>
 #include <SimMap/lib_wrapper/odrfw.h>
@@ -11,7 +11,7 @@
 #include "Agent.h"
 
 
-class VirtualHorizon : public ::sim::IComponent {
+class Environment : public ::sim::IComponent {
 
     ::simmap::id_type_t _map_id = 0;
     std::vector<std::unique_ptr<Agent>> _agents{};
@@ -74,16 +74,13 @@ public:
      */
     void registerSimAgent(unsigned int id, const std::vector<std::string> &track = {}) {
 
-        using namespace simmap;
-
-        auto err = registerAgent(id, _map_id);
-        if(err != 0)
-            throw std::runtime_error("Agent could not be registered");
-
         // add agent
         auto ag = new Agent();
 
-        if(track.size() > 0)
+        // register agent
+        ag->register();
+
+        if(!track.empty())
             ag->setTrack(track);
 
         _agents.emplace_back(ag);
@@ -104,4 +101,4 @@ public:
 };
 
 
-#endif //SIMCORE_VIRTUALHORIZON_H
+#endif //SIMCORE_ENVIRONMENT_H
