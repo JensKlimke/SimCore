@@ -170,7 +170,7 @@ protected:
         sim.addStopCondition(&stop);
 
         // models
-        sim.addModel(&stop);
+        sim.addComponent(&stop);
 
     }
 
@@ -207,11 +207,11 @@ TEST_F(SignalTest, ValueExceed) {
     ex.setValueAndLimit(&value, 25.1, ValueExceed<double>::Mode::OBJECTIVES_MISSED);
 
     // add to sim
-    sim.addModel(&ex);
+    sim.addComponent(&ex);
     sim.addStopCondition(&ex);
 
     // add value limiter
-    sim.addModel(this);
+    sim.addComponent(this);
 
     // run sim
     sim.run();
@@ -253,11 +253,11 @@ TEST_F(SignalTest, OutOfTube) {
     tube.setValues(&x, &value);
 
     // add to sim
-    sim.addModel(&tube);
+    sim.addComponent(&tube);
     sim.addStopCondition(&tube);
 
     // add value limiter
-    sim.addModel(this);
+    sim.addComponent(this);
 
 
     // run sim

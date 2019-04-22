@@ -7,9 +7,9 @@ set(SOURCE_FILES
         main.cpp
         SimTest.h
         SignalTest.h
-        ReporterTest.h
+        DataTest.h
         PluginTest.h
-        VirtualHorizonTest.h)
+        VirtualHorizonTest.h PublishTest.h)
 
 if(EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
     include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)

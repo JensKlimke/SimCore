@@ -6,11 +6,11 @@
 #define SIMCORE_VEHICLEMODEL_H
 
 
-#include <core/SimModel.h>
+#include <core/Model.h>
 #include <cmath>
 
 
-class VehicleModel : public ::sim::SimModel {
+class VehicleModel : public ::sim::Model {
 
 public:
 

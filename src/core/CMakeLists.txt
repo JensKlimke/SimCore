@@ -6,12 +6,11 @@ set(SOURCE_FILES
         IStopCondition
         IParameterizable.h
         IStorable.h
-        DataManager.h
         ISynchronized.h
         functions.h
         IPlugin.h
         Plugin.h
-        SimModel.h
+        Model.h
         DataNode.h
         )
 

@@ -2,8 +2,8 @@
 // Created by klimke on 4/17/2019.
 //
 
-#ifndef SIMCORE_SIMMODEL_H
-#define SIMCORE_SIMMODEL_H
+#ifndef SIMCORE_MODEL_H
+#define SIMCORE_MODEL_H
 
 #include "IComponent.h"
 #include "IStorable.h"
@@ -12,12 +12,12 @@
 
 namespace sim {
 
-    class SimModel : public ISynchronized, public IStorable, public IParameterizable {
+    class Model : public ISynchronized, public data::IStorable, public IParameterizable {
 
     public:
 
-        SimModel() = default;
-        ~SimModel() override = default;
+        Model() = default;
+        ~Model() override = default;
 
         void terminate(double simTime) override {}
 
@@ -25,4 +25,4 @@ namespace sim {
 
 }
 
-#endif //SIMCORE_SIMMODEL_H
+#endif //SIMCORE_MODEL_H

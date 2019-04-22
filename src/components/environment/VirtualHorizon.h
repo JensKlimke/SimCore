@@ -5,13 +5,16 @@
 #ifndef SIMCORE_VIRTUALHORIZON_H
 #define SIMCORE_VIRTUALHORIZON_H
 
-#include <core/SimModel.h>
+#include <core/Model.h>
 #include <SimMap/lib_wrapper/odrfw.h>
+#include <memory>
+#include "Agent.h"
 
 
 class VirtualHorizon : public ::sim::IComponent {
 
     ::simmap::id_type_t _map_id = 0;
+    std::vector<std::unique_ptr<Agent>> _agents{};
 
 public:
 
@@ -45,7 +48,8 @@ public:
             unloadMap(_map_id);
 
         // load map
-        if(loadMap(map.c_str(), &_map_id) != 0)
+        auto err = loadMap(map.c_str(), &_map_id);
+        if(err != 0)
             throw std::runtime_error("Map could not be loaded.");
 
     }
@@ -60,6 +64,42 @@ public:
         return static_cast<unsigned int>(_map_id);
 
     }
+
+
+
+    /**
+     * Registers an agent to the map framework
+     * @param id ID of the agent
+     * @param track Track of the agent coded as a vector of road IDs with a minus for backward direction
+     */
+    void registerSimAgent(unsigned int id, const std::vector<std::string> &track = {}) {
+
+        using namespace simmap;
+
+        auto err = registerAgent(id, _map_id);
+        if(err != 0)
+            throw std::runtime_error("Agent could not be registered");
+
+        // add agent
+        auto ag = new Agent();
+
+        if(track.size() > 0)
+            ag->setTrack(track);
+
+        _agents.emplace_back(ag);
+
+    }
+
+
+    /**
+     * Clears all maps and agents from the map framework
+     */
+    void clear() const {
+
+        simmap::clear();
+
+    }
+
 
 };
 
