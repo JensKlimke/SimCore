@@ -1,6 +1,8 @@
 #include "SimTest.h"
 #include "SignalTest.h"
-#include "ReporterTest.h"
+#include "DataTest.h"
+#include "PublishTest.h"
+#include "EnvironmentTest.h"
 
 int main(int argc, char **argv) {
 

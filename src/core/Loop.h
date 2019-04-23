@@ -6,9 +6,7 @@
 #define SIMCORE_LOOP_H
 
 #include "Exceptions.h"
-#include <string>
 #include <vector>
-#include <unordered_map>
 
 
 namespace sim {
@@ -31,8 +29,7 @@ namespace sim {
         Status _status = Status::STOPPED;
         bool   _stop   = true;
 
-        // TODO: model names
-        std::vector<IComponent*> _models{};
+        std::vector<IComponent*> _components{};
         std::vector<IStopCondition*> _stop_conditions{};
 
         ITimer *_timer = nullptr;
@@ -69,9 +66,9 @@ namespace sim {
         /**
          * Adds an model to the loop
          * @param name Name of the model
-         * @param model Model to be set
+         * @param comp Model to be set
          */
-        void addModel(sim::IComponent *model);
+        void addComponent(sim::IComponent *comp);
 
 
         /**
@@ -91,7 +88,6 @@ namespace sim {
          * @return Status
          */
         Status getStatus() const;
-
 
 
     private:

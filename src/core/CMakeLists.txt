@@ -1,25 +1,17 @@
-cmake_minimum_required(VERSION 3.5)
-project(core CXX)
-
-set(CMAKE_CXX_STANDARD 14)
-
 set(SOURCE_FILES
-        Loop.cpp
-        DataNode.h
-        )
-
-set(HEADER_FILES
         IComponent.h
-        Loop.h
+        Loop.h Loop.cpp
         Exceptions.h
         ITimer.h
         IStopCondition
         IParameterizable.h
         IStorable.h
-        DataManager.h
         ISynchronized.h
         functions.h
         IPlugin.h
-        Plugin.h IModel.h)
+        Plugin.h
+        Model.h
+        DataNode.h
+        )
 
-add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})
+add_library(core STATIC ${SOURCE_FILES})

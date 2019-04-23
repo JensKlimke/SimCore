@@ -8,6 +8,7 @@
 #include <string>
 
 namespace sim {
+namespace fnc {
 
     /**
      * String formatter
@@ -25,6 +26,6 @@ namespace sim {
     }
 
 
-}; // namespace ::sim
+}} // namespace ::sim::fnc
 
 #endif //SIMCORE_FUNCTIONS_H

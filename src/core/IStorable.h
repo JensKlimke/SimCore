@@ -14,6 +14,8 @@
 #include <string>
 
 namespace sim {
+namespace data {
+
 
 class IStorable {
 
@@ -39,7 +41,7 @@ public:
 
 };
 
-} // namespace ::sim
+}} // namespace ::sim::data
 
 
 #endif //SIMCORE_ISTORABLE_H
