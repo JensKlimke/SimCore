@@ -7,7 +7,10 @@
 
 
 #define ADD(vector, name, structure)                          \
-    vector.push_back(DataEntry{#name, &(structure).name});    \
+    vector.push_back(DataEntry{#name, &(structure).name})     \
+
+#define ADD_PTR(vector, name, structure)                      \
+    vector.push_back(DataEntry{#name, (structure).name})      \
 
 
 #include <vector>

@@ -7,7 +7,7 @@ set(SOURCE_FILES
         timers/TimeIsUp.h timers/TimeIsUp.cpp
         timers/RealTimeTimer.h timers/RealTimeTimer.cpp
         data/DataManager.h data/DataManager.cpp
-        data/JsonReporter.h
+        data/JsonReporter.h data/JsonFileReporter.h
         data/TimeReporter.h
         value/ValueExceed.h
         value/ValueOutOfTube.h

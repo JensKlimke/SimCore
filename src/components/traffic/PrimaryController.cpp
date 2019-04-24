@@ -4,54 +4,89 @@
 
 #include "PrimaryController.h"
 
-namespace agent_model {
 
+bool PrimaryController::step(double simTime) {
 
-    void PrimaryController::step(double dt) {
+    auto dt = IComponent::timeStep(simTime);
 
-        // calculate error (P)
-        auto u = *_input.target - *_input.value;
+    // calculate error (P)
+    auto u = *_input.target - *_input.value;
 
-        // calculate integral (I)
-        _state.in += (u + _state.u) * dt;
+    // calculate integral (I)
+    _state.in += (u + _state.u) * dt;
 
-        // calculate derivative (D)
-        auto der = _reset ? 0.0 : (u - _state.u) / dt;
-        _state.u = u;
+    // calculate derivative (D)
+    auto der = _reset ? 0.0 : (u - _state.u) / dt;
+    _state.u = u;
 
-        // calculate controller change and integrate
-        auto dy = _parameters.P * _state.u + _parameters.I * _state.in + _parameters.D * der;
-        *_state.y = std::max(_parameters.range[0], std::min(_parameters.range[1], *_state.y + dy * dt));
+    // calculate controller change and integrate
+    auto dy = _parameters.k_P * _state.u + _parameters.k_I * _state.in + _parameters.k_D * der;
+    *_state.y = std::max(_parameters.range[0], std::min(_parameters.range[1], *_state.y + dy * dt));
 
-        // unset reset flag
-        _reset = false;
+    // unset reset flag
+    _reset = false;
 
-    }
-
-    void PrimaryController::reset() {
-
-        _state.in = 0.0;
-        _reset = true;
-
-    }
-
-
-    void PrimaryController::setVariables(double *value, double *target, double *output) {
-
-        _input.value = value;
-        _input.target = target;
-        _state.y = output;
-
-    }
-
-
-    void PrimaryController::setParamters(double k_p, double k_i, double k_d) {
-
-        _parameters.P = k_p;
-        _parameters.I = k_i;
-        _parameters.D = k_d;
-
-    }
-
+    return true;
 
 }
+
+void PrimaryController::reset() {
+
+    _state.in = 0.0;
+    _reset = true;
+
+}
+
+
+void PrimaryController::setVariables(double *value, double *target, double *output) {
+
+    _input.value = value;
+    _input.target = target;
+    _state.y = output;
+
+}
+
+
+void PrimaryController::setParamters(double k_p, double k_i, double k_d) {
+
+    _parameters.k_P = k_p;
+    _parameters.k_I = k_i;
+    _parameters.k_D = k_d;
+
+}
+
+void PrimaryController::initialize(double initTime) {
+
+    initializeTimer(initTime);
+    ISynchronized::initialize(initTime);
+
+}
+
+std::vector<sim::data::IStorable::DataEntry> PrimaryController::getData(sim::data::IStorable::Context context) {
+
+    std::vector<DataEntry> ret;
+    ret.reserve(2);
+
+    switch(context) {
+        case Context::PARAMETER:
+            ADD(ret, k_P, _parameters);
+            ADD(ret, k_I, _parameters);
+            ADD(ret, k_D, _parameters);
+            break;
+        case Context::INPUT:
+            ADD_PTR(ret, value,  _input);
+            ADD_PTR(ret, target, _input);
+            break;
+        case Context::STATE:
+            ADD(ret,    in, _state);
+            ADD(ret,     u, _state);
+            ADD_PTR(ret, y, _state);
+            break;
+        default:
+            break;
+    }
+
+    return ret;
+
+}
+

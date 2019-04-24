@@ -27,7 +27,7 @@ TEST_F(VehicleModelTest, SteadyTurn) {
     SimSetup setup{};
     setup.endTime  = 200.0;
     setup.logFile  = "log/veh_steady.json";
-    setup.agents.push_back({1.0, 0.1, 10.0, false, {nullptr, nullptr}});
+    setup.agents.push_back({1.0, 0.1, 10.0, {nullptr, nullptr}});
 
     // create simulation
     create(setup);
@@ -36,7 +36,7 @@ TEST_F(VehicleModelTest, SteadyTurn) {
     loop.run();
 
     // get vehicle state
-    auto state = agents[0].vehState;
+    auto state = units[0]->vehState;
 
     EXPECT_NEAR(0.0, state->a, 0.01);
     // TODO: check if vehicle drives on steady curve (circle)
@@ -54,7 +54,7 @@ TEST_F(VehicleModelTest, Controlled) {
     SimSetup setup{};
     setup.endTime  =  20.0;
     setup.logFile  = "log/veh_controller.json";
-    setup.agents.push_back({1.0, 0.1, 10.0, false, {&aDes, &dPsiDes}});
+    setup.agents.push_back({1.0, 0.1, 10.0, {&aDes, &dPsiDes}});
 
     // create simulation
     create(setup);
@@ -63,7 +63,7 @@ TEST_F(VehicleModelTest, Controlled) {
     loop.run();
 
     // get vehicle state
-    auto state = agents[0].vehState;
+    auto state = units[0]->vehState;
 
     // check if acceleration is reached
     EXPECT_NEAR(aDes, state->a, 1e-8);

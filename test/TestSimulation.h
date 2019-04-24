@@ -1,3 +1,5 @@
+#include <memory>
+
 //
 // Created by Jens Klimke on 2019-03-23.
 //
@@ -7,12 +9,13 @@
 
 #include <tuple>
 #include <core/Loop.h>
+#include <components/traffic/Agent.h>
 #include <components/traffic/VehicleModel.h>
 #include <components/traffic/PrimaryController.h>
 #include <components/timers/BasicTimer.h>
 #include <components/timers/RealTimeTimer.h>
 #include <components/timers/TimeIsUp.h>
-#include <components/data/JsonReporter.h>
+#include <components/data/JsonFileReporter.h>
 #include <components/value/ValueExceed.h>
 #include <core/Loop.h>
 #include <cmath>
@@ -25,11 +28,10 @@ public:
 
     struct SimSetup {
 
-        struct Agent {
+        struct SimAgent {
             double  pedal;
             double  steer;
             double  v0;
-            bool    agent;
             double* control[2];
         };
 
@@ -40,240 +42,127 @@ public:
         bool timeReport = false;
         bool liveLog = false;
         std::string logFile;
-        std::vector<Agent> agents{};
+        std::vector<SimAgent> agents{};
 
     };
 
-    struct Agent {
+    struct Unit : public Agent {
 
-        AgentModel               *agent = nullptr;
-        VehicleModel             *vehicle = nullptr;
-        AgentModelAdapter        *adapter = nullptr;
+        std::unique_ptr<VehicleModel> vehicle;
+        std::unique_ptr<Agent> agent;
+
+        std::unique_ptr<PrimaryController> pedal;
+        std::unique_ptr<PrimaryController> steer;
 
         VehicleModel::State      *vehState = nullptr;
         VehicleModel::Input      *vehInput = nullptr;
         VehicleModel::Parameters *vehParam = nullptr;
 
-        AgentModel::State        *agState = nullptr;
-        AgentModel::Input        *agInput = nullptr;
-        AgentModel::Parameters   *agParam = nullptr;
-        AgentModel::Injection    *agInjec = nullptr;
-
-        PrimaryController *pedal = nullptr;
-        PrimaryController *steer = nullptr;
-
     };
 
     sim::Loop loop{};
 
-    BasicTimer *timer = nullptr;
-    TimeIsUp   *stopTime  = nullptr;
-    ValueExceed<double> *stopDist = nullptr;
-    TimeReporter *rep = nullptr;
-    JsonReporter *jsonLog = nullptr;
-    AgentsLogger *liveLog = nullptr;
-    std::vector<Agent> agents{};
+    std::unique_ptr<BasicTimer> timer;
+    std::unique_ptr<TimeIsUp> stopTime;
+    std::unique_ptr<ValueExceed<double>> stopDist;
+    std::unique_ptr<TimeReporter> rep;
+    std::unique_ptr<JsonFileReporter> jsonLog;
 
+    std::vector<std::unique_ptr<Unit>> units{};
 
     TestSimulation() = default;
-
-
-    ~TestSimulation() {
-
-        delete timer;
-        delete stopTime;
-        delete stopDist;
-        delete rep;
-        delete jsonLog;
-
-        for(auto &ag : agents) {
-
-            delete ag.agent;
-            delete ag.vehicle;
-            delete ag.adapter;
-            delete ag.pedal;
-            delete ag.steer;
-
-        }
-
-    }
+    ~TestSimulation() = default;
 
 
     void create(const SimSetup &setup) {
 
 
         // create timer
-        timer = setup.realTime ? new RealTimeTimer : new BasicTimer;
+        timer.reset(setup.realTime ? new RealTimeTimer : new BasicTimer);
         timer->setTimeStepSize(setup.stepSize);
 
         // add timer
-        loop.setTimer(timer);
+        loop.setTimer(timer.get());
 
         // time report
         if(setup.timeReport) {
 
-            rep = new TimeReporter;
-            loop.addModel(rep);
+            // create and add time reporter
+            rep = std::make_unique<TimeReporter>();
+            loop.addComponent(rep.get());
+
+            // set step size
             rep->setTimeStepSize(1.0);
 
         }
 
         // set stop condition (time)
         if(setup.endTime < 1e9) {
-            stopTime = new TimeIsUp;
+            stopTime = std::make_unique<TimeIsUp>();
             stopTime->setStopTime(setup.endTime);
         }
 
         // add stop condition
-        loop.addStopCondition(stopTime);
-        loop.addModel(stopTime);
+        loop.addStopCondition(stopTime.get());
+        loop.addComponent(stopTime.get());
 
         // create JSON log
-        jsonLog = new JsonReporter;
+        jsonLog = std::make_unique<JsonFileReporter>();
         jsonLog->setFilename(setup.logFile);
 
-        // create live log
-        if(setup.liveLog) {
-            liveLog = new AgentsLogger;
-            liveLog->setFilename("log/live.json");
-            liveLog->setTimeStepSize(0.1);
-            liveLog->setSize(0.0, -100.0, 500.0, 100.0);
-        }
-
-        // reserve space
-        agents.clear();
-        agents.reserve(setup.agents.size());
 
         // create agents
         unsigned int i = 0;
         for(auto &ag : setup.agents) {
 
             // create agent_tests
-            Agent unit{};
-            unit.vehicle = new VehicleModel;
+            auto unit = new Unit;
+            unit->vehicle = std::make_unique<VehicleModel>();
 
             // add vehicle model
-            loop.addModel(unit.vehicle);
+            loop.addComponent(unit->vehicle.get());
 
             // link state, input and parameters
-            unit.vehicle->getState(reinterpret_cast<void**>(&unit.vehState));
-            unit.vehicle->getInput(reinterpret_cast<void**>(&unit.vehInput));
-            unit.vehicle->getParameters(reinterpret_cast<void**>(&unit.vehParam));
+            unit->vehicle->getState(reinterpret_cast<void**>(&unit->vehState));
+            unit->vehicle->getInput(reinterpret_cast<void**>(&unit->vehInput));
+            unit->vehicle->getParameters(reinterpret_cast<void**>(&unit->vehParam));
 
             // initialize state
-            unit.vehState->xy[0] = 0.0;
-            unit.vehState->xy[1] = 0.0;
-            unit.vehState->v     = ag.v0;
-            unit.vehState->s     = 0.0;
-            unit.vehState->a     = 0.0;
-            unit.vehState->dPsi  = 0.0;
-            unit.vehState->psi   = 0.0;
+            unit->vehState->xy[0] = 0.0;
+            unit->vehState->xy[1] = 0.0;
+            unit->vehState->v     = ag.v0;
+            unit->vehState->s     = 0.0;
+            unit->vehState->a     = 0.0;
+            unit->vehState->dPsi  = 0.0;
+            unit->vehState->psi   = 0.0;
 
             // initialize inputs
-            unit.vehInput->pedal = ag.pedal;
-            unit.vehInput->steer = ag.steer;
-            unit.vehInput->slope = 0.0;
-
-            // set live log
-            AgentsLogger::Agent la{};
-            if(setup.liveLog) {
-
-                // create agent_tests and add
-                la.x = &unit.vehState->xy[0];
-                la.y = &unit.vehState->xy[1];
-                la.psi = &unit.vehState->psi;
-                la.length = &unit.vehParam->size[0];
-                la.width = &unit.vehParam->size[1];
-                la.driverPosX = nullptr;
-                la.driverPosY = nullptr;
-
-            }
+            unit->vehInput->pedal = ag.pedal;
+            unit->vehInput->steer = ag.steer;
+            unit->vehInput->slope = 0.0;
 
             // something which is only for agent_tests 0
             if(i == 0) {
 
                 // create report model
-                jsonLog->addValue("x", &unit.vehState->xy[0]);
-                jsonLog->addValue("y", &unit.vehState->xy[1]);
-                jsonLog->addValue("a", &unit.vehState->a);
-                jsonLog->addValue("v", &unit.vehState->v);
-                jsonLog->addValue("dPsi", &unit.vehState->dPsi);
-                jsonLog->addValue("pedal", &unit.vehInput->pedal);
-                jsonLog->addValue("steer", &unit.vehInput->steer);
+                jsonLog->addValue("x", &unit->vehState->xy[0]);
+                jsonLog->addValue("y", &unit->vehState->xy[1]);
+                jsonLog->addValue("a", &unit->vehState->a);
+                jsonLog->addValue("v", &unit->vehState->v);
+                jsonLog->addValue("dPsi", &unit->vehState->dPsi);
+                jsonLog->addValue("pedal", &unit->vehInput->pedal);
+                jsonLog->addValue("steer", &unit->vehInput->steer);
 
                 // set stop condition (distance)
                 if(setup.endDistance < 1e9) {
-                    stopDist = new ValueExceed<double>();
-                    stopDist->setValueAndLimit(&unit.vehState->s, setup.endDistance);
+                    stopDist = std::make_unique<ValueExceed<double>>();
+                    stopDist->setValueAndLimit(&unit->vehState->s, setup.endDistance);
                 }
 
             }
 
 
-            // create agent_tests model
-            if(ag.agent) {
-
-                // create agent_tests
-                unit.agent = new AgentModel;
-
-                if(i == 0 && setup.injection != nullptr) {
-
-                    // add to injection and adapter
-                    setup.injection->setAgent(unit.agent, unit.vehicle);
-                    loop.addModel(setup.injection);
-
-                }
-
-                // create adapter
-                unit.adapter = new AgentModelAdapter;
-                unit.adapter->setUnit(unit.agent, unit.vehicle);
-
-                // get parameters, states, input and injection
-                unit.agent->getParameters(reinterpret_cast<void**>(&unit.agParam));
-                unit.agent->getInput(reinterpret_cast<void**>(&unit.agInput));
-                unit.agent->getState(reinterpret_cast<void**>(&unit.agState));
-                unit.agent->getInjection(&unit.agInjec);
-
-                // update standard parameters
-                createStandardParameters(unit.agParam);
-
-                // pedal controller
-                unit.pedal = new PrimaryController;
-                unit.pedal->setParamters(1.0, 0.0, 0.0);
-                unit.pedal->setValues(&unit.vehState->a, &unit.agState->subConscious.aDes, &unit.vehInput->pedal);
-
-                // steering controller
-                unit.steer = new PrimaryController;
-                unit.steer->setParamters(3.0, 0.0, 0.0);
-                unit.steer->setValues(&unit.vehState->dPsi, &unit.agState->subConscious.dPsiDes, &unit.vehInput->steer);
-
-                // add models
-                loop.addModel(unit.adapter);
-                loop.addModel(unit.agent);
-                loop.addModel(unit.pedal);
-                loop.addModel(unit.steer);
-
-                // set live log values
-                if(setup.liveLog) {
-
-                    // create agent_tests and add;
-                    la.driverPosX = &unit.agParam->vehicle.pos.x;
-                    la.driverPosY = &unit.agParam->vehicle.pos.y;
-
-                }
-
-                // logger
-                if(i == 0) {
-
-                    // add log values
-                    jsonLog->addValue("vDes",    &unit.agState->conscious.vDes);
-                    jsonLog->addValue("aDes",    &unit.agState->subConscious.aDes);
-                    jsonLog->addValue("dPsiDes", &unit.agState->subConscious.dPsiDes);
-                    jsonLog->addValue("aux",     &unit.agState->aux);
-
-                }
-
-            } else if(ag.control[0] != nullptr) {
+            if(ag.control[0] != nullptr) {
 
                 if(i == 0) {
 
@@ -284,28 +173,24 @@ public:
                 }
 
                 // pedal controller
-                unit.pedal = new PrimaryController;
-                unit.pedal->setParamters(1.0, 0.0, 0.0);
-                unit.pedal->setValues(&unit.vehState->a, ag.control[0], &unit.vehInput->pedal);
+                unit->pedal = std::make_unique<PrimaryController>();
+                unit->pedal->setParamters(1.0, 0.0, 0.0);
+                unit->pedal->setVariables(&unit->vehState->a, ag.control[0], &unit->vehInput->pedal);
 
                 // steering controller
-                unit.steer = new PrimaryController;
-                unit.steer->setParamters(1.0, 0.0, 0.0);
-                unit.steer->setValues(&unit.vehState->dPsi, ag.control[1], &unit.vehInput->steer);
+                unit->steer = std::make_unique<PrimaryController>();
+                unit->steer->setParamters(1.0, 0.0, 0.0);
+                unit->steer->setVariables(&unit->vehState->dPsi, ag.control[1], &unit->vehInput->steer);
 
                 // add models to sim
-                loop.addModel(unit.pedal);
-                loop.addModel(unit.steer);
+                loop.addComponent(unit->pedal.get());
+                loop.addComponent(unit->steer.get());
 
             }
 
-            // add agent_tests to live log
-            if(liveLog)
-                liveLog->addAgent(la);
-
 
             // add unit to vector
-            agents.emplace_back(unit);
+            units.emplace_back(std::unique_ptr<Unit>(unit));
 
             i++;
 
@@ -313,15 +198,12 @@ public:
 
         // add stop condition (distance)
         if(stopDist != nullptr) {
-            loop.addStopCondition(stopDist);
-            loop.addModel(stopDist);
+            loop.addStopCondition(stopDist.get());
+            loop.addComponent(stopDist.get());
         }
 
-        // add loggers to sim
-        if(setup.liveLog)
-            loop.addModel(liveLog);
-
-        loop.addModel(jsonLog);
+        // add json logger
+        loop.addComponent(jsonLog.get());
 
     }
 

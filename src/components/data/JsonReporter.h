@@ -6,7 +6,6 @@
 #define SIMCORE_JSONREPORTER_H
 
 #include <map>
-#include <fstream>
 #include <string>
 #include <core/IComponent.h>
 #include <core/Exceptions.h>
@@ -18,8 +17,6 @@ class JsonReporter : public sim::IComponent {
     std::map<std::string, const double*> _values{};
 
     bool _hasContent = false;
-
-
 
 
 public:
@@ -79,6 +76,9 @@ protected:
 
 
     void initialize(double initTime) override {
+
+        if(_outstream == nullptr)
+            throw std::runtime_error("Output stream is not initialized.");
 
         _hasContent = false;
 

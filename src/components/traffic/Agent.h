@@ -36,8 +36,16 @@ public:
 
     typedef simmap::Position Position;
 
-    explicit Agent(unsigned int id);
+    Agent() = default;
     virtual ~Agent() = default;
+
+
+
+    /**
+     * Sets the ID of the agent
+     * @param id Agent ID
+     */
+    void setID(unsigned int id);
 
 
     /**

@@ -7,7 +7,12 @@
 #include <iostream>
 
 
-Agent::Agent(unsigned int id) : _id(id) {}
+
+void Agent::setID(unsigned int id) {
+
+    _id = id;
+
+}
 
 
 unsigned int Agent::getID() const {

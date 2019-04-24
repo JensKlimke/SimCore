@@ -115,16 +115,16 @@ public:
 
         switch(context) {
             case Context::PARAMETER:
-                ADD(ret, pa, _param)
-                ADD(ret, pb, _param)
+                ADD(ret, pa, _param);
+                ADD(ret, pb, _param);
                 break;
             case Context::INPUT:
-                ADD(ret, ia, _input)
-                ADD(ret, ib, _input)
+                ADD(ret, ia, _input);
+                ADD(ret, ib, _input);
                 break;
             case Context::STATE:
-                ADD(ret, sa, _state)
-                ADD(ret, sb, _state)
+                ADD(ret, sa, _state);
+                ADD(ret, sb, _state);
                 break;
             default:
                 break;

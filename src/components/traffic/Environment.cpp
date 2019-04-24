@@ -9,7 +9,8 @@
 Agent * Environment::createAgent(unsigned int id, const std::vector<std::string> &track) {
 
     // create agent
-    auto ag = new Agent(id);
+    auto ag = new Agent;
+    ag->setID(id);
 
     // register agent to simulation map service
     auto err = simmap::registerAgent(id, _map_id);
