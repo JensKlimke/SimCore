@@ -8,8 +8,7 @@ set(SOURCE_FILES
         IStorable.h
         ISynchronized.h
         functions.h
-        IPlugin.h
-        Plugin.h
+        IPlugin.h Plugin.h
         Model.h
         DataNode.h
         )

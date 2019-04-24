@@ -14,7 +14,7 @@ class EnvironmentTest : public ::testing::Test, public Environment {
 protected:
 
     ::sim::Loop sim{};
-    Agent *agent;
+    Agent *agent = nullptr;
 
 public:
 

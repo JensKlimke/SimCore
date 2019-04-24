@@ -84,7 +84,7 @@ public:
      * @param ds Distance to be moved
      * @param t Lateral offset to be set
      */
-    void move(double s, double t);
+    void move(double ds, double t);
 
 
     /**

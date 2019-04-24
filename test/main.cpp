@@ -3,6 +3,7 @@
 #include "DataTest.h"
 #include "PublishTest.h"
 #include "EnvironmentTest.h"
+#include "VehicleModelTest.h"
 
 int main(int argc, char **argv) {
 
