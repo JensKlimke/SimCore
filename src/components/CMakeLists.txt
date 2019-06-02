@@ -15,5 +15,5 @@ set(SOURCE_FILES
         data/DataPublisher.h)
 
 add_library(components STATIC ${SOURCE_FILES})
-target_link_libraries(components odrfw curl)
+target_link_libraries(components simmap curl)
 target_include_directories(components PUBLIC ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/lib)

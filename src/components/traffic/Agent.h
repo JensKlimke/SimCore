@@ -8,7 +8,7 @@
 #include <vector>
 #include <string>
 #include <cmath>
-#include <SimMap/lib_wrapper/odrfw.h>
+#include <SimMap/lib.h>
 
 
 #ifndef VEH_DEFAULT_LENGTH
@@ -35,6 +35,8 @@ class Agent {
 public:
 
     typedef simmap::Position Position;
+    typedef simmap::MapPosition MapPosition;
+
 
     Agent() = default;
     virtual ~Agent() = default;
@@ -64,12 +66,11 @@ public:
 
     /**
      * Sets the position of the agent onto the given map
-     * @param roadID Road ID
-     * @param laneID Lane ID
+     * @param edgeID Name of the edge
      * @param s Longitudinal position in road
      * @param t Relative lateral position from lane center
      */
-    void setMapPosition(const std::string &roadID, int laneID, double s, double t);
+    void setMapPosition(const std::string &edgeID, double s, double t);
 
 
     /**
@@ -77,7 +78,7 @@ public:
      * @param pos Position to be set
      * @param rMax Maximum moved distance from last positioning
      */
-    void setPosition(const Position &pos, double rMax);
+    MapPosition setPosition(const Position &pos, double rMax);
 
 
     /**
@@ -85,6 +86,13 @@ public:
      * @return Position of the agent
      */
     Position getPosition() const;
+
+
+    /**
+     * Returns the current map position of the agent
+     * @return Map position
+     */
+    MapPosition getMapPosition() const;
 
 
     /**

@@ -6,7 +6,7 @@
 #define SIMCORE_ENVIRONMENT_H
 
 #include <core/Model.h>
-#include <SimMap/lib_wrapper/odrfw.h>
+#include <SimMap/lib.h>
 #include <memory>
 #include <vector>
 #include <map>

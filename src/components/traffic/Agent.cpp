@@ -3,7 +3,7 @@
 //
 
 #include "Agent.h"
-#include <SimMap/lib_wrapper/odrfw.h>
+#include <SimMap/lib.h>
 #include <iostream>
 
 
@@ -15,11 +15,13 @@ void Agent::setID(unsigned int id) {
 }
 
 
+
 unsigned int Agent::getID() const {
 
     return _id;
 
 }
+
 
 
 void Agent::setTrack(const std::vector<std::string> &track) {
@@ -41,12 +43,11 @@ void Agent::setTrack(const std::vector<std::string> &track) {
 
 
 
-void Agent::setMapPosition(const std::string &roadID, int laneID, double s, double t) {
+void Agent::setMapPosition(const std::string &edgeID, double s, double t) {
 
     // create map coordinate
     simmap::MapPosition pos;
-    pos.roadID = roadID.c_str();
-    pos.laneID = laneID;
+    pos.edgeID = edgeID.c_str();
     pos.latPos = t;
     pos.longPos = s;
 
@@ -60,7 +61,7 @@ void Agent::setMapPosition(const std::string &roadID, int laneID, double s, doub
 
 
 
-void Agent::setPosition(const Position &pos, double rMax) {
+Agent::MapPosition Agent::setPosition(const Position &pos, double rMax) {
 
     // match position
     simmap::MapPosition mpos{};
@@ -70,13 +71,15 @@ void Agent::setPosition(const Position &pos, double rMax) {
     if(err != 0)
         throw std::runtime_error("Matching not possible");
 
-    // set to position
-    setMapPosition(mpos.roadID, mpos.laneID, mpos.longPos, mpos.latPos);
-
-    // save position
+    // set to position and save absolute position
+    setMapPosition(mpos.edgeID, mpos.longPos, mpos.latPos);
     _pos = pos;
 
+    // return position
+    return mpos;
+
 }
+
 
 
 Agent::Position Agent::getPosition() const {
@@ -84,6 +87,18 @@ Agent::Position Agent::getPosition() const {
     return _pos;
 
 }
+
+
+
+Agent::MapPosition Agent::getMapPosition() const {
+
+    Agent::MapPosition pos;
+    simmap::getMapPosition(getID(), &pos);
+
+    return pos;
+
+}
+
 
 
 void Agent::move(double ds, double t) {
@@ -98,11 +113,13 @@ void Agent::move(double ds, double t) {
 }
 
 
+
 std::pair<double, double> Agent::getPathLengths() const {
 
     return {200.0, 50.0};
 
 }
+
 
 
 void Agent::setDynamics(double velocity, double acceleration) {
@@ -111,6 +128,7 @@ void Agent::setDynamics(double velocity, double acceleration) {
     _acceleration = acceleration;
 
 }
+
 
 
 void Agent::setDimensions(double length, double width) {

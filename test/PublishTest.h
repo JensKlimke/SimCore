@@ -88,7 +88,7 @@ TEST_F(PublishTest, Publisher) {
     loop.addComponent(&pub);
 
     // initialize simulation
-    loop.run();
+    EXPECT_NO_THROW(loop.run());
 
 }
 

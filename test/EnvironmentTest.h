@@ -8,6 +8,10 @@
 #include <gtest/gtest.h>
 #include <components/traffic/Environment.h>
 
+#ifndef EPS_DISTANCE
+#define EPS_DISTANCE 1e-6
+#endif
+
 class EnvironmentTest : public ::testing::Test, public Environment {
 
 
@@ -28,7 +32,7 @@ public:
 
         // add agents
         agent = this->createAgent(1, {"1", "-2"});
-        agent->setMapPosition("1", -2, 200.0, 0.5);
+        agent->setMapPosition("R1-LS2-R2", 42.9203673205, 0.5);
 
     }
 
@@ -111,6 +115,33 @@ TEST_F(EnvironmentTest, MoveAgent) {
     EXPECT_NEAR( 93.1730, pos.y,     1e-4);
     EXPECT_NEAR(  0.0,    pos.z,     1e-4);
     EXPECT_NEAR(  3.6207, pos.phi,   1e-4);
+
+    // get map position
+    auto mpos = agent->getMapPosition();
+    EXPECT_EQ("R1-LS2-R2", std::string(mpos.edgeID));
+    EXPECT_NEAR(47.9203673205, mpos.longPos, EPS_DISTANCE);
+    EXPECT_NEAR(0.5, mpos.latPos, EPS_DISTANCE);
+
+}
+
+
+TEST_F(EnvironmentTest, MatchAgent) {
+
+    // set positions
+    Agent::Position pos{};
+    pos.x = -48.4126;
+    pos.y = 93.1730;
+    pos.z = 0.0;
+    pos.phi = 3.6207;
+
+    // set position
+    agent->setPosition(pos, 10.0);
+
+    // get map position
+    auto mpos = agent->getMapPosition();
+    EXPECT_EQ("R1-LS2-R2", std::string(mpos.edgeID));
+    EXPECT_NEAR(47.9203673205, mpos.longPos, 1e-4);
+    EXPECT_NEAR(0.5, mpos.latPos, 1e-4);
 
 }
 

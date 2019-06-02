@@ -1,8 +1,3 @@
-cmake_minimum_required(VERSION 3.5)
-project(sim_test CXX)
-
-set(CMAKE_CXX_STANDARD 14)
-
 set(SOURCE_FILES
         main.cpp
         SimTest.h
@@ -14,5 +9,8 @@ set(SOURCE_FILES
         VehicleModelTest.h
         )
 
-add_executable(${PROJECT_NAME} ${SOURCE_FILES})
-target_link_libraries(${PROJECT_NAME} core components odrfw gtest)
+add_executable(SimTest ${SOURCE_FILES})
+target_include_directories(SimTest PRIVATE ${PROJECT_SOURCE_DIR}/src ${})
+target_link_libraries(SimTest PRIVATE core components)
+
+add_gtest(SimTest)
