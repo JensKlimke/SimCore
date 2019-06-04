@@ -10,6 +10,7 @@
 #define EPS_DISTANCE 1e-6
 #endif
 
+
 class EnvironmentTest : public ::testing::Test, public Environment {
 
 
@@ -22,8 +23,12 @@ public:
 
     void SetUp() override {
 
+        // get map path: SIMMAP_SRC has to be provided by cmake
+        std::stringstream ss;
+        ss << SIMMAP_SRC << "/tests/tracks/CircleR100.xodr";
+
         // load map
-        this->registerMap("tracks/CircleR100.xodr");
+        this->registerMap(ss.str());
 
         // add virtual horizon as component
         sim.addComponent(this);

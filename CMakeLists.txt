@@ -6,7 +6,9 @@ set(CMAKE_CXX_STANDARD 14)
 # add ./cmake to CMAKE_MODULE_PATH
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
+# include sim map lib and provide path to source (for tracks)
 include(AddSimMap)
+add_definitions(-DSIMMAP_SRC=\"${simmap_SOURCE_DIR}\")
 
 add_subdirectory(src/core)
 add_subdirectory(src/components)
