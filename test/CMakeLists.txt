@@ -7,7 +7,7 @@ set(SOURCE_FILES
         )
 
 add_executable(SimTest ${SOURCE_FILES})
-target_include_directories(SimTest PRIVATE ${PROJECT_SOURCE_DIR}/src ${})
+target_include_directories(SimTest PRIVATE ${PROJECT_SOURCE_DIR}/src)
 target_link_libraries(SimTest PRIVATE core components)
 
 add_gtest(SimTest)
