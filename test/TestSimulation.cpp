@@ -12,6 +12,7 @@
 #include <components/timers/RealTimeTimer.h>
 #include <components/timers/TimeIsUp.h>
 #include <components/data/JsonFileReporter.h>
+#include <components/data/TimeReporter.h>
 #include <components/value/ValueExceed.h>
 #include <core/Loop.h>
 #include <cmath>

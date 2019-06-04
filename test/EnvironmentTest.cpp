@@ -4,6 +4,7 @@
 
 #include <gtest/gtest.h>
 #include <components/traffic/Environment.h>
+#include <core/Loop.h>
 
 #ifndef EPS_DISTANCE
 #define EPS_DISTANCE 1e-6

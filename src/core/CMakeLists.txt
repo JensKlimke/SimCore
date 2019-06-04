@@ -10,7 +10,6 @@ set(SOURCE_FILES
         functions.h
         IPlugin.h Plugin.h
         Model.h
-        DataNode.h
         )
 
 add_library(core STATIC ${SOURCE_FILES})

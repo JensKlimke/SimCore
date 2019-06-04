@@ -9,6 +9,7 @@
 #include <components/timers/BasicTimer.h>
 #include <components/timers/TimeIsUp.h>
 #include <components/data/TimeReporter.h>
+#include <components/data/DataManager.h>
 
 
 class DataTest : public ::testing::Test, public sim::Model {
