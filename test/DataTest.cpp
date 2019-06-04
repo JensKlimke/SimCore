@@ -2,9 +2,6 @@
 // Created by klimke on 16.04.2019.
 //
 
-#ifndef SIMCORE_DATATEST_H
-#define SIMCORE_DATATEST_H
-
 #include <gtest/gtest.h>
 #include <core/Model.h>
 #include <core/Loop.h>
@@ -12,6 +9,7 @@
 #include <components/timers/BasicTimer.h>
 #include <components/timers/TimeIsUp.h>
 #include <components/data/TimeReporter.h>
+
 
 class DataTest : public ::testing::Test, public sim::Model {
 
@@ -195,6 +193,3 @@ TEST_F(DataTest, DataManager) {
 
 }
 
-
-
-#endif //SIMCORE_DATATEST_H

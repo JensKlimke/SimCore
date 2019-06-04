@@ -1,12 +1,8 @@
-#include <memory>
-
 //
 // Created by Jens Klimke on 2019-03-23.
 //
 
-#ifndef SIMULATION_FRAMEWORK_TESTSIMULATION_H
-#define SIMULATION_FRAMEWORK_TESTSIMULATION_H
-
+#include <memory>
 #include <tuple>
 #include <core/Loop.h>
 #include <components/traffic/Agent.h>
@@ -209,5 +205,3 @@ public:
 
 };
 
-
-#endif //SIMULATION_FRAMEWORK_TESTSIMULATION_H

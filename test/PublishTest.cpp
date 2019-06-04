@@ -2,9 +2,6 @@
 // Created by Jens Klimke on 2019-04-22.
 //
 
-#ifndef SIMCORE_PUBLISHTEST_H
-#define SIMCORE_PUBLISHTEST_H
-
 #include <gtest/gtest.h>
 #include <core/Model.h>
 #include <components/timers/RealTimeTimer.h>
@@ -91,5 +88,3 @@ TEST_F(PublishTest, Publisher) {
     EXPECT_NO_THROW(loop.run());
 
 }
-
-#endif //SIMCORE_PUBLISHTEST_H

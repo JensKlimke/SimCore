@@ -2,9 +2,6 @@
 // Created by Jens Klimke on 2019-04-20.
 //
 
-#ifndef SIMCORE_ENVIRONMENTTEST_H
-#define SIMCORE_ENVIRONMENTTEST_H
-
 #include <gtest/gtest.h>
 #include <components/traffic/Environment.h>
 
@@ -144,6 +141,3 @@ TEST_F(EnvironmentTest, MatchAgent) {
     EXPECT_NEAR(0.5, mpos.latPos, 1e-4);
 
 }
-
-
-#endif //SIMCORE_ENVIRONMENTTEST_H

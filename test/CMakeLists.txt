@@ -1,12 +1,9 @@
 set(SOURCE_FILES
-        main.cpp
-        SimTest.h
-        SignalTest.h
-        DataTest.h
-        PluginTest.h
-        EnvironmentTest.h
-        PublishTest.h
-        VehicleModelTest.h
+        SimTest.cpp
+        SignalTest.cpp
+        DataTest.cpp
+        EnvironmentTest.cpp
+        VehicleModelTest.cpp
         )
 
 add_executable(SimTest ${SOURCE_FILES})

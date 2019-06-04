@@ -2,11 +2,8 @@
 // Created by klimke on 22.03.2019.
 //
 
-#ifndef SIMULATION_FRAMEWORK_VEHICLEMODELTEST_H
-#define SIMULATION_FRAMEWORK_VEHICLEMODELTEST_H
-
 #include <gtest/gtest.h>
-#include "TestSimulation.h"
+#include "TestSimulation.cpp"
 
 class VehicleModelTest : public ::testing::Test, public TestSimulation {
 
@@ -70,7 +67,3 @@ TEST_F(VehicleModelTest, Controlled) {
     EXPECT_NEAR(dPsiDes, state->dPsi, 1e-8);
 
 }
-
-
-
-#endif //SIMULATION_FRAMEWORK_VEHICLEMODELTEST_H

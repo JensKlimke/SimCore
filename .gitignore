@@ -37,3 +37,4 @@ cmake-*
 backup
 log
 .DS_Store
+.vs
