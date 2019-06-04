@@ -4,9 +4,9 @@
 
 #include "RealTimeTimer.h"
 #include <ctime>
-#include <thread>
-#include <unistd.h>
 #include <iostream>
+#include <chrono>
+#include <thread>
 
 void RealTimeTimer::step() {
 
@@ -24,7 +24,7 @@ void RealTimeTimer::step() {
     while (currTime < nextTime) {
 
         // wait a thousandth of a second
-        usleep(100);
+		std::this_thread::sleep_for(std::chrono::microseconds(100));
 
         // recalculate
         elapsed = duration_cast<milliseconds>(system_clock::now() - _refTime);

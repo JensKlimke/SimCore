@@ -8,7 +8,7 @@
 #include <components/data/DataManager.h>
 #include <components/timers/BasicTimer.h>
 #include <components/timers/TimeIsUp.h>
-
+#include <components/timers/RealTimeTimer.h>
 
 
 class SimTest : public ::testing::Test, public sim::IComponent {
@@ -101,12 +101,12 @@ TEST_F(SimTest, Model) {
     using namespace ::sim;
 
     // create objects
-    BasicTimer timer;
+    RealTimeTimer timer;
     TimeIsUp stop;
 
     // set parameters
-    timer.setTimeStepSize(0.1);
-    stop.setStopTime(10.0);
+    timer.setTimeStepSize(0.01);
+    stop.setStopTime(1.0);
 
     // create loop
     Loop sim;
@@ -123,13 +123,13 @@ TEST_F(SimTest, Model) {
     // check status
     EXPECT_EQ(Loop::Status::STOPPED, sim.getStatus());
 
-    // initialize simulation
+    // run simulation, TODO: check time
     sim.run();
 
     // check time and steps
-    EXPECT_NEAR(10.0, timer.time(), 1e-8);
-    EXPECT_NEAR(10.0, time, 1e-8);
-    EXPECT_NEAR(10.0, finalTime, 1e-8);
+    EXPECT_NEAR(1.0, timer.time(), 1e-8);
+    EXPECT_NEAR(1.0, time, 1e-8);
+    EXPECT_NEAR(1.0, finalTime, 1e-8);
     EXPECT_EQ(101, this->steps);
 
     // check status
