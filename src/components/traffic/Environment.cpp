@@ -15,7 +15,7 @@ Agent * Environment::createAgent(unsigned int id, const std::vector<std::string>
     // register agent to simulation map service
     auto err = simmap::registerAgent(id, _map_id);
     if(err != 0)
-        throw std::runtime_error("Agent could not be registered");
+        throw std::invalid_argument("Agent could not be registered");
 
     // set track
     if(!track.empty())

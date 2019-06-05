@@ -3,6 +3,7 @@ set(SOURCE_FILES
         SignalTest.cpp
         DataTest.cpp
         EnvironmentTest.cpp
+        TrafficSimulationTest.cpp
         VehicleModelTest.cpp
         )
 
