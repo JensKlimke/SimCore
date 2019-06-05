@@ -24,7 +24,17 @@ TEST_F(VehicleModelTest, SteadyTurn) {
     SimSetup setup{};
     setup.endTime  = 200.0;
     setup.logFile  = "log/veh_steady.json";
-    setup.agents.push_back({1.0, 0.1, 10.0, {nullptr, nullptr}});
+
+    // create agent
+    SimSetup::SimAgent ag{};
+    ag.pedal =  1.0;
+    ag.steer =  0.1;
+    ag.v0    = 10.0;
+    ag.control[0] = nullptr;
+    ag.control[1] = nullptr;
+
+    // add agent
+    setup.agents.push_back(ag);
 
     // create simulation
     create(setup);
@@ -51,7 +61,17 @@ TEST_F(VehicleModelTest, Controlled) {
     SimSetup setup{};
     setup.endTime  =  20.0;
     setup.logFile  = "log/veh_controller.json";
-    setup.agents.push_back({1.0, 0.1, 10.0, {&aDes, &dPsiDes}});
+
+    // create agent
+    SimSetup::SimAgent ag{};
+    ag.pedal =  1.0;
+    ag.steer =  0.1;
+    ag.v0    = 10.0;
+    ag.control[0] = &aDes;
+    ag.control[1] = &dPsiDes;
+
+    // add agent
+    setup.agents.push_back(ag);
 
     // create simulation
     create(setup);

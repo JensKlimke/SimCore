@@ -122,15 +122,6 @@ std::pair<double, double> Agent::getPathLengths() const {
 
 
 
-void Agent::setDynamics(double velocity, double acceleration) {
-
-    _velocity = velocity;
-    _acceleration = acceleration;
-
-}
-
-
-
 void Agent::setDimensions(double length, double width) {
 
     _length = length;

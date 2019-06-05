@@ -25,7 +25,7 @@ public:
 
     struct SimSetup {
 
-        struct SimAgent {
+        struct SimAgent : public Agent{
             double  pedal;
             double  steer;
             double  v0;
@@ -46,7 +46,6 @@ public:
     struct Unit : public Agent {
 
         std::unique_ptr<VehicleModel> vehicle;
-        std::unique_ptr<Agent> agent;
 
         std::unique_ptr<PrimaryController> pedal;
         std::unique_ptr<PrimaryController> steer;

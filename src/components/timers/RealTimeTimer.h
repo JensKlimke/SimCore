@@ -5,8 +5,13 @@
 #ifndef SIMCORE_REALTIMETIMER_H
 #define SIMCORE_REALTIMETIMER_H
 
-#include "BasicTimer.h"
 #include <chrono>
+#include <ctime>
+#include <iostream>
+#include <chrono>
+#include <thread>
+#include "BasicTimer.h"
+
 
 class RealTimeTimer : public BasicTimer {
 
@@ -22,11 +27,51 @@ public:
 
     ~RealTimeTimer() override = default;
 
-    void step() override;
 
-    void start() override;
+    void step() override {
 
-    void reset() override;
+        using namespace std::chrono;
+
+        // create elapsed time
+        auto elapsed = duration_cast<milliseconds>(system_clock::now() - _refTime);
+        auto currTime = static_cast<double>(elapsed.count()) / 1000.0;
+
+        // step increment
+        _steps++;
+
+        // wait until elapsed time
+        auto nextTime = getTimeStepSize() * _steps;
+        while (currTime < nextTime) {
+
+            // wait a thousandth of a second
+            std::this_thread::sleep_for(std::chrono::microseconds(100));
+
+            // recalculate
+            elapsed = duration_cast<milliseconds>(system_clock::now() - _refTime);
+            currTime = static_cast<double>(elapsed.count()) / 1000.0;
+
+        }
+
+        // set current time
+        setTime(nextTime);
+
+    }
+
+
+    void start() override {
+
+        BasicTimer::start();
+        _refTime = std::chrono::system_clock::now();
+
+    }
+
+
+    void reset() override {
+
+        BasicTimer::reset();
+        _steps = 0;
+
+    }
 
 
 };

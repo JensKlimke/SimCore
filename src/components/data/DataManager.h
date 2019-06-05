@@ -8,7 +8,6 @@
 #include <unordered_map>
 #include <iostream>
 #include "core/IStorable.h"
-//#include "DataNode.h"
 
 namespace sim {
 namespace data {
@@ -43,7 +42,27 @@ namespace data {
          * @param name Name of the storable
          * @param store Storable to be added
          */
-        void registerValues(const std::string &name, IStorable &store);
+        void registerValues(const std::string &name, IStorable &store) {
+
+            // add storable itself
+            registerValue(name, &store);
+
+            // register parameters
+            auto vals = store.getData(IStorable::PARAMETER);
+            for (auto &v : vals)
+                registerValue(name + ".parameter." + v.name, v.data);
+
+            // register inputs
+            vals = store.getData(IStorable::INPUT);
+            for (auto &v : vals)
+                registerValue(name + ".input." + v.name, v.data);
+
+            // register states
+            vals = store.getData(IStorable::STATE);
+            for (auto &v : vals)
+                registerValue(name + ".state." + v.name, v.data);
+
+        }
 
 
         /**
@@ -51,7 +70,11 @@ namespace data {
          * @param name Name of the value
          * @param value Value to be set
          */
-        void registerValue(const std::string &name, void *value);
+        void registerValue(const std::string &name, void *value) {
+
+            _values[name] = value;
+
+        }
 
 
         /**
@@ -59,28 +82,41 @@ namespace data {
          * @param name Name of the value
          * @return Pointer to the value
          */
-        void* getValue(const std::string &name);
+        void* getValue(const std::string &name) {
+
+            return _values.at(name);
+
+        }
 
 
         /**
          * Resets the data manager
          */
-        void reset();
+        void reset() {
+
+            _values.clear();
+
+        }
 
 
         /**
          * Streams the data manager to the given out stream
          * @param os Out stream
          */
-        void streamTo(std::ostream &os) const;
+        void streamTo(std::ostream &os) const {
+
+            os << "{";
+
+            for (const auto &entry : _values)
+                os << "\"" << entry.first << "\":\"" << entry.second << "\"";
+
+            os << "}";
+
+        }
 
     };
 
 }} // namespace ::sim::data
-
-
-
-std::ostream &operator<< (std::ostream& os, const sim::data::DataManager &dm);
 
 
 #endif //SIMCORE_DATAMANAGER_H

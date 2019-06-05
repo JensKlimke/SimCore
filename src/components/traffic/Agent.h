@@ -28,9 +28,6 @@ class Agent {
     double _length = VEH_DEFAULT_LENGTH;
     double _width  = VEH_DEFAULT_WIDTH;
 
-    double _velocity = 0.0;
-    double _acceleration = 0.0;
-
 
 public:
 
@@ -101,14 +98,6 @@ public:
      * @param t Lateral offset to be set
      */
     void move(double ds, double t);
-
-
-    /**
-     * Sets the current velocity and acceleration of the agents vehicle
-     * @param velocity Velocity to be set
-     * @param acceleration Acceleration to be set
-     */
-    void setDynamics(double velocity, double acceleration);
 
 
     /**

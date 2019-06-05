@@ -10,13 +10,12 @@
 #include <cmath>
 
 
+#ifndef EPS_TIME
+#define EPS_TIME 1e-12
+#endif
+
+
 class TimeIsUp : public ::sim::IStopCondition, public ::sim::IComponent {
-
-public:
-
-    struct Parameters {
-        double stopTime = INFINITY;
-    };
 
 
 private:
@@ -32,13 +31,34 @@ public:
      */
     TimeIsUp() = default;
 
-    void initialize(double initTime) override;
 
-    bool step(double simTime) override;
 
-    void terminate(double simTime) override;
+    void initialize(double initTime) override {
 
-    void setStopTime(double stopTime);
+        reset();
+
+    }
+
+
+    bool step(double simTime) override {
+
+        // set status to ended if time is reached
+        if(simTime >= (_stopTime - EPS_TIME))
+            end();
+
+        return true;
+
+    }
+
+
+    void terminate(double simTime) override {}
+
+
+    void setStopTime(double stopTime) {
+
+        _stopTime = stopTime;
+
+    }
 
 };
 

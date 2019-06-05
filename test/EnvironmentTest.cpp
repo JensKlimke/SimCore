@@ -4,11 +4,54 @@
 
 #include <gtest/gtest.h>
 #include <components/traffic/Environment.h>
+#include <components/traffic/Agent.h>
 #include <core/Loop.h>
+#include <core/IComponent.h>
+#include <cmath>
 
 #ifndef EPS_DISTANCE
 #define EPS_DISTANCE 1e-6
 #endif
+
+
+struct IDM : public ::sim::IComponent {
+
+
+    Agent *ag = nullptr;
+
+    double dv = 0.0;
+    double v  = 0.0;
+    double s  = 0.0;
+    double a  = 0.0;
+
+
+    void initialize(double initTime) override {
+
+        initializeTimer(initTime);
+
+    }
+
+    bool step(double simTime) override {
+
+        // parameters
+        double ac  = 0.73;
+        double bc  = 1.67;
+        double v0  = 100.0 / 3.6;
+        double T   = 1.5;
+        double s0  = 2.0;
+
+        auto s_star = s0 + v * T + (v * dv / (2.0 * sqrt(ac * bc)));
+        a = ac * (1.0 - pow(v / v0, 4) - pow(s_star / s, 2));
+
+        return true;
+
+    }
+
+    void terminate(double simTime) override {}
+
+
+};
+
 
 
 class EnvironmentTest : public ::testing::Test, public Environment {
@@ -145,5 +188,34 @@ TEST_F(EnvironmentTest, MatchAgent) {
     EXPECT_EQ("R1-LS2-R2", std::string(mpos.edgeID));
     EXPECT_NEAR(47.9203673205, mpos.longPos, 1e-4);
     EXPECT_NEAR(0.5, mpos.latPos, 1e-4);
+
+}
+
+
+TEST_F(EnvironmentTest, TrafficSimulation) {
+
+    unsigned int n = 1;
+
+    // init agents
+    std::vector<IDM> agents(n);
+    for(unsigned int i = 0; i < n; ++i) {
+
+        // add agent
+        agents[i].ag = this->createAgent(1, {"1", "-2"});
+
+        // place agent
+        double s = (double) i * 10 / (2 * M_PI * 100.0);
+        if(s < M_PI * 50.0)
+            agent->setMapPosition("R1-LS1-R1", s, 0.0);
+        else if(s < M_PI * 100.0)
+            agent->setMapPosition("R1-LS2-R1", s - M_PI * 50.0, 0.0);
+        else
+            agent->setMapPosition("R2-LS1-L1", s - M_PI * 100.0, 0.0);
+
+
+
+    }
+
+
 
 }

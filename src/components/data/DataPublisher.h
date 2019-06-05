@@ -8,6 +8,7 @@
 #include <core/functions.h>
 #include <core/ISynchronized.h>
 #include <core/IComponent.h>
+#include <components/data/DataManager.h>
 #include <curl/curl.h>
 #include <sstream>
 #include <iostream>

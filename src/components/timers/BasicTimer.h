@@ -27,29 +27,53 @@ public:
 
     ~BasicTimer() override = default;
 
-    void step() override;
 
-    void start() override;
+    void step() override {
 
-    void stop() override;
+        _time += _stepSize;
 
-    double time() const override;
+    }
 
-    void reset() override;
+
+    void start() override {}
+
+    void stop() override {}
+
+
+    double time() const override {
+
+        return _time;
+
+    }
+
+
+    void reset() override {
+
+        _time = 0.0;
+
+    }
 
 
     /**
      * Sets the time step size of the timer
      * @param stepSize Time step size
      */
-    void setTimeStepSize(double stepSize);
+    void setTimeStepSize(double stepSize) {
+
+        _stepSize = stepSize;
+
+    }
 
 
     /**
      * Returns the step size of the timer
      * @return Step size of the timer
      */
-    double getTimeStepSize() const;
+    double getTimeStepSize() const {
+
+        return _stepSize;
+
+    }
 
 
 protected:
@@ -58,7 +82,11 @@ protected:
      * Sets the current time
      * @param time Time to be set
      */
-    void setTime(double time);
+    void setTime(double time) {
+
+        _time = time;
+
+    }
 
 
 };
