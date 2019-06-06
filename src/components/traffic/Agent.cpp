@@ -7,6 +7,10 @@
 #include <iostream>
 
 
+#ifndef NO_OF_TARGETS
+#define NO_OF_TARGETS 32
+#endif
+
 
 void Agent::setID(unsigned int id) {
 
@@ -27,7 +31,7 @@ unsigned int Agent::getID() const {
 void Agent::setTrack(const std::vector<std::string> &track) {
 
     // create string array
-    const char ** rids = new const char*[track.size()];
+    std::vector<const char*> rids(track.size());
 
     // write track data
     size_t i = 0;
@@ -35,7 +39,7 @@ void Agent::setTrack(const std::vector<std::string> &track) {
         rids[i++] = rid.c_str();
 
     // set track
-    auto err = simmap::setTrack(_id, rids, track.size());
+    auto err = simmap::setTrack(_id, rids.data(), track.size());
     if(err != 0)
         throw std::runtime_error("Could not set track.");
 
@@ -126,5 +130,20 @@ void Agent::setDimensions(double length, double width) {
 
     _length = length;
     _width = width;
+
+}
+
+
+std::vector<simmap::TargetInformation> Agent::getTargets() {
+
+    // define number of targets
+    unsigned long n = NO_OF_TARGETS;
+    std::vector<simmap::TargetInformation> ti(n);
+
+    // get target information
+    if(simmap::targets(getID(), ti.data(), &n) != 0)
+        throw std::runtime_error("Could not generate target list");
+
+    return ti;
 
 }

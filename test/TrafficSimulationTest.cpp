@@ -27,6 +27,12 @@ struct IDM : public ::sim::IComponent {
     double s  = 0.0;
     double a  = 0.0;
 
+    double ac  = 0.73;
+    double bc  = 1.67;
+    double v0  = 100.0 / 3.6;
+    double T   = 1.5;
+    double s0  = 2.0;
+
 
     void initialize(double initTime) override {
 
@@ -36,12 +42,20 @@ struct IDM : public ::sim::IComponent {
 
     bool step(double simTime) override {
 
-        // parameters
-        double ac  = 0.73;
-        double bc  = 1.67;
-        double v0  = 100.0 / 3.6;
-        double T   = 1.5;
-        double s0  = 2.0;
+        // get targets
+        auto tars = ag->getTargets();
+
+        // get relevant target
+        s = INFINITY;
+        for(auto &tar : tars) {
+
+            // check if distance is larger than zero
+            if(tar.distance > 0) {
+                s = tar.distance;
+                break;
+            }
+
+        }
 
         // calculate acceleration
         auto s_star = s0 + v * T + (v * dv / (2.0 * sqrt(ac * bc)));
@@ -88,7 +102,6 @@ public:
         // add virtual horizon as component
         sim.addComponent(this);
 
-
     }
 
 
@@ -113,7 +126,7 @@ TEST_F(TrafficSimulationTest, TrafficSimulation) {
 
     // set parameters
     timer.setTimeStepSize(0.1);
-    stop.setStopTime(100.0);
+    stop.setStopTime(10.0);
 
     // set timer and stop condition
     sim.setTimer(&timer);
@@ -128,7 +141,7 @@ TEST_F(TrafficSimulationTest, TrafficSimulation) {
     rep.setFilename("out.json");
 
     // create agent vector
-    unsigned int n = 100;
+    unsigned int n = 10;
     std::vector<IDM> agents(n);
 
     // init agents
@@ -139,7 +152,6 @@ TEST_F(TrafficSimulationTest, TrafficSimulation) {
         agents[i].ag = agent;
 
         // place agent
-
         auto s = (2 * M_PI * 100.0 / n) * i;
         if(s < M_PI * 50.0)
             agent->setMapPosition("R1-LS1-R1", s, 0.0);
