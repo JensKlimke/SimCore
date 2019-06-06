@@ -22,17 +22,19 @@ protected:
 
     ::sim::Loop sim{};
     Agent *agent = nullptr;
+    std::string file;
 
 public:
 
     void SetUp() override {
 
         // get map path: SIMMAP_SRC has to be provided by cmake
-        std::stringstream ss;
+        std::stringstream ss{};
         ss << SIMMAP_SRC << "/tests/tracks/CircleR100.xodr";
+        file = ss.str();
 
         // load map
-        this->registerMap(ss.str());
+        this->registerMap(file);
 
         // add virtual horizon as component
         sim.addComponent(this);

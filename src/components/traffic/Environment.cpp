@@ -2,8 +2,8 @@
 // Created by Jens Klimke on 2019-04-22.
 //
 
-#include "Environment.h"
 #include <iostream>
+#include "Environment.h"
 
 
 Agent * Environment::createAgent(unsigned int id, const std::vector<std::string> &track) {
@@ -81,6 +81,9 @@ unsigned int Environment::getMapID() const {
 
 void Environment::clear() const {
 
-    simmap::clear();
+    auto err = simmap::clear();
+
+    if(err != 0)
+        throw std::runtime_error("Couldn't clear simmap framework.");
 
 }

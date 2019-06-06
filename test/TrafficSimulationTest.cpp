@@ -3,13 +3,14 @@
 //
 
 #include <gtest/gtest.h>
+#include <cmath>
 #include <components/traffic/Environment.h>
 #include <components/traffic/Agent.h>
 #include <components/timers/TimeIsUp.h>
 #include <core/Loop.h>
 #include <core/IComponent.h>
-#include <cmath>
 #include <timers/BasicTimer.h>
+#include <data/JsonFileReporter.h>
 
 #ifndef EPS_DISTANCE
 #define EPS_DISTANCE 1e-6
@@ -64,24 +65,25 @@ struct IDM : public ::sim::IComponent {
 
 
 
-class EnvironmentTest : public ::testing::Test, public Environment {
+class TrafficSimulationTest : public ::testing::Test, public Environment {
 
 
 protected:
 
     ::sim::Loop sim{};
-
+    std::string file;
 
 public:
 
     void SetUp() override {
 
         // get map path: SIMMAP_SRC has to be provided by cmake
-        std::stringstream ss;
+        std::stringstream ss{};
         ss << SIMMAP_SRC << "/tests/tracks/CircleR100.xodr";
+        file = ss.str();
 
         // load map
-        this->registerMap(ss.str());
+        this->registerMap(file);
 
         // add virtual horizon as component
         sim.addComponent(this);
@@ -101,7 +103,7 @@ public:
 
 
 
-TEST_F(EnvironmentTest, TrafficSimulation) {
+TEST_F(TrafficSimulationTest, TrafficSimulation) {
 
     using namespace ::sim;
 
@@ -111,10 +113,7 @@ TEST_F(EnvironmentTest, TrafficSimulation) {
 
     // set parameters
     timer.setTimeStepSize(0.1);
-    stop.setStopTime(10.0);
-
-    // create loop
-    Loop sim;
+    stop.setStopTime(100.0);
 
     // set timer and stop condition
     sim.setTimer(&timer);
@@ -124,9 +123,12 @@ TEST_F(EnvironmentTest, TrafficSimulation) {
     sim.addComponent(&stop);
     sim.addComponent(this);
 
+    // logger
+    JsonFileReporter rep;
+    rep.setFilename("out.json");
 
     // create agent vector
-    unsigned int n = 1;
+    unsigned int n = 100;
     std::vector<IDM> agents(n);
 
     // init agents
@@ -137,7 +139,8 @@ TEST_F(EnvironmentTest, TrafficSimulation) {
         agents[i].ag = agent;
 
         // place agent
-        double s = (double) i * 10 / (2 * M_PI * 100.0);
+
+        auto s = (2 * M_PI * 100.0 / n) * i;
         if(s < M_PI * 50.0)
             agent->setMapPosition("R1-LS1-R1", s, 0.0);
         else if(s < M_PI * 100.0)
