@@ -3,7 +3,6 @@ set(SOURCE_FILES
         SignalTest.cpp
         DataTest.cpp
         EnvironmentTest.cpp
-        TrafficSimulationTest.cpp
         VehicleModelTest.cpp
         )
 
@@ -12,3 +11,11 @@ target_include_directories(SimTest PRIVATE ${PROJECT_SOURCE_DIR}/src)
 target_link_libraries(SimTest PRIVATE core components)
 
 add_gtest(SimTest)
+
+
+
+add_executable(SimLiveTest TrafficSimulationTest.cpp)
+target_include_directories(SimLiveTest PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_link_libraries(SimLiveTest PRIVATE core components)
+
+add_gtest(SimLiveTest)

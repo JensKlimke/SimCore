@@ -7,9 +7,10 @@
 #include <components/traffic/Environment.h>
 #include <components/traffic/Agent.h>
 #include <components/timers/TimeIsUp.h>
+#include <data/TimeReporter.h>
 #include <core/Loop.h>
 #include <core/IComponent.h>
-#include <timers/BasicTimer.h>
+#include <timers/RealTimeTimer.h>
 #include <data/JsonFileReporter.h>
 
 #ifndef EPS_DISTANCE
@@ -88,7 +89,6 @@ public:
         // add virtual horizon as component
         sim.addComponent(this);
 
-
     }
 
 
@@ -108,12 +108,12 @@ TEST_F(TrafficSimulationTest, TrafficSimulation) {
     using namespace ::sim;
 
     // create objects
-    BasicTimer timer;
+    RealTimeTimer timer;
     TimeIsUp stop;
 
     // set parameters
     timer.setTimeStepSize(0.1);
-    stop.setStopTime(100.0);
+    stop.setStopTime(10.0);
 
     // set timer and stop condition
     sim.setTimer(&timer);
@@ -125,7 +125,11 @@ TEST_F(TrafficSimulationTest, TrafficSimulation) {
 
     // logger
     JsonFileReporter rep;
-    rep.setFilename("out.json");
+    rep.setFilename("./test/tools/log/out.json");
+    rep.addValue();
+
+    // add reporter to sim
+    sim.addComponent(&rep);
 
     // create agent vector
     unsigned int n = 100;
@@ -139,7 +143,6 @@ TEST_F(TrafficSimulationTest, TrafficSimulation) {
         agents[i].ag = agent;
 
         // place agent
-
         auto s = (2 * M_PI * 100.0 / n) * i;
         if(s < M_PI * 50.0)
             agent->setMapPosition("R1-LS1-R1", s, 0.0);
