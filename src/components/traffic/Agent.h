@@ -108,6 +108,12 @@ public:
     void setDimensions(double length, double width);
 
 
+    /**
+     * Returns a list of targets. The number of returned (and ordered) targets can be set by macro NO_OF_TARGETS
+     * @return List of targets
+     */
+    std::vector<simmap::TargetInformation> getTargets();
+
 
 protected:
 
