@@ -1,15 +1,14 @@
 # 
 #
-# Downloads operndrive-parser and provides a helper macro to add tests. Add make check, as well, which
-# gives output on failed tests without having to set an environment variable.
+# Downloads simmap library
 #
 #
+
+message("Downloading SimMap ...")
 
 set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
-
 set(SIMMAP_ENABLE_TESTING OFF CACHE BOOL "" FORCE)
-message("Downloading SimMap ...")
 
 if (CMAKE_VERSION VERSION_LESS 3.11)
     set(UPDATE_DISCONNECTED_IF_AVAILABLE "UPDATE_DISCONNECTED 1")
@@ -47,3 +46,14 @@ include_directories(${simmap_INCLUDE_DIR})
 
 set_target_properties(simmap
         PROPERTIES FOLDER "Extern")
+
+
+mark_as_advanced(
+        odr
+        server
+        odradapter
+        graph
+        curve
+        check
+        uninstall
+)

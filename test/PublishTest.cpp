@@ -2,10 +2,10 @@
 // Created by Jens Klimke on 2019-04-22.
 //
 
-#include <gtest/gtest.h>
 #include <core/Model.h>
 #include <components/timers/RealTimeTimer.h>
 #include <components/data/DataPublisher.h>
+#include <gtest/gtest.h>
 
 class PublishTest : public ::testing::Test, public sim::IComponent {
 

@@ -2,16 +2,18 @@
 // Created by Jens Klimke on 2019-04-20.
 //
 
-#include <gtest/gtest.h>
 #include <cmath>
 #include <components/traffic/Environment.h>
 #include <components/traffic/Agent.h>
 #include <components/timers/TimeIsUp.h>
+#include <socket/DataPublisher.h>
 #include <data/TimeReporter.h>
+#include <data/DataManager.h>
 #include <core/Loop.h>
 #include <core/IComponent.h>
+#include <core/functions.h>
 #include <timers/RealTimeTimer.h>
-#include <data/JsonFileReporter.h>
+#include <gtest/gtest.h>
 
 #ifndef EPS_DISTANCE
 #define EPS_DISTANCE 1e-6
@@ -125,25 +127,28 @@ TEST_F(TrafficSimulationTest, TrafficSimulation) {
     RealTimeTimer timer;
     TimeIsUp stop;
 
+    // time reporter
+    TimeReporter tr;
+    tr.setTimeStepSize(1.0);
+
     // set parameters
     timer.setTimeStepSize(0.1);
     stop.setStopTime(10.0);
+
+    // data manager
+    sim::data::DataManager data;
+    sim::data::DataPublisher pub;
+    pub.setDataManager(&data);
 
     // set timer and stop condition
     sim.setTimer(&timer);
     sim.addStopCondition(&stop);
 
     // models
+    sim.addComponent(&tr);
+    sim.addComponent(&pub);
     sim.addComponent(&stop);
     sim.addComponent(this);
-
-    // logger
-    JsonFileReporter rep;
-    rep.setFilename("./test/tools/log/out.json");
-    rep.addValue();
-
-    // add reporter to sim
-    sim.addComponent(&rep);
 
     // create agent vector
     unsigned int n = 10;
@@ -155,6 +160,9 @@ TEST_F(TrafficSimulationTest, TrafficSimulation) {
         // add agent
         auto agent = this->createAgent(i + 1, {"1", "-2"});
         agents[i].ag = agent;
+
+        // add agent to data manager
+        data.registerValues(sim::fnc::string_format("agent[%d]", i + 1), *agent);
 
         // place agent
         auto s = (2 * M_PI * 100.0 / n) * i;

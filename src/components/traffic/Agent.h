@@ -9,7 +9,7 @@
 #include <string>
 #include <cmath>
 #include <SimMap/lib.h>
-
+#include <core/IStorable.h>
 
 #ifndef VEH_DEFAULT_LENGTH
 #define VEH_DEFAULT_LENGTH 5.0;
@@ -20,7 +20,7 @@
 #endif
 
 
-class Agent {
+class Agent : public sim::data::IStorable {
 
     unsigned int _id = 0;
     simmap::Position _pos{};
@@ -113,6 +113,14 @@ public:
      * @return List of targets
      */
     std::vector<simmap::TargetInformation> getTargets();
+
+
+    /**
+     * Return data
+     * @param context
+     * @return
+     */
+    std::vector<sim::data::IStorable::DataEntry> getData(sim::data::IStorable::Context context);
 
 
 protected:

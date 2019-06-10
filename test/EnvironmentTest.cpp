@@ -2,12 +2,12 @@
 // Created by Jens Klimke on 2019-04-20.
 //
 
-#include <gtest/gtest.h>
 #include <components/traffic/Environment.h>
 #include <components/traffic/Agent.h>
 #include <core/Loop.h>
 #include <core/IComponent.h>
 #include <cmath>
+#include <gtest/gtest.h>
 
 #ifndef EPS_DISTANCE
 #define EPS_DISTANCE 1e-6

@@ -147,3 +147,24 @@ std::vector<simmap::TargetInformation> Agent::getTargets() {
     return ti;
 
 }
+
+std::vector<sim::data::IStorable::DataEntry> Agent::getData(sim::data::IStorable::Context context) {
+
+    std::vector<sim::data::IStorable::DataEntry> ret{};
+    if(context == sim::data::IStorable::Context::STATE) {
+
+        // ret.push_back(DataEntry{"x", &_pos.x});
+        // ret.push_back(DataEntry{"y", &_pos.y});
+        // ret.push_back(DataEntry{"z", &_pos.z});
+        // ret.push_back(DataEntry{"phi", &_pos.phi});
+        // ret.push_back(DataEntry{"kappa", &_pos.kappa});
+
+    } else if(context == sim::data::IStorable::PARAMETER) {
+
+        // ret.push_back(DataEntry{"id", &_id});
+
+    }
+
+    return ret;
+
+}

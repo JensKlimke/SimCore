@@ -64,7 +64,9 @@ endif()
 
 # Target must already exist
 macro(add_gtest TESTNAME)
+
     target_link_libraries(${TESTNAME} PUBLIC gtest gmock gtest_main)
+    target_include_directories(${TESTNAME} PUBLIC ${googletest_SOURCE_DIR}/include)
     
     if(GOOGLE_TEST_INDIVIDUAL)
         if(CMAKE_VERSION VERSION_LESS 3.10)
