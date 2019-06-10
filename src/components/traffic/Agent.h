@@ -120,7 +120,7 @@ public:
      * @param context
      * @return
      */
-    std::vector<sim::data::IStorable::DataEntry> getData(sim::data::IStorable::Context context);
+    std::vector<sim::data::IStorable::DataEntry> getData(sim::data::IStorable::Context context) const;
 
 
 protected:

@@ -49,7 +49,7 @@ namespace data {
          * Returns a vector with data entries
          * @return Data entry vector
          */
-        virtual std::vector<DataEntry> getData(Context context) = 0;
+        virtual std::vector<DataEntry> getData(Context context) const = 0;
 
     };
 

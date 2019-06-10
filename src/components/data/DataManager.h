@@ -25,7 +25,7 @@ namespace data {
         struct DataNode {
 
             std::shared_ptr<IDataSet> value;
-            std::vector<DataNode> nodeArray{};
+            std::list<DataNode> nodeArray{};
             std::list<std::pair<std::string, DataNode>> nodeMap{};
 
         };
@@ -54,29 +54,41 @@ namespace data {
          * @param name Name of the storable
          * @param store Storable to be added
          */
-        void registerValues(const std::string &name, IStorable &store) {
+        void registerStorable(const std::string &name, const IStorable &store) {
 
             // create data node for storable class
             _root.nodeMap.emplace_back(name, DataNode{});
-            auto &dn = _root.nodeMap.back().second;
+            auto dn = &_root.nodeMap.back().second;
 
             // register parameters
-            dn.nodeMap.emplace_back("parameter", DataNode{nullptr});
-            auto vals = store.getData(IStorable::PARAMETER);
-            for (auto &v : vals)
-                registerValue(dn.nodeMap.back().second, name, "parameter", v);
+            regStorable(name, &store, dn);
 
-            // register inputs
-            dn.nodeMap.emplace_back("input", DataNode{nullptr});
-            vals = store.getData(IStorable::INPUT);
-            for (auto &v : vals)
-                registerValue(dn.nodeMap.back().second, name, "input", v);
+        }
 
-            // register states
-            dn.nodeMap.emplace_back("state", DataNode{nullptr});
-            vals = store.getData(IStorable::STATE);
-            for (auto &v : vals)
-                registerValue(dn.nodeMap.back().second, name, "state", v);
+
+
+        /**
+         * Registers the given storable container vector to the data manager
+         * @param name Name of the vector
+         * @param stores Storable container vector
+         */
+        void registerStorableVector(const std::string &name, const std::vector<const IStorable*> &stores) {
+
+            _root.nodeMap.emplace_back(name, DataNode{});
+            auto &dr = _root.nodeMap.back().second;
+
+            for(auto &store : stores) {
+
+                // create array
+                dr.nodeArray.emplace_back(DataNode{});
+                auto dn = &dr.nodeArray.back();
+
+                // register storable
+                regStorable(name, store, dn);
+
+            }
+
+
 
         }
 
@@ -123,13 +135,42 @@ namespace data {
 
 
         /**
+         * Registers a storable container to the given data node
+         * @param name Name of the container
+         * @param store Container
+         * @param dn Data node to be written to
+         */
+        void regStorable(const std::string &name, const IStorable *store, DataNode *dn) {
+
+            // register parameters
+            dn->nodeMap.emplace_back("parameter", DataNode{nullptr});
+            auto vals = store->getData(IStorable::PARAMETER);
+            for (auto &v : vals)
+                regValue(dn->nodeMap.back().second, name, "parameter", v);
+
+            // register inputs
+            dn->nodeMap.emplace_back("input", DataNode{nullptr});
+            vals = store->getData(IStorable::INPUT);
+            for (auto &v : vals)
+                regValue(dn->nodeMap.back().second, name, "input", v);
+
+            // register states
+            dn->nodeMap.emplace_back("state", DataNode{nullptr});
+            vals = store->getData(IStorable::STATE);
+            for (auto &v : vals)
+                regValue(dn->nodeMap.back().second, name, "state", v);
+
+        }
+
+
+        /**
          * Registers a value to the data manager
          * @param dn The data node, the value shall be stored in
          * @param name Name of the owner object
          * @param context Context of the value
          * @param value Value object
          */
-        void registerValue(DataNode &dn, const std::string &name, const std::string &context, const IStorable::DataEntry &v) {
+        void regValue(DataNode &dn, const std::string &name, const std::string &context, const IStorable::DataEntry &v) {
 
             // add to root
             dn.nodeMap.emplace_back(v.name, DataNode{v.data});
@@ -173,9 +214,9 @@ namespace data {
 
                 // iterate over array element
                 unsigned long i = 0;
-                for (auto &p : node.nodeMap) {
+                for (auto &p : node.nodeArray) {
                     os << (i++ > 0 ? "," : "");
-                    nodeToStream(os, p.second);
+                    nodeToStream(os, p);
                 }
 
                 os << "]";

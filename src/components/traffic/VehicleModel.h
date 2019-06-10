@@ -66,7 +66,7 @@ public:
     STATE_ACCESS(_state)
 
 
-    std::vector<DataEntry> getData(Context context) override {
+    std::vector<DataEntry> getData(Context context) const override {
 
         std::vector<DataEntry> ret;
         ret.reserve(2);

@@ -111,7 +111,7 @@ public:
     }
 
 
-    std::vector<DataEntry> getData(Context context) override {
+    std::vector<DataEntry> getData(Context context) const override {
 
         std::vector<DataEntry> ret;
         ret.reserve(2);
@@ -180,7 +180,7 @@ TEST_F(DataTest, DataManager) {
 
     // register model to data manager
     DataManager data;
-    data.registerValues("Test", *this);
+    data.registerStorable("Test", *this);
 
     // add this to loop
     loop.addComponent(this);

@@ -148,7 +148,7 @@ std::vector<simmap::TargetInformation> Agent::getTargets() {
 
 }
 
-std::vector<sim::data::IStorable::DataEntry> Agent::getData(sim::data::IStorable::Context context) {
+std::vector<sim::data::IStorable::DataEntry> Agent::getData(sim::data::IStorable::Context context) const {
 
     using namespace sim::data;
 
@@ -158,12 +158,14 @@ std::vector<sim::data::IStorable::DataEntry> Agent::getData(sim::data::IStorable
         ret.push_back(createDataEntry("x", &_pos.x));
         ret.push_back(createDataEntry("y", &_pos.y));
         ret.push_back(createDataEntry("z", &_pos.z));
-        ret.push_back(createDataEntry("phi", &_pos.phi));
+        ret.push_back(createDataEntry("psi", &_pos.phi));
         ret.push_back(createDataEntry("kappa", &_pos.kappa));
 
     } else if(context == sim::data::IStorable::PARAMETER) {
 
-        ret.push_back(createDataEntry("id", &_id));
+        ret.push_back(createDataEntry("id",     &_id));
+        ret.push_back(createDataEntry("width",  &_width));
+        ret.push_back(createDataEntry("length", &_length));
 
     }
 
