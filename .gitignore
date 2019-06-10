@@ -38,3 +38,5 @@ backup
 .DS_Store
 .vs
 test/tools/log
+node_modules
+package-lock.json
