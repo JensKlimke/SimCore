@@ -44,7 +44,7 @@ public:
     void setHost(const std::string &host, const std::string &port);
 
 
-    void connect();
+    bool connect();
 
 
     bool send(const std::string &text);

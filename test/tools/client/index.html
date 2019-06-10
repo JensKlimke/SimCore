@@ -19,9 +19,19 @@
         }
 
         .agent-box {
-            fill: transparent;
-            stroke: #aa3500;
+            fill: #297baa;
+            stroke: #0D3349;
             stroke-width: 1px;
+        }
+
+        .grid line {
+            stroke: lightgrey;
+            stroke-opacity: 0.7;
+            shape-rendering: crispEdges;
+        }
+
+        .grid path {
+            stroke-width: 0;
         }
 
     </style>
@@ -35,7 +45,7 @@
 
     <script type="text/javascript" src="socket.io-client/dist/socket.io.js"></script>
     <script type="text/javascript" src="symple-client/dist/symple.js"></script>
-    <script type="text/javascript" src="connect.js"></script>
+    <!--<script type="text/javascript" src="connect.js"></script>-->
 
 
     <div class="sim-meta-data">
@@ -57,15 +67,17 @@
     </script>
 
 
-    <!--<script type="application/javascript">
+    <script type="application/javascript">
+
 
         var log = false;
         var counter = 0;
         var svg = false;
 
+        var i = 0;
         setInterval(function() {
 
-            $.ajax({
+            /*$.ajax({
                 dataType: "json",
                 url: '../../log/live.json',
                 data: '',
@@ -81,7 +93,20 @@
                 error : (res, err) => {
                     log = false;
                 }
-            });
+            });*/
+
+            var p = i * 0.1 * Math.PI;
+
+            log = {};
+            log.size = {x0 : -120.0, x1 : 120.0, y0 : -120, y1 : 120.0};
+            log.agents = [
+                {x : (i + 10) % 200, y : 50 + Math.sin(p), psi : Math.atan2(0.25 * Math.cos(p), 1), width : 2.2, length : 5.0 },
+                {x : (i + 20) % 200, y : 50 + Math.sin(p), psi : Math.atan2(0.25 * Math.cos(p), 1), width : 2.2, length : 5.0 },
+                {x : (i + 50) % 200, y : 50 + Math.sin(p), psi : Math.atan2(0.25 * Math.cos(p), 1), width : 2.2, length : 5.0 },
+                {x : (i + 70) % 200, y : 50 + Math.sin(p), psi : Math.atan2(0.25 * Math.cos(p), 1), width : 2.2, length : 5.0 }
+            ];
+
+            i++;
 
         }, 100);
 
@@ -100,6 +125,7 @@
                     var ratio  = (log.size.y1 - log.size.y0) / (log.size.x1 - log.size.x0);
                     var width  = 1000;
                     var height = width * ratio;
+
 
                     svg = {};
                     svg.container = d3.select("#sim-canvas")
@@ -139,6 +165,7 @@
 
                 }
 
+
                 svg.agents = svg.container
                     .selectAll("rect")
                     .data(log.agents);
@@ -150,17 +177,18 @@
                 svg.agents
                     .enter()
                     .append("rect")
-                    .attr("x", (d) => { return svg.x_scale(d.position.x - d.size.length * 0.5); })
-                    .attr("y", (d) => { return svg.y_scale(d.position.y + d.size.width * 0.5); })
-                    .attr("width",  (d) => { return svg.s_scale(d.size.length); })
-                    .attr("height", (d) => { return svg.s_scale(d.size.width); })
+                    .attr("x", (d) => { return svg.x_scale(d.x - d.length * 0.5); })
+                    .attr("y", (d) => { return svg.y_scale(d.y + d.width * 0.5); })
+                    .attr("width",  (d) => { return svg.s_scale(d.length); })
+                    .attr("height", (d) => { return svg.s_scale(d.width); })
                     .attr("rx", svg.s_scale(0.2))
                     .attr("ry", svg.s_scale(0.2))
                     .attr("class", "agent-box");
 
                 svg.agents
-                    .attr('x', (d) => { return svg.x_scale(d.position.x - d.size.length * 0.5); })
-                    .attr('y', (d) => { return svg.y_scale(d.position.y + d.size.width * 0.5); });
+                    .attr('x', (d) => { return svg.x_scale(d.x - d.length * 0.5); })
+                    .attr('y', (d) => { return svg.y_scale(d.y + d.width * 0.5); })
+                    .attr("transform", (d) => { return "rotate(" + (-d.psi * 180.0 / Math.PI) + "," + svg.x_scale(d.x) + "," + svg.y_scale(d.y) + ")"; });
 
                 // TODO: transition()
 
@@ -176,7 +204,7 @@
 
         }, 25);
 
-    </script>-->
+    </script>
 
 </body>
 </html>

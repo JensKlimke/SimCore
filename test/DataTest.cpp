@@ -120,7 +120,7 @@ public:
             case Context::PARAMETER:
                 ADD(ret, pa, _param);
                 ADD(ret, pb, _param);
-                ret.push_back(DataEntry{"name", sim::data::createDataSet(&name)});
+                ret.emplace_back(sim::data::createDataEntry("name",  &name));
                 break;
             case Context::INPUT:
                 ADD(ret, ia, _input);
@@ -129,7 +129,7 @@ public:
             case Context::STATE:
                 ADD(ret, sa, _state);
                 ADD(ret, sb, _state);
-                ret.push_back(DataEntry{"time", sim::data::createDataSet(&time)});
+                ret.emplace_back(sim::data::createDataEntry("time", &time));
                 break;
             default:
                 break;

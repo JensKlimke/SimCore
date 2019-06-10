@@ -13,7 +13,7 @@ void WebSocket::setHost(const std::string &host, const std::string &port) {
 }
 
 
-void WebSocket::connect() {
+bool WebSocket::connect() {
 
     // Look up the domain name
     auto const results = _resolver.resolve(_host, _port);
@@ -24,6 +24,8 @@ void WebSocket::connect() {
     // Perform the websocket handshake
     _ws.handshake(_host, "/");
 
+    return true;
+
 }
 
 
@@ -32,14 +34,11 @@ bool WebSocket::send(const std::string &text) {
     // Send the message
     _ws.write(boost::asio::buffer(text));
 
-    // This buffer will hold the incoming message
-    boost::beast::multi_buffer buffer;
-
-    // Read a message into our buffer
-    _ws.read(buffer);
-
-    // The buffers() function helps print a ConstBufferSequence
-    std::cout << boost::beast::buffers(buffer.data()) << std::endl;
+//    // This buffer will hold the incoming message
+//    boost::beast::multi_buffer buffer;
+//
+//    // Read a message into our buffer
+//    _ws.read(buffer);
 
     return true;
 
