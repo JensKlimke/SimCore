@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.10)
 
 project(SimCore CXX)
 set(CMAKE_CXX_STANDARD 14)
@@ -23,8 +23,8 @@ add_definitions(-DSIMMAP_SRC=\"${simmap_SOURCE_DIR}\")
 # include folders
 include_directories(src/core src/components src/socket)
 
-find_package( Boost COMPONENTS program_options REQUIRED )
-#include_directories(${Boost_INCLUDE_DIRS})
+#find_package(Boost COMPONENTS program_options REQUIRED )
+include(AddBoost)
 
 if(SIMCORE_ENABLE_TESTING)
     add_subdirectory(test)

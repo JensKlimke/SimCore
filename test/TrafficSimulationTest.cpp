@@ -28,9 +28,6 @@ struct IDM : public ::sim::IComponent {
 
     Agent *ag = nullptr;
 
-    double dv = 0.0;
-    double ds = 0.0;
-
     double s  = 0.0;
     double v  = 10.0 / 3.6;
     double a  = 0.0;
@@ -54,20 +51,23 @@ struct IDM : public ::sim::IComponent {
         auto tars = ag->getTargets();
 
         // reset values
-        ds = INFINITY;
-        dv = 0.0;
+        double dv = INFINITY;
+        double ds = 0.0;
+
+        auto ds_back_own  = -INFINITY;
+        auto dv_back_own  = 0.0;
+        auto ds_back_tar  = -INFINITY;
+        auto dv_back_tar  = 0.0;
+        auto ds_front_tar =  INFINITY;
+        auto dv_front_tar = 0.0;
 
         // get relevant target
         for(auto &tar : tars) {
 
             // check if distance is larger than zero
-            if(tar.distance > 0) {
-
+            if(tar.distance > 0 && tar.lane == 0 && tar.distance < ds) {
                 ds = tar.distance;
                 dv = v - agents[tar.id].v;
-
-                break;
-
             }
 
         }
