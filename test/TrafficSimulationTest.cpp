@@ -39,6 +39,17 @@ struct IDM : public ::sim::IComponent {
     double s0  = 2.0;
 
 
+    double acc(double ds, double dv) {
+
+        // calculate acceleration
+        auto s_star = s0 + v * T + (v * dv / (2.0 * sqrt(ac * bc)));
+        a = ac * (1.0 - pow(v / v0, 4) - pow(s_star / ds, 2));
+
+        return a;
+
+    }
+
+
     void initialize(double initTime) override {
 
         initializeTimer(initTime);
@@ -51,11 +62,11 @@ struct IDM : public ::sim::IComponent {
         auto tars = ag->getTargets();
 
         // reset values
-        double dv = INFINITY;
-        double ds = 0.0;
+        double ds = INFINITY;
+        double dv = 0.0;
 
-        auto ds_back_own  = -INFINITY;
-        auto dv_back_own  = 0.0;
+        auto ds_back_ego  = -INFINITY;
+        auto dv_back_ego  = 0.0;
         auto ds_back_tar  = -INFINITY;
         auto dv_back_tar  = 0.0;
         auto ds_front_tar =  INFINITY;
@@ -65,16 +76,38 @@ struct IDM : public ::sim::IComponent {
         for(auto &tar : tars) {
 
             // check if distance is larger than zero
-            if(tar.distance > 0 && tar.lane == 0 && tar.distance < ds) {
+            if(tar.distance > 0.0 && tar.lane == 0 && tar.distance < ds) {
                 ds = tar.distance;
                 dv = v - agents[tar.id].v;
+            }
+
+            // check if distance is larger than zero
+            if(tar.distance < 0.0 && tar.lane == 0 && tar.distance > ds_back_ego) {
+                ds_back_ego = tar.distance;
+                dv_back_ego = v - agents[tar.id].v;
+            }
+
+            // check if distance is larger than zero
+            if(tar.distance > 0.0 && tar.lane == 1 && tar.distance > ds_front_tar) {
+                ds_front_tar = tar.distance;
+                dv_front_tar = v - agents[tar.id].v;
+            }
+
+            // check if distance is larger than zero
+            double accT = 0.0;
+            if(tar.distance < 0.0 && tar.lane == 1 && tar.distance > ds_back_tar) {
+
+                ds_back_tar = tar.distance;
+                dv_back_tar = v - agents[tar.id].v;
+
+                accT = agents.at(tar.id).acc(ds_back_tar, dv_back_tar);
+
             }
 
         }
 
         // calculate acceleration
-        auto s_star = s0 + v * T + (v * dv / (2.0 * sqrt(ac * bc)));
-        a = ac * (1.0 - pow(v / v0, 4) - pow(s_star / ds, 2));
+        a = acc(ds, dv);
 
         // calculate distance
         auto dt = timeStep(simTime);
@@ -141,15 +174,18 @@ TEST_F(TrafficSimulationTest, TrafficSimulation) {
     using namespace ::sim;
 
     // create objects
-    BasicTimer timer;
+    RealTimeTimer timer;
     TimeIsUp stop;
+
+    // set acceleration
+    timer.setAcceleration(5.0);
 
     // time reporter
     TimeReporter tr;
     tr.setTimeStepSize(1.0);
 
     // set parameters
-    timer.setTimeStepSize(0.1);
+    timer.setTimeStepSize(1.0);
     stop.setStopTime(400.0);
 
     // data manager

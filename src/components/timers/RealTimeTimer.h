@@ -17,6 +17,8 @@ class RealTimeTimer : public BasicTimer {
 
 private:
 
+    double _acceleration = 1.0;
+
     std::chrono::system_clock::time_point _refTime;
     unsigned long _steps = 0;
 
@@ -41,7 +43,7 @@ public:
 
         // wait until elapsed time
         auto nextTime = getTimeStepSize() * _steps;
-        while (currTime < nextTime) {
+        while (currTime < 0.1 * nextTime) {
 
             // wait a thousandth of a second
             std::this_thread::sleep_for(std::chrono::microseconds(100));
@@ -70,6 +72,13 @@ public:
 
         BasicTimer::reset();
         _steps = 0;
+
+    }
+
+
+    void setAcceleration(double acc) {
+
+        _acceleration = acc;
 
     }
 
