@@ -21,6 +21,7 @@ namespace websocket = boost::beast::websocket;  // from <boost/beast/websocket.h
 
 class WebSocket : public std::enable_shared_from_this<WebSocket> {
 
+    bool _connected = false;
 
     boost::asio::io_context ioc{};
     tcp::resolver _resolver;
@@ -51,6 +52,10 @@ public:
 
 
     void close();
+
+
+    bool connected() const;
+
 
 };
 

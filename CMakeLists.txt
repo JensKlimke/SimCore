@@ -24,7 +24,10 @@ add_definitions(-DSIMMAP_SRC=\"${simmap_SOURCE_DIR}\")
 include_directories(src/core src/components src/socket)
 
 #find_package(Boost COMPONENTS program_options REQUIRED )
-include(AddBoost)
+find_package(Boost 1.69)
+if(NOT Boost_FOUND)
+    include(AddBoost)
+endif()
 
 if(SIMCORE_ENABLE_TESTING)
     add_subdirectory(test)
