@@ -60,57 +60,61 @@ struct IDM : public ::sim::IComponent, public Agent {
         // get targets
         auto tars = this->getTargets();
 
-        // reset values
-        double ds = INFINITY;
-        double dv = 0.0;
+        auto id_front_ego = 0;
+        auto ds_front_ego = INFINITY;
+        auto v_front_ego = 0.0;
 
-        auto ds_back_ego  = -INFINITY;
-        auto dv_back_ego  = 0.0;
-        auto ds_back_tar  = -INFINITY;
-        auto dv_back_tar  = 0.0;
-        auto ds_front_tar =  INFINITY;
-        auto dv_front_tar = 0.0;
+        auto id_back_ego = 0;
+        auto ds_back_ego = -INFINITY;
+        auto v_back_ego = 0.0;
 
-        // calculate acceleration
-        a = acc(ds, dv);
+        auto id_back_tar = 0;
+        auto ds_back_tar = -INFINITY;
+        auto v_back_tar = 0.0;
+
+        auto id_front_tar = 0;
+        auto ds_front_tar = INFINITY;
+        auto v_front_tar = 0.0;
 
         // get relevant target
         for(auto &tar : tars) {
 
             // check if distance is larger than zero
-            if(tar.distance > 0.0 && tar.lane == 0 && tar.distance < ds) {
-                ds = tar.distance;
-                dv = v - agents[tar.id].v;
+            if(tar.distance > 0.0 && tar.lane == 0 && tar.distance < ds_front_ego) {
+                ds_front_ego = tar.distance;
+                v_front_ego  = agents[tar.id].v;
             }
 
             // check if distance is larger than zero
             if(tar.distance < 0.0 && tar.lane == 0 && tar.distance > ds_back_ego) {
                 ds_back_ego = tar.distance;
-                dv_back_ego = v - agents[tar.id].v;
+                v_back_ego  = agents[tar.id].v;
             }
 
             // check if distance is larger than zero
             if(tar.distance > 0.0 && tar.lane != 0 && tar.distance > ds_front_tar) {
                 ds_front_tar = tar.distance;
-                dv_front_tar = v - agents[tar.id].v;
+                v_front_tar  = v - agents[tar.id].v;
             }
 
             // check if distance is larger than zero
             if(tar.distance < 0.0 && tar.lane != 0 && tar.distance > ds_back_tar) {
                 ds_back_tar = tar.distance;
-                dv_back_tar = v - agents[tar.id].v;
+                v_back_tar  = v - agents[tar.id].v;
             }
 
-
-            // calculate acceleration
-            auto acc_front_tar = agents.at(tar.id).acc(ds_front_tar, dv_front_tar);
-            auto acc_back_ego  = agents.at(tar.id).acc(ds_back_ego, dv_back_ego);
-
-
-            // acc' (M') - acc (M) > p [ acc (B') - acc' (B') ] + athr
-            bool change = (acc_front_tar - a) > 1.0 * ();
-
         }
+
+        // calculate acceleration
+        a = acc(ds_front_ego, v - v_front_ego);                                              // acc (M)
+        auto a1 = acc(ds_front_tar, v - v_front_tar);                                        // acc' (M')
+        auto a2 = agents[tar.id].acc(ds_front_tar - ds_back_tar, v_back_tar - v_front_tar);  // acc (B')
+        auto a3 = agents[tar.id].acc(-ds_back_tar, v_back_tar - v);                          // acc' (B')
+
+        auto change = a1 - a > 1.0 * (a2 - a3) + 0.0;
+        std::cout << (change ? "change" : "don't change") << std::endl;
+
+        // acc' (M') - acc (M) > p [ acc (B') - acc' (B') ] + athr
 
         // calculate distance
         auto dt = timeStep(simTime);
