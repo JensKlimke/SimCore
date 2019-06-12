@@ -18,7 +18,7 @@ class Environment : public ::sim::IComponent {
 
     ::simmap::id_type_t _map_id = 0;
 
-    std::vector<std::unique_ptr<Agent>> _agents;
+    std::vector<Agent*> _agents;
     std::map<unsigned int, Agent*> _index;
 
 
@@ -41,7 +41,7 @@ public:
      * @param id ID of the agent
      * @param track Track of the agent
      */
-    Agent * createAgent(unsigned int id, const std::vector<std::string> &track = {});
+    void createAgent(Agent *agent, unsigned int id, const std::vector<std::string> &track);
 
 
     /**

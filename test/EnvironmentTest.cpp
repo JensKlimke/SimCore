@@ -40,7 +40,7 @@ public:
         sim.addComponent(this);
 
         // add agents
-        agent = this->createAgent(1, {"1", "-2"});
+        agent = this->createAgent(nullptr, 1, {"1", "-2"});
         agent->setMapPosition("R1-LS2-R2", 42.9203673205, 0.5);
 
     }

@@ -6,11 +6,10 @@
 #include "Environment.h"
 
 
-Agent * Environment::createAgent(unsigned int id, const std::vector<std::string> &track) {
+void Environment::createAgent(Agent *agent, unsigned int id, const std::vector<std::string> &track) {
 
     // create agent
-    auto ag = new Agent;
-    ag->setID(id);
+    agent->setID(id);
 
     // register agent to simulation map service
     auto err = simmap::registerAgent(id, _map_id);
@@ -19,14 +18,11 @@ Agent * Environment::createAgent(unsigned int id, const std::vector<std::string>
 
     // set track
     if(!track.empty())
-        ag->setTrack(track);
+        agent->setTrack(track);
 
     // save and index
-    _agents.emplace_back(std::unique_ptr<Agent>(ag));
-    _index[id] = ag;
-
-    // return agent
-    return ag;
+    _agents.emplace_back(agent);
+    _index[id] = agent;
 
 }
 

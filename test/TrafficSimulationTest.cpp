@@ -22,11 +22,10 @@
 #endif
 
 
-struct IDM : public ::sim::IComponent {
+struct IDM : public ::sim::IComponent, public Agent {
 
     static std::unordered_map<unsigned long, IDM> agents;
 
-    Agent *ag = nullptr;
 
     double s  = 0.0;
     double v  = 10.0 / 3.6;
@@ -59,7 +58,7 @@ struct IDM : public ::sim::IComponent {
     bool step(double simTime) override {
 
         // get targets
-        auto tars = ag->getTargets();
+        auto tars = this->getTargets();
 
         // reset values
         double ds = INFINITY;
@@ -71,6 +70,9 @@ struct IDM : public ::sim::IComponent {
         auto dv_back_tar  = 0.0;
         auto ds_front_tar =  INFINITY;
         auto dv_front_tar = 0.0;
+
+        // calculate acceleration
+        a = acc(ds, dv);
 
         // get relevant target
         for(auto &tar : tars) {
@@ -88,26 +90,27 @@ struct IDM : public ::sim::IComponent {
             }
 
             // check if distance is larger than zero
-            if(tar.distance > 0.0 && tar.lane == 1 && tar.distance > ds_front_tar) {
+            if(tar.distance > 0.0 && tar.lane != 0 && tar.distance > ds_front_tar) {
                 ds_front_tar = tar.distance;
                 dv_front_tar = v - agents[tar.id].v;
             }
 
             // check if distance is larger than zero
-            double accT = 0.0;
-            if(tar.distance < 0.0 && tar.lane == 1 && tar.distance > ds_back_tar) {
-
+            if(tar.distance < 0.0 && tar.lane != 0 && tar.distance > ds_back_tar) {
                 ds_back_tar = tar.distance;
                 dv_back_tar = v - agents[tar.id].v;
-
-                accT = agents.at(tar.id).acc(ds_back_tar, dv_back_tar);
-
             }
 
-        }
 
-        // calculate acceleration
-        a = acc(ds, dv);
+            // calculate acceleration
+            auto acc_front_tar = agents.at(tar.id).acc(ds_front_tar, dv_front_tar);
+            auto acc_back_ego  = agents.at(tar.id).acc(ds_back_ego, dv_back_ego);
+
+
+            // acc' (M') - acc (M) > p [ acc (B') - acc' (B') ] + athr
+            bool change = (acc_front_tar - a) > 1.0 * ();
+
+        }
 
         // calculate distance
         auto dt = timeStep(simTime);
@@ -118,7 +121,7 @@ struct IDM : public ::sim::IComponent {
         v += a * dt;
 
         // move agent
-        ag->move(ds_step, 0.0);
+        this->move(ds_step, 0.0);
 
         return true;
 
@@ -174,18 +177,18 @@ TEST_F(TrafficSimulationTest, TrafficSimulation) {
     using namespace ::sim;
 
     // create objects
-    RealTimeTimer timer;
+    BasicTimer timer;
     TimeIsUp stop;
 
     // set acceleration
-    timer.setAcceleration(5.0);
+    //timer.setAcceleration(5.0);
 
     // time reporter
     TimeReporter tr;
     tr.setTimeStepSize(1.0);
 
     // set parameters
-    timer.setTimeStepSize(1.0);
+    timer.setTimeStepSize(0.1);
     stop.setStopTime(400.0);
 
     // data manager
@@ -215,30 +218,27 @@ TEST_F(TrafficSimulationTest, TrafficSimulation) {
     // init agents
     for(unsigned int i = 0; i < n; ++i) {
 
-        // create id and agent
+        // create id
         auto id = i + 1;
-        auto agent = this->createAgent(id, {"1", "-2"});
 
         // create IDM object
         IDM::agents[id] = IDM{};
-        IDM::agents[id].ag = agent;
+        this->createAgent(&IDM::agents[id], id, {"1", "-2"});
 
         // set velocity
         IDM::agents[id].v0 -= (2.0 * i / 3.6);
 
-        // save agent to storable list
-        store.emplace_back(agent);
-
         // place agent
         auto s = (2 * M_PI * 100.0 / n) * i;
         if(s < M_PI * 50.0)
-            agent->setMapPosition("R1-LS1-R1", s, 0.0);
+            IDM::agents[id].setMapPosition("R1-LS1-R1", s, 0.0);
         else if(s < M_PI * 100.0)
-            agent->setMapPosition("R1-LS2-R1", s - M_PI * 50.0, 0.0);
+            IDM::agents[id].setMapPosition("R1-LS2-R1", s - M_PI * 50.0, 0.0);
         else
-            agent->setMapPosition("R2-LS1-L1", s - M_PI * 100.0, 0.0);
+            IDM::agents[id].setMapPosition("R2-LS1-L1", s - M_PI * 100.0, 0.0);
 
-        // add agent as component
+        // save agent to storable list and add as component
+        store.emplace_back(&IDM::agents[id]);
         sim.addComponent(&IDM::agents[id]);
 
     }
