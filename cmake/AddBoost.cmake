@@ -21,10 +21,30 @@ if(NOT boost_POPULATED)
     FetchContent_Populate(boost)
 endif()
 
-execute_process(
-        COMMAND "echo installing && ./boostrap.sh && ./b2 headers"
-        WORKING_DIRECTORY ${boost_SOURCE_DIR})
+IF(NOT EXISTS ${boost_SOURCE_DIR}/boost)
 
+    # ./boostrap.sh && ./b2 headers"
 
-set(Boost_INCLUDE_DIRS ${boost_SOURCE_DIR}/include/ CACHE DIRECTORY "Include Directory of the OpneDRIVE parser" FORCE)
-include_directories(${boost_INCLUDE_DIR})
+    # TODO: Windows
+    message("creating headers ...")
+
+    set(MAKE_CMD ./bootstrap.sh)
+    message("COMMAND: ${MAKE_CMD}")
+
+    execute_process(COMMAND ${MAKE_CMD}
+            WORKING_DIRECTORY ${boost_SOURCE_DIR}
+            RESULT_VARIABLE CMD_ERROR
+            OUTPUT_FILE CMD_OUTPUT)
+
+    set(MAKE_CMD ./b2 headers)
+    message("COMMAND: ${MAKE_CMD}")
+
+    execute_process(COMMAND ${MAKE_CMD}
+            WORKING_DIRECTORY ${boost_SOURCE_DIR}
+            RESULT_VARIABLE CMD_ERROR
+            OUTPUT_FILE CMD_OUTPUT)
+
+endif()
+
+set(Boost_INCLUDE_DIRS ${boost_SOURCE_DIR} CACHE DIRECTORY "Include Directory of the OpneDRIVE parser" FORCE)
+include_directories(${boost_SOURCE_DIR})
