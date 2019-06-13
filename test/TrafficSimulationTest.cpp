@@ -22,9 +22,9 @@
 #endif
 
 
-struct IDM : public ::sim::IComponent, public Agent {
+struct DriverModel : public ::sim::IComponent, public Agent {
 
-    static std::unordered_map<unsigned long, IDM> agents;
+    static std::unordered_map<unsigned long, DriverModel> agents;
 
 
     double s  = 0.0;
@@ -38,13 +38,35 @@ struct IDM : public ::sim::IComponent, public Agent {
     double s0  = 2.0;
 
 
-    double acc(double ds, double dv) {
+    double idm(double ds, double dv) {
 
         // calculate acceleration
         auto s_star = s0 + v * T + (v * dv / (2.0 * sqrt(ac * bc)));
         a = ac * (1.0 - pow(v / v0, 4) - pow(s_star / ds, 2));
 
         return a;
+
+    }
+
+
+    std::pair<bool, bool> mobil(double ds0f, double v0f, double ds1f, double v1f, double ds0b, double v0b,
+            double ds1b, double v1b) {
+
+        auto a00m = idm(ds0f, v - v0f);          // acc(M)
+        auto a11m = idm(ds1f, v - v1f);          // acc'(M')
+        auto a00b = idm(-ds0b, v0b - v);         // acc(B)
+        auto a01b = idm(ds1f - ds1b, v1b - v1f); // acc(B')
+        auto a10b = idm(ds0f - ds0b, v0b - v0f); // acc'(B)
+        auto a11b = idm(-ds1b, v1f - v);         // acc'(B')
+
+        auto bSave = 0.5;
+        auto p = 1.0;
+        auto aThr = 0.0;
+
+        return {
+            a11b > -bSave,                                        // safety criterion
+            a11m - a00m > p * (a00b + a01b - a10b - a11b) + aThr  // incentive criterion
+        };
 
     }
 
@@ -68,13 +90,14 @@ struct IDM : public ::sim::IComponent, public Agent {
         auto ds_back_ego = -INFINITY;
         auto v_back_ego = 0.0;
 
+        auto id_front_tar = 0;
+        auto ds_front_tar = INFINITY;
+        auto v_front_tar = 0.0;
+
         auto id_back_tar = 0;
         auto ds_back_tar = -INFINITY;
         auto v_back_tar = 0.0;
 
-        auto id_front_tar = 0;
-        auto ds_front_tar = INFINITY;
-        auto v_front_tar = 0.0;
 
         // get relevant target
         for(auto &tar : tars) {
@@ -82,39 +105,31 @@ struct IDM : public ::sim::IComponent, public Agent {
             // check if distance is larger than zero
             if(tar.distance > 0.0 && tar.lane == 0 && tar.distance < ds_front_ego) {
                 ds_front_ego = tar.distance;
-                v_front_ego  = agents[tar.id].v;
+                id_front_ego = tar.id;
             }
 
             // check if distance is larger than zero
             if(tar.distance < 0.0 && tar.lane == 0 && tar.distance > ds_back_ego) {
                 ds_back_ego = tar.distance;
-                v_back_ego  = agents[tar.id].v;
+                id_back_ego = tar.id;
             }
 
             // check if distance is larger than zero
             if(tar.distance > 0.0 && tar.lane != 0 && tar.distance > ds_front_tar) {
                 ds_front_tar = tar.distance;
-                v_front_tar  = v - agents[tar.id].v;
+                id_front_tar = tar.id;
             }
 
             // check if distance is larger than zero
             if(tar.distance < 0.0 && tar.lane != 0 && tar.distance > ds_back_tar) {
                 ds_back_tar = tar.distance;
-                v_back_tar  = v - agents[tar.id].v;
+                id_back_tar = tar.id;
             }
 
         }
 
         // calculate acceleration
-        a = acc(ds_front_ego, v - v_front_ego);                                              // acc (M)
-        auto a1 = acc(ds_front_tar, v - v_front_tar);                                        // acc' (M')
-        auto a2 = agents[tar.id].acc(ds_front_tar - ds_back_tar, v_back_tar - v_front_tar);  // acc (B')
-        auto a3 = agents[tar.id].acc(-ds_back_tar, v_back_tar - v);                          // acc' (B')
-
-        auto change = a1 - a > 1.0 * (a2 - a3) + 0.0;
-        std::cout << (change ? "change" : "don't change") << std::endl;
-
-        // acc' (M') - acc (M) > p [ acc (B') - acc' (B') ] + athr
+        a = idm(ds_front_ego, v - v_front_ego);
 
         // calculate distance
         auto dt = timeStep(simTime);
@@ -136,7 +151,7 @@ struct IDM : public ::sim::IComponent, public Agent {
 
 };
 
-std::unordered_map<unsigned long, IDM> IDM::agents{};
+std::unordered_map<unsigned long, DriverModel> DriverModel::agents{};
 
 
 class TrafficSimulationTest : public ::testing::Test, public Environment {
@@ -173,6 +188,20 @@ public:
     }
 
 };
+
+
+
+TEST(TrafficSimulationTestModels, Models) {
+
+    DriverModel ego{};
+    DriverModel t0f{};
+    DriverModel t0b{};
+    DriverModel t1f{};
+    DriverModel t1b{};
+
+    // TODO:
+
+}
 
 
 
@@ -226,24 +255,27 @@ TEST_F(TrafficSimulationTest, TrafficSimulation) {
         auto id = i + 1;
 
         // create IDM object
-        IDM::agents[id] = IDM{};
-        this->createAgent(&IDM::agents[id], id, {"1", "-2"});
+        DriverModel::agents[id] = DriverModel{};
+        auto dm = &DriverModel::agents[id];
+
+        // create agent
+        this->createAgent(dm, id, {"1", "-2"});
 
         // set velocity
-        IDM::agents[id].v0 -= (2.0 * i / 3.6);
+        dm->v0 -= (2.0 * i / 3.6);
 
         // place agent
         auto s = (2 * M_PI * 100.0 / n) * i;
         if(s < M_PI * 50.0)
-            IDM::agents[id].setMapPosition("R1-LS1-R1", s, 0.0);
+            dm->setMapPosition("R1-LS1-R1", s, 0.0);
         else if(s < M_PI * 100.0)
-            IDM::agents[id].setMapPosition("R1-LS2-R1", s - M_PI * 50.0, 0.0);
+            dm->setMapPosition("R1-LS2-R1", s - M_PI * 50.0, 0.0);
         else
-            IDM::agents[id].setMapPosition("R2-LS1-L1", s - M_PI * 100.0, 0.0);
+            dm->setMapPosition("R2-LS1-L1", s - M_PI * 100.0, 0.0);
 
         // save agent to storable list and add as component
-        store.emplace_back(&IDM::agents[id]);
-        sim.addComponent(&IDM::agents[id]);
+        store.emplace_back(dm);
+        sim.addComponent(dm);
 
     }
 
