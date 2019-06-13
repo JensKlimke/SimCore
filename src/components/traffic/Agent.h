@@ -22,6 +22,9 @@
 
 class Agent : public sim::data::IStorable {
 
+    static const unsigned long NO_OF_TARGETS = 64;
+    static const unsigned long NO_OF_LANES   = 32;
+
     unsigned int _id = 0;
     simmap::Position _pos{};
 
@@ -113,6 +116,13 @@ public:
      * @return List of targets
      */
     std::vector<simmap::TargetInformation> getTargets();
+
+
+    /**
+     * Returns lane information around the agent
+     * @return Lane information vector
+     */
+    std::vector<simmap::LaneInformation> getLanes();
 
 
     /**

@@ -92,9 +92,6 @@ wsServer.on('request', function(request) {
 
             } else {
 
-                // log and broadcast the message
-                console.log((new Date()) + ' Received Message from ' + userName + ': ' + message.utf8Data);
-
                 // we want to keep history of all sent messages
                 var obj = {
                     time: (new Date()).getTime(),

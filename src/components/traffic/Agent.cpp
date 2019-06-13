@@ -7,11 +7,6 @@
 #include <iostream>
 
 
-#ifndef NO_OF_TARGETS
-#define NO_OF_TARGETS 32
-#endif
-
-
 void Agent::setID(unsigned int id) {
 
     _id = id;
@@ -144,9 +139,25 @@ std::vector<simmap::TargetInformation> Agent::getTargets() {
     if(simmap::targets(getID(), ti.data(), &n) != 0)
         throw std::runtime_error("Could not generate target list");
 
-    return ti;
+    return std::vector<simmap::TargetInformation>(ti.begin(), std::next(ti.begin(), n));
 
 }
+
+
+std::vector<simmap::LaneInformation> Agent::getLanes() {
+
+    // define number lanes
+    unsigned long n = NO_OF_LANES;
+    std::vector<simmap::LaneInformation> li(n);
+
+    // get lane information
+    if(simmap::lanes(getID(), li.data(), &n) != 0)
+        throw std::runtime_error("Could not generate lane list");
+
+    return std::vector<simmap::LaneInformation>(li.begin(), std::next(li.begin(), n));
+
+}
+
 
 std::vector<sim::data::IStorable::DataEntry> Agent::getData(sim::data::IStorable::Context context) const {
 

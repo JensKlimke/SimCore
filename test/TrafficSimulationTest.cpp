@@ -79,57 +79,66 @@ struct DriverModel : public ::sim::IComponent, public Agent {
 
     bool step(double simTime) override {
 
+        struct Tar {
+            double ds;
+            double v;
+            unsigned int id;
+        };
+
+        // targets
+        std::map<int, Tar> front{};
+        std::map<int, Tar> back{};
+
+
+        // get lanes
+        auto lanes = getLanes();
+
+        lanes[0] = {};
+        lanes[0].access    = simmap::Access::ALLOWED;
+        lanes[0].direction = simmap::Direction::FORWARDS;
+
+        // create pair for each lane
+        for(auto &ln : lanes) {
+
+            // TODO: more options
+            if(ln.access != simmap::Access::ALLOWED || ln.direction != simmap::Direction::FORWARDS)
+                continue;
+
+            front[ln.index] = {INFINITY, 0.0, 0};
+            back[ln.index]  = {-INFINITY, 0.0, 0};
+
+        }
+
+
         // get targets
         auto tars = this->getTargets();
-
-        auto id_front_ego = 0;
-        auto ds_front_ego = INFINITY;
-        auto v_front_ego = 0.0;
-
-        auto id_back_ego = 0;
-        auto ds_back_ego = -INFINITY;
-        auto v_back_ego = 0.0;
-
-        auto id_front_tar = 0;
-        auto ds_front_tar = INFINITY;
-        auto v_front_tar = 0.0;
-
-        auto id_back_tar = 0;
-        auto ds_back_tar = -INFINITY;
-        auto v_back_tar = 0.0;
-
 
         // get relevant target
         for(auto &tar : tars) {
 
-            // check if distance is larger than zero
-            if(tar.distance > 0.0 && tar.lane == 0 && tar.distance < ds_front_ego) {
-                ds_front_ego = tar.distance;
-                id_front_ego = tar.id;
+            // create pair for each lane
+            for(auto &ln : lanes) {
+
+                // check distance
+                if(tar.lane != ln.index)
+                    continue;
+
+                // check if target is closer than last one
+                if(tar.distance > 0.0 && tar.distance < front[ln.index].ds)
+                    front[ln.index] = {tar.distance, agents.at(tar.id).v, tar.id};
+
+                // check if target is closer than last one
+                if(tar.distance <= 0.0 && tar.distance > back[ln.index].ds)
+                    back[ln.index] = {tar.distance, agents.at(tar.id).v, tar.id};
+
             }
 
-            // check if distance is larger than zero
-            if(tar.distance < 0.0 && tar.lane == 0 && tar.distance > ds_back_ego) {
-                ds_back_ego = tar.distance;
-                id_back_ego = tar.id;
-            }
-
-            // check if distance is larger than zero
-            if(tar.distance > 0.0 && tar.lane != 0 && tar.distance > ds_front_tar) {
-                ds_front_tar = tar.distance;
-                id_front_tar = tar.id;
-            }
-
-            // check if distance is larger than zero
-            if(tar.distance < 0.0 && tar.lane != 0 && tar.distance > ds_back_tar) {
-                ds_back_tar = tar.distance;
-                id_back_tar = tar.id;
-            }
 
         }
 
+
         // calculate acceleration
-        a = idm(ds_front_ego, v - v_front_ego);
+        a = idm(front[0].ds - 5.0, v - front[0].v);
 
         // calculate distance
         auto dt = timeStep(simTime);
@@ -210,11 +219,11 @@ TEST_F(TrafficSimulationTest, TrafficSimulation) {
     using namespace ::sim;
 
     // create objects
-    BasicTimer timer;
+    RealTimeTimer timer;
     TimeIsUp stop;
 
     // set acceleration
-    //timer.setAcceleration(5.0);
+    timer.setAcceleration(2.0);
 
     // time reporter
     TimeReporter tr;
