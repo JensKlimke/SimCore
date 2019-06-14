@@ -98,22 +98,27 @@ struct DriverModel : public ::sim::IComponent, public Agent {
         lanes[0].direction = simmap::Direction::FORWARDS;
 
         // create pair for each lane
-        for(auto &ln : lanes) {
+        for(auto it = lanes.begin(); it != lanes.end(); ) {
+
+            // get lane
+            auto &ln = *it;
 
             // TODO: more options
-            if(ln.access != simmap::Access::ALLOWED || ln.direction != simmap::Direction::FORWARDS)
+            if(ln.access != simmap::Access::ALLOWED || ln.direction != simmap::Direction::FORWARDS) {
+                it = lanes.erase(it);
                 continue;
+            }
 
+            // create target element
             front[ln.index] = {INFINITY, 0.0, 0};
             back[ln.index]  = {-INFINITY, 0.0, 0};
 
+            ++it;
+
         }
 
-
-        // get targets
-        auto tars = this->getTargets();
-
         // get relevant target
+        auto tars = this->getTargets();
         for(auto &tar : tars) {
 
             // create pair for each lane
@@ -136,7 +141,6 @@ struct DriverModel : public ::sim::IComponent, public Agent {
 
         }
 
-
         // calculate acceleration
         a = idm(front[0].ds - 5.0, v - front[0].v);
 
@@ -150,6 +154,28 @@ struct DriverModel : public ::sim::IComponent, public Agent {
 
         // move agent
         this->move(ds_step, 0.0);
+
+
+        if(getID() != 2)
+            return true;
+
+
+        // iterate over lanes
+        for(auto &ln : lanes) {
+
+            if(ln.index == 0)
+                continue;
+
+            // calculate lane change
+            auto c = mobil(front[0].ds, front[0].v, front[ln.index].ds, front[ln.index].v, back[0].ds, back[0].v,
+                    back[ln.index].ds, back[ln.index].v);
+
+            if (c.first && c.second) {
+                this->setMapPosition(ln.id, ln.s, 0.0);
+                std::cout << "Agent " << getID() << " changed lane to the " << (ln.index > 0 ? "left" : "right") << std::endl;
+            }
+
+        }
 
         return true;
 
@@ -223,7 +249,7 @@ TEST_F(TrafficSimulationTest, TrafficSimulation) {
     TimeIsUp stop;
 
     // set acceleration
-    timer.setAcceleration(2.0);
+    timer.setAcceleration(8.0);
 
     // time reporter
     TimeReporter tr;

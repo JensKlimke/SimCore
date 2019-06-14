@@ -43,7 +43,7 @@ public:
 
         // wait until elapsed time
         auto nextTime = getTimeStepSize() * _steps;
-        while (currTime < 0.1 * nextTime) {
+        while (currTime < nextTime / _acceleration) {
 
             // wait a thousandth of a second
             std::this_thread::sleep_for(std::chrono::microseconds(100));
