@@ -5,7 +5,7 @@
 #ifndef SIMCORE_SIGNALTUBE_H
 #define SIMCORE_SIGNALTUBE_H
 
-#include "SignalTube.h"
+#include "SignalCurve.h"
 
 class SignalTube {
 
