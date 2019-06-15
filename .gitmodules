@@ -2,3 +2,7 @@
 	path = test/tools/client/d3
 	url = https://github.com/d3/d3.git
 	branch = master
+[submodule "test/tools/client/jquery"]
+	path = test/tools/client/jquery
+	url = https://github.com/jquery/jquery.git
+	branch = master
