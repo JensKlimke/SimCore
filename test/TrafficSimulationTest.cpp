@@ -42,9 +42,14 @@ struct DriverModel : public ::sim::IComponent, public Agent {
 
         // calculate acceleration
         auto s_star = s0 + v * T + (v * dv / (2.0 * sqrt(ac * bc)));
-        a = ac * (1.0 - pow(v / v0, 4) - pow(s_star / ds, 2));
+        auto acc = ac * (1.0 - pow(v / v0, 4) - pow(s_star / ds, 2));
 
-        return a;
+        if(isnan(acc))
+            acc = 0.0;
+        else if(isinf(acc))
+            acc = 0.0;
+
+        return acc;
 
     }
 
@@ -60,8 +65,8 @@ struct DriverModel : public ::sim::IComponent, public Agent {
         auto a11b = idm(-ds1b, v1f - v);         // acc'(B')
 
         auto bSave = 0.5;
-        auto p = 1.0;
-        auto aThr = 0.0;
+        auto p = 0.8;
+        auto aThr = 0.5;
 
         return {
             a11b > -bSave,                                        // safety criterion
@@ -143,21 +148,19 @@ struct DriverModel : public ::sim::IComponent, public Agent {
 
         // calculate acceleration
         a = idm(front[0].ds - 5.0, v - front[0].v);
+        a = std::max(std::min(a, ac), -bc);
 
         // calculate distance
         auto dt = timeStep(simTime);
-        auto ds_step = 0.5 * a * dt * dt + v * dt;
+        auto ds_step = std::max(0.5 * a * dt * dt + v * dt, 0.0);
 
         // calculate distance and speed
         s += ds_step;
         v += a * dt;
+        v = std::max(v, 0.0);
 
         // move agent
         this->move(ds_step, 0.0);
-
-
-        if(getID() != 2)
-            return true;
 
 
         // iterate over lanes
@@ -249,7 +252,8 @@ TEST_F(TrafficSimulationTest, TrafficSimulation) {
     TimeIsUp stop;
 
     // set acceleration
-    timer.setAcceleration(8.0);
+    auto a = 1.0;
+    timer.setAcceleration(a);
 
     // time reporter
     TimeReporter tr;
@@ -277,7 +281,7 @@ TEST_F(TrafficSimulationTest, TrafficSimulation) {
     sim.addComponent(this);
 
     // define agent size
-    unsigned int n = 10;
+    unsigned int n = 60;
 
     // create containers
     std::vector<const sim::data::IStorable*> store;
@@ -297,7 +301,8 @@ TEST_F(TrafficSimulationTest, TrafficSimulation) {
         this->createAgent(dm, id, {"1", "-2"});
 
         // set velocity
-        dm->v0 -= (2.0 * i / 3.6);
+        dm->v0 += (1.0 * i / 3.6);
+        dm->v = dm->v0;
 
         // place agent
         auto s = (2 * M_PI * 100.0 / n) * i;
