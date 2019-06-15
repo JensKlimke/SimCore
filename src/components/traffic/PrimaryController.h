@@ -88,7 +88,7 @@ public:
      * @param context Context of the data
      * @return
      */
-    std::vector<DataEntry> getData(Context context) override;
+    std::vector<DataEntry> getData(Context context) const override;
 
 
     // generate accessor methods

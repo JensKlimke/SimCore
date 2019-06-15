@@ -2,13 +2,13 @@
 // Created by Jens Klimke on 2019-03-19.
 //
 
-#include <gtest/gtest.h>
 #include <core/IComponent.h>
 #include <core/Loop.h>
 #include <components/data/DataManager.h>
 #include <components/timers/BasicTimer.h>
 #include <components/timers/TimeIsUp.h>
 #include <components/timers/RealTimeTimer.h>
+#include <gtest/gtest.h>
 
 
 class SimTest : public ::testing::Test, public sim::IComponent {

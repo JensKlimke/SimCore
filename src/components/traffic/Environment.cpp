@@ -2,31 +2,27 @@
 // Created by Jens Klimke on 2019-04-22.
 //
 
-#include "Environment.h"
 #include <iostream>
+#include "Environment.h"
 
 
-Agent * Environment::createAgent(unsigned int id, const std::vector<std::string> &track) {
+void Environment::createAgent(Agent *agent, unsigned int id, const std::vector<std::string> &track) {
 
     // create agent
-    auto ag = new Agent;
-    ag->setID(id);
+    agent->setID(id);
 
     // register agent to simulation map service
     auto err = simmap::registerAgent(id, _map_id);
     if(err != 0)
-        throw std::runtime_error("Agent could not be registered");
+        throw std::invalid_argument("Agent could not be registered");
 
     // set track
     if(!track.empty())
-        ag->setTrack(track);
+        agent->setTrack(track);
 
     // save and index
-    _agents.emplace_back(std::unique_ptr<Agent>(ag));
-    _index[id] = ag;
-
-    // return agent
-    return ag;
+    _agents.emplace_back(agent);
+    _index[id] = agent;
 
 }
 
@@ -81,6 +77,9 @@ unsigned int Environment::getMapID() const {
 
 void Environment::clear() const {
 
-    simmap::clear();
+    auto err = simmap::clear();
+
+    if(err != 0)
+        throw std::runtime_error("Couldn't clear simmap framework.");
 
 }

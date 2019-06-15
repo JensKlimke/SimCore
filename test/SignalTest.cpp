@@ -2,8 +2,6 @@
 // Created by klimke on 16.04.2019.
 //
 
-
-#include <gtest/gtest.h>
 #include <core/IComponent.h>
 #include <core/Loop.h>
 #include <core/IStopCondition.h>
@@ -13,6 +11,7 @@
 #include <components/value/ValueOutOfTube.h>
 #include <components/timers/BasicTimer.h>
 #include <components/timers/TimeIsUp.h>
+#include <gtest/gtest.h>
 
 
 TEST(SignalTestBasic, SignalCurve) {

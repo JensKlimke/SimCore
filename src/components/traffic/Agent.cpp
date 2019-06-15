@@ -7,7 +7,6 @@
 #include <iostream>
 
 
-
 void Agent::setID(unsigned int id) {
 
     _id = id;
@@ -27,7 +26,7 @@ unsigned int Agent::getID() const {
 void Agent::setTrack(const std::vector<std::string> &track) {
 
     // create string array
-    const char ** rids = new const char*[track.size()];
+    std::vector<const char*> rids(track.size());
 
     // write track data
     size_t i = 0;
@@ -35,7 +34,7 @@ void Agent::setTrack(const std::vector<std::string> &track) {
         rids[i++] = rid.c_str();
 
     // set track
-    auto err = simmap::setTrack(_id, rids, track.size());
+    auto err = simmap::setTrack(_id, rids.data(), track.size());
     if(err != 0)
         throw std::runtime_error("Could not set track.");
 
@@ -126,5 +125,61 @@ void Agent::setDimensions(double length, double width) {
 
     _length = length;
     _width = width;
+
+}
+
+
+std::vector<simmap::TargetInformation> Agent::getTargets() {
+
+    // define number of targets
+    unsigned long n = NO_OF_TARGETS;
+    std::vector<simmap::TargetInformation> ti(n);
+
+    // get target information
+    if(simmap::targets(getID(), ti.data(), &n) != 0)
+        throw std::runtime_error("Could not generate target list");
+
+    return std::vector<simmap::TargetInformation>(ti.begin(), std::next(ti.begin(), n));
+
+}
+
+
+std::vector<simmap::LaneInformation> Agent::getLanes() {
+
+    // define number lanes
+    unsigned long n = NO_OF_LANES;
+    std::vector<simmap::LaneInformation> li(n);
+
+    // get lane information
+    if(simmap::lanes(getID(), li.data(), &n) != 0)
+        throw std::runtime_error("Could not generate lane list");
+
+    return std::vector<simmap::LaneInformation>(li.begin(), std::next(li.begin(), n));
+
+}
+
+
+std::vector<sim::data::IStorable::DataEntry> Agent::getData(sim::data::IStorable::Context context) const {
+
+    using namespace sim::data;
+
+    std::vector<sim::data::IStorable::DataEntry> ret{};
+    if(context == sim::data::IStorable::Context::STATE) {
+
+        ret.push_back(createDataEntry("x",     &_pos.x));
+        ret.push_back(createDataEntry("y",     &_pos.y));
+        ret.push_back(createDataEntry("z",     &_pos.z));
+        ret.push_back(createDataEntry("psi",   &_pos.phi));
+        ret.push_back(createDataEntry("kappa", &_pos.kappa));
+
+    } else if(context == sim::data::IStorable::PARAMETER) {
+
+        ret.push_back(createDataEntry("id",     &_id));
+        ret.push_back(createDataEntry("width",  &_width));
+        ret.push_back(createDataEntry("length", &_length));
+
+    }
+
+    return ret;
 
 }

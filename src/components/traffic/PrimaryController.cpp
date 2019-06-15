@@ -62,7 +62,7 @@ void PrimaryController::initialize(double initTime) {
 
 }
 
-std::vector<sim::data::IStorable::DataEntry> PrimaryController::getData(sim::data::IStorable::Context context) {
+std::vector<sim::data::IStorable::DataEntry> PrimaryController::getData(sim::data::IStorable::Context context) const {
 
     std::vector<DataEntry> ret;
     ret.reserve(2);

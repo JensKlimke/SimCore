@@ -5,5 +5,5 @@ set(SOURCE_FILES
         traffic/PrimaryController.cpp)
 
 add_library(components STATIC ${SOURCE_FILES})
-target_link_libraries(components PUBLIC core simmap curl)
+target_link_libraries(components PUBLIC simmap)
 target_include_directories(components PUBLIC ${CMAKE_SOURCE_DIR}/src)

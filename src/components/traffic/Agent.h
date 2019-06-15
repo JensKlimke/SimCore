@@ -9,7 +9,7 @@
 #include <string>
 #include <cmath>
 #include <SimMap/lib.h>
-
+#include <core/IStorable.h>
 
 #ifndef VEH_DEFAULT_LENGTH
 #define VEH_DEFAULT_LENGTH 5.0;
@@ -20,7 +20,10 @@
 #endif
 
 
-class Agent {
+class Agent : public sim::data::IStorable {
+
+    static const unsigned long NO_OF_TARGETS = 64;
+    static const unsigned long NO_OF_LANES   = 32;
 
     unsigned int _id = 0;
     simmap::Position _pos{};
@@ -107,6 +110,27 @@ public:
      */
     void setDimensions(double length, double width);
 
+
+    /**
+     * Returns a list of targets. The number of returned (and ordered) targets can be set by macro NO_OF_TARGETS
+     * @return List of targets
+     */
+    std::vector<simmap::TargetInformation> getTargets();
+
+
+    /**
+     * Returns lane information around the agent
+     * @return Lane information vector
+     */
+    std::vector<simmap::LaneInformation> getLanes();
+
+
+    /**
+     * Return data
+     * @param context
+     * @return
+     */
+    std::vector<sim::data::IStorable::DataEntry> getData(sim::data::IStorable::Context context) const;
 
 
 protected:

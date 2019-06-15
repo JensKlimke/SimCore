@@ -1,15 +1,3 @@
-set(SOURCE_FILES
-        IComponent.h
-        Loop.h Loop.cpp
-        Exceptions.h
-        ITimer.h
-        IStopCondition
-        IParameterizable.h
-        IStorable.h
-        ISynchronized.h
-        functions.h
-        IPlugin.h Plugin.h
-        Model.h
-        )
+set(SOURCE_FILES Loop.cpp)
 
 add_library(core STATIC ${SOURCE_FILES})

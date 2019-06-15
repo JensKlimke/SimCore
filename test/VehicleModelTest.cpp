@@ -2,8 +2,8 @@
 // Created by klimke on 22.03.2019.
 //
 
-#include <gtest/gtest.h>
 #include "TestSimulation.cpp"
+#include <gtest/gtest.h>
 
 class VehicleModelTest : public ::testing::Test, public TestSimulation {
 
