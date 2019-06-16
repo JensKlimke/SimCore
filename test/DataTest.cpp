@@ -5,11 +5,13 @@
 #include <core/Model.h>
 #include <core/Loop.h>
 #include <core/IStopCondition.h>
+#include <core/IStorable.h>
 #include <components/timers/BasicTimer.h>
 #include <components/timers/TimeIsUp.h>
 #include <components/data/TimeReporter.h>
 #include <components/data/DataManager.h>
 #include <gtest/gtest.h>
+#include <map>
 
 
 class DataTest : public ::testing::Test, public sim::Model {
@@ -40,7 +42,6 @@ private:
 
     double time = 0.0;
     std::string name;
-
 
 
 protected:
@@ -103,6 +104,7 @@ public:
 
     }
 
+
     void terminate(double simTime) override {
 
         time = simTime;
@@ -118,8 +120,8 @@ public:
 
         switch(context) {
             case Context::PARAMETER:
-                ADD(ret, pa, _param);
-                ADD(ret, pb, _param);
+                ret.push_back(sim::data::createDataEntry("pa", &_param.pa));
+                ret.push_back(sim::data::createDataEntry("pb", &_param.pb));
                 ret.emplace_back(sim::data::createDataEntry("name",  &name));
                 break;
             case Context::INPUT:
@@ -138,6 +140,14 @@ public:
         return ret;
 
     }
+
+
+    void _data() {
+
+
+
+    }
+
 
     // accessors
     PARAM_ACCESS(Parameters, _param)

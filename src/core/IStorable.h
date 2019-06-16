@@ -12,10 +12,10 @@
 
 
 #define ADD(vector, name, structure)                                         \
-    vector.push_back(sim::data::createDataEntry(#name, &(structure).name))   \
+    vector.emplace_back(sim::data::createDataEntry(#name, &(structure).name))   \
 
 #define ADD_PTR(vector, name, structure)                                     \
-    vector.push_back(sim::data::createDataEntry(#name, (structure).name))    \
+    vector.emplace_back(sim::data::createDataEntry(#name, (structure).name))    \
 
 
 #include <vector>
@@ -56,9 +56,9 @@ namespace data {
 
 
     template<typename T>
-    struct DataSet : public IDataSet {
+    struct DataValue : public IDataSet {
         const T *value = nullptr;
-        explicit DataSet(const T *v) : value(v) {}
+        explicit DataValue(const T *v) : value(v) {}
         std::ostream &s(std::ostream &os) const override {
             os << *value;
             return os;
@@ -67,8 +67,8 @@ namespace data {
     };
 
 
-    struct StringSet : public DataSet<std::string> {
-        explicit StringSet(const std::string *val) : DataSet<std::string>(val) {}
+    struct StringValue : public DataValue<std::string> {
+        explicit StringValue(const std::string *val) : DataValue<std::string>(val) {}
         std::ostream &s(std::ostream &os) const override {
             os << "\"" << (*value) << "\"";
             return os;
@@ -79,13 +79,13 @@ namespace data {
     template<typename T>
     inline IStorable::DataEntry createDataEntry(const std::string &name, const T *value) {
 
-        return IStorable::DataEntry{name, std::make_shared<DataSet<T>>(value)};
+        return IStorable::DataEntry{name, std::make_shared<DataValue<T>>(value)};
 
     }
 
     inline IStorable::DataEntry createDataEntry(const std::string &name, const std::string *value) {
 
-        return IStorable::DataEntry{name, std::make_shared<StringSet>(value)};
+        return IStorable::DataEntry{name, std::make_shared<StringValue>(value)};
 
     }
 
