@@ -11,6 +11,7 @@ set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 set(SIMMAP_ENABLE_TESTING OFF CACHE BOOL "" FORCE)
 
 if (CMAKE_VERSION VERSION_LESS 3.11)
+
     set(UPDATE_DISCONNECTED_IF_AVAILABLE "UPDATE_DISCONNECTED 1")
 
     include(DownloadProject)
@@ -26,6 +27,7 @@ if (CMAKE_VERSION VERSION_LESS 3.11)
     unset(CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
 
 else ()
+
     include(FetchContent)
     FetchContent_Declare(simmap
             GIT_REPOSITORY https://github.com/JensKlimke/SimMap.git
@@ -37,23 +39,9 @@ else ()
         add_subdirectory(${simmap_SOURCE_DIR} ${simmap_BINARY_DIR} EXCLUDE_FROM_ALL)
         unset(CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
     endif ()
+
 endif ()
 
 
 set(simmap_INCLUDE_DIR ${simmap_SOURCE_DIR}/include/ CACHE DIRECTORY "Include Directory of the SimMap framework" FORCE)
 include_directories(${simmap_INCLUDE_DIR})
-
-
-set_target_properties(simmap
-        PROPERTIES FOLDER "Extern")
-
-
-mark_as_advanced(
-        odr
-        server
-        odradapter
-        graph
-        curve
-        check
-        uninstall
-)
