@@ -37,7 +37,7 @@ public:
         double endDistance = INFINITY;
         bool realTime = false;
         bool timeReport = false;
-        bool liveLog = false;
+
         std::string logFile;
         std::vector<SimAgent> agents{};
 
@@ -119,9 +119,9 @@ public:
             loop.addComponent(unit->vehicle.get());
 
             // link state, input and parameters
-            unit->vehicle->getState(reinterpret_cast<void**>(&unit->vehState));
-            unit->vehicle->getInput(reinterpret_cast<void**>(&unit->vehInput));
-            unit->vehicle->getParameters(reinterpret_cast<void**>(&unit->vehParam));
+            unit->vehicle->getStates(&unit->vehState);
+            unit->vehicle->getInputs(&unit->vehInput);
+            unit->vehicle->getParameters(&unit->vehParam);
 
             // initialize state
             unit->vehState->xy[0] = 0.0;

@@ -6,38 +6,47 @@
 #define SIMCORE_PARAMETERIZABLE_H
 
 
-#define PARAM_ACCESS(var)                                               \
-bool getParameters(void **param) override {                             \
+#define PARAM_ACCESS(struct_name, var)                                  \
+bool getParameters(struct_name **params) {                              \
     try {                                                               \
-        *param = &var;                                                  \
+        *params = &this->var;                                           \
     } catch(...) {                                                      \
         return false;                                                   \
     }                                                                   \
     return true;                                                        \
 }                                                                       \
+bool getParametersAsVoid(void **params) override {                      \
+    return getParameters(reinterpret_cast<struct_name**>(params));      \
+}                                                                       \
 
 
-#define INPUT_ACCESS(var)                                               \
-bool getInput(void **input) override {                                  \
+#define INPUT_ACCESS(struct_name, var)                                  \
+bool getInputs(struct_name **input) {                                   \
     try {                                                               \
-        *input = &var;                                                  \
+        *input = &this->var;                                            \
     } catch(...) {                                                      \
         return false;                                                   \
     }                                                                   \
     return true;                                                        \
 }                                                                       \
+bool getInputsAsVoid(void **inputs) override {                          \
+    return getInputs(reinterpret_cast<struct_name**>(inputs));          \
+}                                                                       \
 
 
-#define STATE_ACCESS(var)                                               \
-bool getState(void **state) override {                                  \
+#define STATE_ACCESS(struct_name, var)                                  \
+bool getStates(struct_name **states) {                                  \
     try {                                                               \
-        *state = &var;                                                  \
+        *states = &this->var;                                           \
     } catch(...) {                                                      \
         return false;                                                   \
     }                                                                   \
     return true;                                                        \
+                                                                        \
 }                                                                       \
-
+bool getStatesAsVoid(void **states) override {                          \
+    return getStates(reinterpret_cast<struct_name**>(states));          \
+}                                                                       \
 
 
 namespace sim {
@@ -63,21 +72,21 @@ public:
      * Writes the parameters of the model into the given pointer
      * @return The parameters of the model
      */
-    virtual bool getParameters(void **param) = 0;
+    virtual bool getParametersAsVoid(void **params) = 0;
 
 
     /**
      * Writes the input of the model into the given pointer
      * @return The input of the model
      */
-    virtual bool getInput(void **input) = 0;
+    virtual bool getInputsAsVoid(void **inputs) = 0;
 
 
     /**
      * Writes the state of the model into the given pointer
      * @return The state of the model
      */
-    virtual bool getState(void **state) = 0;
+    virtual bool getStatesAsVoid(void **states) = 0;
 
 
 };

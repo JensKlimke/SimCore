@@ -61,9 +61,9 @@ public:
     void terminate(double simTime) override;
 
     // default accessors
-    PARAM_ACCESS(_param)
-    INPUT_ACCESS(_input)
-    STATE_ACCESS(_state)
+    PARAM_ACCESS(Parameters, _param)
+    INPUT_ACCESS(Input, _input)
+    STATE_ACCESS(State, _state)
 
 
     std::vector<DataEntry> getData(Context context) const override {

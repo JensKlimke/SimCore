@@ -21,7 +21,7 @@ class EnvironmentTest : public ::testing::Test, public Environment {
 protected:
 
     ::sim::Loop sim{};
-    Agent *agent = nullptr;
+    Agent agent{};
     std::string file;
 
 public:
@@ -40,8 +40,8 @@ public:
         sim.addComponent(this);
 
         // add agents
-        agent = this->createAgent(nullptr, 1, {"1", "-2"});
-        agent->setMapPosition("R1-LS2-R2", 42.9203673205, 0.5);
+        this->createAgent(&agent, 1, {"1", "-2"});
+        agent.setMapPosition("R1-LS2-R2", 42.9203673205, 0.5);
 
     }
 
@@ -64,10 +64,10 @@ TEST_F(EnvironmentTest, MapLoaded) {
 TEST_F(EnvironmentTest, RegisterAgents) {
 
     // check id
-    EXPECT_EQ(1, agent->getID());
+    EXPECT_EQ(1, agent.getID());
 
     // get position
-    auto pos = agent->getPosition();
+    auto pos = agent.getPosition();
     EXPECT_NEAR(-43.6954, pos.x,     1e-4);
     EXPECT_NEAR( 95.4762, pos.y,     1e-4);
     EXPECT_NEAR(  0.0,    pos.z,     1e-4);
@@ -85,10 +85,10 @@ TEST_F(EnvironmentTest, SetAgent) {
     pos.phi   =   3.5708;
 
     // set position
-    agent->setPosition(pos, 1.0);
+    agent.setPosition(pos, 1.0);
 
     // get position
-    pos = agent->getPosition();
+    pos = agent.getPosition();
     EXPECT_NEAR(-43.6954, pos.x,     1e-4);
     EXPECT_NEAR( 95.4762, pos.y,     1e-4);
     EXPECT_NEAR(  0.0,    pos.z,     1e-4);
@@ -101,10 +101,10 @@ TEST_F(EnvironmentTest, SetAgent) {
     pos.phi   =   4.0;
 
     // set position
-    agent->setPosition(pos, 10.0);
+    agent.setPosition(pos, 10.0);
 
     // get position
-    pos = agent->getPosition();
+    pos = agent.getPosition();
     EXPECT_NEAR(-48.4126, pos.x,     1e-4);
     EXPECT_NEAR( 93.1730, pos.y,     1e-4);
     EXPECT_NEAR(  0.0,    pos.z,     1e-4);
@@ -116,17 +116,17 @@ TEST_F(EnvironmentTest, SetAgent) {
 TEST_F(EnvironmentTest, MoveAgent) {
 
     // move agent
-    agent->move(5.0, 0.5);
+    agent.move(5.0, 0.5);
 
     // get position
-    auto pos = agent->getPosition();
+    auto pos = agent.getPosition();
     EXPECT_NEAR(-48.4126, pos.x,     1e-4);
     EXPECT_NEAR( 93.1730, pos.y,     1e-4);
     EXPECT_NEAR(  0.0,    pos.z,     1e-4);
     EXPECT_NEAR(  3.6207, pos.phi,   1e-4);
 
     // get map position
-    auto mpos = agent->getMapPosition();
+    auto mpos = agent.getMapPosition();
     EXPECT_EQ("R1-LS2-R2", std::string(mpos.edgeID));
     EXPECT_NEAR(47.9203673205, mpos.longPos, EPS_DISTANCE);
     EXPECT_NEAR(0.5, mpos.latPos, EPS_DISTANCE);
@@ -144,10 +144,10 @@ TEST_F(EnvironmentTest, MatchAgent) {
     pos.phi = 3.6207;
 
     // set position
-    agent->setPosition(pos, 10.0);
+    agent.setPosition(pos, 10.0);
 
     // get map position
-    auto mpos = agent->getMapPosition();
+    auto mpos = agent.getMapPosition();
     EXPECT_EQ("R1-LS2-R2", std::string(mpos.edgeID));
     EXPECT_NEAR(47.9203673205, mpos.longPos, 1e-4);
     EXPECT_NEAR(0.5, mpos.latPos, 1e-4);

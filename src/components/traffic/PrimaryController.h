@@ -92,9 +92,9 @@ public:
 
 
     // generate accessor methods
-    PARAM_ACCESS(_parameters);
-    INPUT_ACCESS(_input);
-    STATE_ACCESS(_state);
+    PARAM_ACCESS(Parameters, _parameters);
+    INPUT_ACCESS(Input, _input);
+    STATE_ACCESS(State, _state);
 
 
 };

@@ -140,9 +140,9 @@ public:
     }
 
     // accessors
-    PARAM_ACCESS(param)
-    INPUT_ACCESS(input)
-    STATE_ACCESS(state)
+    PARAM_ACCESS(Parameters, _param)
+    INPUT_ACCESS(Input, _input)
+    STATE_ACCESS(State, _state)
 
 };
 
