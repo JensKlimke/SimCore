@@ -40,7 +40,7 @@ else ()
 endif ()
 
 
-set(simmap_INCLUDE_DIR ${simmap_SOURCE_DIR}/include/ CACHE DIRECTORY "Include Directory of the OpneDRIVE parser" FORCE)
+set(simmap_INCLUDE_DIR ${simmap_SOURCE_DIR}/include/ CACHE DIRECTORY "Include Directory of the SimMap framework" FORCE)
 include_directories(${simmap_INCLUDE_DIR})
 
 
