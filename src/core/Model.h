@@ -12,7 +12,7 @@
 
 namespace sim {
 
-    class Model : public ISynchronized, public data::IStorable, public IParameterizable {
+    class Model : public ISynchronized, public data::IStorable {
 
     public:
 
