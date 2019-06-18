@@ -44,9 +44,9 @@ struct DriverModel : public ::sim::IComponent, public Agent {
         auto s_star = s0 + v * T + (v * dv / (2.0 * sqrt(ac * bc)));
         auto acc = ac * (1.0 - pow(v / v0, 4) - pow(s_star / ds, 2));
 
-        if(isnan(acc))
+        if(std::isnan(acc))
             acc = 0.0;
-        else if(isinf(acc))
+        else if(std::isinf(acc))
             acc = 0.0;
 
         return acc;
