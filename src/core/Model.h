@@ -7,7 +7,7 @@
 
 #include "IComponent.h"
 #include "IStorable.h"
-#include "IParameterizable.h"
+#include "DataAccessMacros.h"
 #include "ISynchronized.h"
 
 namespace sim {
