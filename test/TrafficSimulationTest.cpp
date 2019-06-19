@@ -4,8 +4,7 @@
 
 #include <cmath>
 #include <unordered_map>
-#include <components/traffic/Environment.h>
-#include <components/traffic/Agent.h>
+#include <traffic/Environment.h>
 #include <components/timers/TimeIsUp.h>
 #include <socket/DataPublisher.h>
 #include <data/TimeReporter.h>

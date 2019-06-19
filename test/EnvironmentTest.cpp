@@ -2,8 +2,8 @@
 // Created by Jens Klimke on 2019-04-20.
 //
 
-#include <components/traffic/Environment.h>
-#include <components/traffic/Agent.h>
+#include <traffic/Environment.h>
+#include <traffic/Agent.h>
 #include <core/Loop.h>
 #include <core/IComponent.h>
 #include <cmath>

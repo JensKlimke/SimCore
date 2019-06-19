@@ -8,7 +8,7 @@ set(SOURCE_FILES
 
 add_executable(SimTest ${SOURCE_FILES})
 target_include_directories(SimTest PRIVATE ${PROJECT_SOURCE_DIR}/src)
-target_link_libraries(SimTest PRIVATE core components)
+target_link_libraries(SimTest PRIVATE simcore)
 
 add_gtest(SimTest)
 
@@ -16,6 +16,6 @@ add_gtest(SimTest)
 
 add_executable(SimLiveTest TrafficSimulationTest.cpp)
 target_include_directories(SimLiveTest PRIVATE ${PROJECT_SOURCE_DIR}/src)
-target_link_libraries(SimLiveTest PRIVATE core components websocket)
+target_link_libraries(SimLiveTest PRIVATE simcore)
 
 add_gtest(SimLiveTest)

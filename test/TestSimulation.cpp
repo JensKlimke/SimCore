@@ -5,9 +5,9 @@
 #include <memory>
 #include <tuple>
 #include <core/Loop.h>
-#include <components/traffic/Agent.h>
-#include <components/traffic/VehicleModel.h>
-#include <components/traffic/PrimaryController.h>
+#include <traffic/Agent.h>
+#include <traffic/VehicleModel.h>
+#include <traffic/PrimaryController.h>
 #include <components/timers/BasicTimer.h>
 #include <components/timers/RealTimeTimer.h>
 #include <components/timers/TimeIsUp.h>
