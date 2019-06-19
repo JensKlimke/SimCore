@@ -3,4 +3,4 @@ set(SOURCE_FILES
         WebSocket.cpp)
 
 add_library(websocket STATIC ${SOURCE_FILES})
-target_include_directories(websocket PRIVATE ${CMAKE_SOURCE_DIR}/src ${Boost_INCLUDE_DIRS})
+target_include_directories(websocket PRIVATE ${PROJECT_SOURCE_DIR}/src ${Boost_INCLUDE_DIRS})
