@@ -135,8 +135,9 @@ TEST(SignalTestBasic, SignalTube) {
 
     EXPECT_FALSE(sc.in( 5.0, 4.5));
     EXPECT_FALSE(sc.in(30.0, -4.0));
-    EXPECT_FALSE(sc.in(-1e-10, 5.0));
-    EXPECT_FALSE(sc.in(30.0 + 1e-10, 1.0));
+    EXPECT_TRUE(sc.in(-1e-10, 5.0));
+    EXPECT_TRUE(sc.in(30.0 + 1e-10, 1.0));
+
 }
 
 

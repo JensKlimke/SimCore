@@ -62,7 +62,15 @@ public:
      */
     bool in(double x, double y) const {
 
-        return lower.interpolate(x) <= y && y <= upper.interpolate(x);
+        bool inLow = true;
+        if(lower.isInBounds(x))
+            inLow = lower.interpolate(x) <= y;
+
+        bool inUp = true;
+        if(upper.isInBounds(x))
+            inUp = y <= upper.interpolate(x);
+
+        return inLow && inUp;
 
     }
 
