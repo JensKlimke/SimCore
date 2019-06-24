@@ -79,6 +79,17 @@ public:
     }
 
 
+    /**
+     * Returns the lower and upper value of the tube
+     * @param x Position to be evaluated
+     * @return pair of lower and upper value
+     */
+    std::pair<double, double> getValues(double x) const {
+
+        return {lower.interpolate(x), upper.interpolate(x)};
+
+    }
+
 };
 
 #endif //SIMCORE_SIGNALTUBE_H

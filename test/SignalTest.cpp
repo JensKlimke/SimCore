@@ -120,6 +120,17 @@ TEST(SignalTestBasic, SignalTube) {
     EXPECT_THROW(sc.center(30.0 + 1e-4), std::invalid_argument);
 
 
+    // get limits
+
+    EXPECT_NEAR( 0.0, sc.getValues(0.0).first,  EPS_DISTANCE);
+    EXPECT_NEAR( 2.0, sc.getValues(0.0).second,  EPS_DISTANCE);
+    EXPECT_NEAR( 1.0, sc.getValues(10.0).first,  EPS_DISTANCE);
+    EXPECT_NEAR( 3.0, sc.getValues(10.0).second,  EPS_DISTANCE);
+    EXPECT_NEAR( 0.5, sc.getValues(5.0).first,  EPS_DISTANCE);
+    EXPECT_NEAR( 2.5, sc.getValues(5.0).second,  EPS_DISTANCE);
+
+
+
     // check function in()
     EXPECT_TRUE(sc.in( 0.0, 1.0));
     EXPECT_TRUE(sc.in( 1.0, 1.1));
