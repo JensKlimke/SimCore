@@ -60,6 +60,8 @@ void PrimaryController::initialize(double initTime) {
     initializeTimer(initTime);
     ISynchronized::initialize(initTime);
 
+    reset();
+
 }
 
 std::vector<sim::data::IStorable::DataEntry> PrimaryController::getData(sim::data::IStorable::Context context) const {

@@ -50,6 +50,18 @@ public:
 
 
     /**
+     * Check if the value is within defined boundaries
+     * @param x Value to be checked
+     * @return Flag if the value is in bounds
+     */
+    bool isInBounds(double x) const {
+
+        return x >= _x.front() && x <= _x.back();
+
+    }
+
+
+    /**
      * Calculates the y-value at the given x point by linear interpolation
      * @param x x-value
      * @return y-value
@@ -57,7 +69,7 @@ public:
     double interpolate(double x) const {
 
         // check if x is out of bounds
-        if(x < _x[0] - EPS_DISTANCE || x > _x[_x.size() - 1] + EPS_DISTANCE)
+        if(x < _x.front() - EPS_DISTANCE || x > _x.back() + EPS_DISTANCE)
             throw std::invalid_argument("x out of bounds");
 
         auto w = where(x);
@@ -74,7 +86,7 @@ public:
     double previous(double x) const {
 
         // check if x is out of bounds
-        if(x < _x[0] - EPS_DISTANCE)
+        if(x < _x.front() - EPS_DISTANCE)
             throw std::invalid_argument("x out of bounds");
 
         auto w = where(x);
@@ -95,7 +107,7 @@ public:
     double next(double x) const {
 
         // check if x is out of bounds
-        if(x > _x[_x.size() - 1] + EPS_DISTANCE)
+        if(x > _x.back() + EPS_DISTANCE)
             throw std::invalid_argument("x out of bounds");
 
         auto w = where(x);
