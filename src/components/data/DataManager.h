@@ -9,7 +9,7 @@
 #include <list>
 #include <iostream>
 #include <sstream>
-#include <functions.h>
+#include "core/functions.h"
 #include "core/IStorable.h"
 
 namespace sim {

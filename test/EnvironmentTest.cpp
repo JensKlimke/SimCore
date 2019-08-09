@@ -32,6 +32,7 @@ public:
         std::stringstream ss{};
         ss << SIMMAP_SRC << "/tests/tracks/CircleR100.xodr";
         file = ss.str();
+        std::cout << file << std::endl;
 
         // load map
         this->registerMap(file);
