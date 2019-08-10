@@ -145,6 +145,7 @@ TEST_F(EnvironmentTest, MatchAgent) {
     pos.phi = 3.6207;
 
     // set position
+    agent.setMapPosition("R1-LS2-R2", 47.0, 0.0);
     agent.setPosition(pos, 10.0);
 
     // get map position

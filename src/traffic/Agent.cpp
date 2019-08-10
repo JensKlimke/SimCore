@@ -112,7 +112,6 @@ void Agent::move(double ds, double t) {
 }
 
 
-
 std::pair<double, double> Agent::getPathLengths() const {
 
     return {200.0, 50.0};

@@ -12,7 +12,7 @@ set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 set(SIMMAP_ENABLE_TESTING OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(lib/SimMap)
-include_directories(lib/SimMap/include)
+include_directories(${PROJECT_SOURCE_DIR}/lib/SimMap/include)
 add_definitions(-DSIMMAP_SRC=\"${PROJECT_SOURCE_DIR}/lib/SimMap\")
 
 # download gtest when enabled

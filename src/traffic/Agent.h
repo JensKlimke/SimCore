@@ -74,7 +74,7 @@ public:
 
 
     /**
-     * Sets the absolute position of the agent
+     * Sets the absolute position of the agent and calculates the map position
      * @param pos Position to be set
      * @param rMax Maximum moved distance from last positioning
      */
@@ -130,7 +130,7 @@ public:
      * @param context
      * @return
      */
-    std::vector<sim::data::IStorable::DataEntry> getData(sim::data::IStorable::Context context) const;
+    std::vector<sim::data::IStorable::DataEntry> getData(sim::data::IStorable::Context context) const override;
 
 
 protected:
