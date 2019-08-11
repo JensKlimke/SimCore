@@ -7,13 +7,13 @@
 #include <traffic/Environment.h>
 #include <components/timers/TimeIsUp.h>
 #include <socket/DataPublisher.h>
-#include <data/TimeReporter.h>
-#include <data/DataManager.h>
+#include <components/data/TimeReporter.h>
+#include <components/data/DataManager.h>
 #include <core/IStorable.h>
 #include <core/Loop.h>
 #include <core/IComponent.h>
 #include <core/functions.h>
-#include <timers/RealTimeTimer.h>
+#include <components/timers/RealTimeTimer.h>
 #include <gtest/gtest.h>
 
 #ifndef EPS_DISTANCE
@@ -98,8 +98,8 @@ struct DriverModel : public ::sim::IComponent, public Agent {
         auto lanes = getLanes();
 
         lanes[0] = {};
-        lanes[0].access    = simmap::Access::ALLOWED;
-        lanes[0].direction = simmap::Direction::FORWARDS;
+        lanes[0].access    = Access::ALLOWED;
+        lanes[0].direction = Direction::FORWARDS;
 
         // create pair for each lane
         for(auto it = lanes.begin(); it != lanes.end(); ) {
@@ -108,7 +108,7 @@ struct DriverModel : public ::sim::IComponent, public Agent {
             auto &ln = *it;
 
             // TODO: more options
-            if(ln.access != simmap::Access::ALLOWED || ln.direction != simmap::Direction::FORWARDS) {
+            if(ln.access != Access::ALLOWED || ln.direction != Direction::FORWARDS) {
                 it = lanes.erase(it);
                 continue;
             }

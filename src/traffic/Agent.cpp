@@ -60,28 +60,25 @@ void Agent::setMapPosition(const std::string &edgeID, double s, double t) {
 
 
 
-Agent::MapPosition Agent::setPosition(const Position &pos, double rMax) {
-
-    // match position
-    simmap::MapPosition mpos{};
+const MapPosition& Agent::setPosition(const Position &pos, double rMax) {
 
     // try to match agent
-    auto err = simmap::match(getID(), pos, rMax, &mpos);
+    auto err = simmap::match(getID(), pos, rMax, &_map_pos);
     if(err != 0)
         throw std::runtime_error("Matching not possible");
 
     // set to position and save absolute position
-    setMapPosition(mpos.edgeID, mpos.longPos, mpos.latPos);
+    setMapPosition(_map_pos.edgeID, _map_pos.longPos, _map_pos.latPos);
     _pos = pos;
 
-    // return position
-    return mpos;
+    // return updated map position
+    return _map_pos;
 
 }
 
 
 
-Agent::Position Agent::getPosition() const {
+const Position & Agent::getPosition() const {
 
     return _pos;
 
@@ -89,12 +86,11 @@ Agent::Position Agent::getPosition() const {
 
 
 
-Agent::MapPosition Agent::getMapPosition() const {
+const MapPosition & Agent::getMapPosition() const {
 
-    Agent::MapPosition pos;
-    simmap::getMapPosition(getID(), &pos);
-
-    return pos;
+    // update map position and return
+    simmap::getMapPosition(getID(), &_map_pos);
+    return _map_pos;
 
 }
 
@@ -128,32 +124,58 @@ void Agent::setDimensions(double length, double width) {
 }
 
 
-std::vector<simmap::TargetInformation> Agent::getTargets() {
+std::vector<Agent::Target> Agent::getTargets() const {
 
     // define number of targets
-    unsigned long n = NO_OF_TARGETS;
-    std::vector<simmap::TargetInformation> ti(n);
+    unsigned long n = MAX_NO_OF_TARGETS;
+    std::vector<Target> ti(n);
 
     // get target information
     if(simmap::targets(getID(), ti.data(), &n) != 0)
         throw std::runtime_error("Could not generate target list");
 
-    return std::vector<simmap::TargetInformation>(ti.begin(), std::next(ti.begin(), n));
+    return std::vector<Target>(ti.begin(), std::next(ti.begin(), n));
 
 }
 
 
-std::vector<simmap::LaneInformation> Agent::getLanes() {
+std::vector<Agent::Lane> Agent::getLanes() const {
 
     // define number lanes
-    unsigned long n = NO_OF_LANES;
-    std::vector<simmap::LaneInformation> li(n);
+    unsigned long n = MAX_NO_OF_LANES;
+    std::vector<Lane> li(n);
 
     // get lane information
     if(simmap::lanes(getID(), li.data(), &n) != 0)
         throw std::runtime_error("Could not generate lane list");
 
-    return std::vector<simmap::LaneInformation>(li.begin(), std::next(li.begin(), n));
+    // only return n elements
+    return std::vector<Lane>(li.begin(), std::next(li.begin(), n));
+
+}
+
+
+std::vector<Agent::HorizonKnot> Agent::getHorizon(const std::vector<double> &steps) const {
+
+    // instantiate vector
+    unsigned long n = steps.size();
+    std::vector<HorizonInformation> hor(n);
+
+    // get horizon information
+    if(simmap::horizon(getID(), steps.data(), hor.data(), n) != 0)
+        throw std::runtime_error("Could not generate horizon list");
+
+    // transform to coordinate system
+    std::vector<HorizonKnot> horizon(n);
+    for(size_t i = 0; i < hor.size(); ++i) {
+        horizon[i].s   = hor[i].s;
+        horizon[i].pos = global2local({hor[i].x, hor[i].y, 0.0, hor[i].psi, hor[i].kappa});
+        horizon[i].egoLaneWidth   = hor[i].laneWidth;
+        horizon[i].rightLaneWidth = hor[i].rightWidth;
+        horizon[i].leftLaneWidth  = hor[i].leftWidth;
+    }
+
+    return horizon;
 
 }
 
@@ -182,3 +204,18 @@ std::vector<sim::data::IStorable::DataEntry> Agent::getData(sim::data::IStorable
     return ret;
 
 }
+
+
+Position Agent::global2local(const Position &global) const {
+
+    // pre-calculate relative position and trigonometric values
+    auto dx = global.x - _pos.x;
+    auto dy = global.y - _pos.y;
+    auto c = cos(-_pos.phi);
+    auto s = sin(-_pos.phi);
+
+    // return relative position
+    return {c * dx - s * dy, s * dx + c * dy, 0.0,global.phi - _pos.phi, global.kappa};
+
+}
+

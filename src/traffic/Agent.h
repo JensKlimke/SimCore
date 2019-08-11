@@ -10,6 +10,7 @@
 #include <cmath>
 #include <SimMap/lib.h>
 #include <core/IStorable.h>
+#include "types.h"
 
 #ifndef VEH_DEFAULT_LENGTH
 #define VEH_DEFAULT_LENGTH 5.0;
@@ -22,11 +23,13 @@
 
 class Agent : public sim::data::IStorable {
 
-    static const unsigned long NO_OF_TARGETS = 64;
-    static const unsigned long NO_OF_LANES   = 32;
+    static const unsigned long MAX_NO_OF_TARGETS = 64;
+    static const unsigned long MAX_NO_OF_LANES   = 32;
 
     unsigned int _id = 0;
-    simmap::Position _pos{};
+
+    Position _pos{};
+    mutable MapPosition _map_pos{};
 
     double _length = VEH_DEFAULT_LENGTH;
     double _width  = VEH_DEFAULT_WIDTH;
@@ -34,8 +37,18 @@ class Agent : public sim::data::IStorable {
 
 public:
 
-    typedef simmap::Position Position;
-    typedef simmap::MapPosition MapPosition;
+    typedef Position Position;
+    typedef MapPosition MapPosition;
+    typedef TargetInformation Target;
+    typedef LaneInformation Lane;
+
+    struct HorizonKnot {
+        double s;
+        Position pos;
+        double egoLaneWidth;
+        double rightLaneWidth;
+        double leftLaneWidth;
+    };
 
 
     Agent() = default;
@@ -78,21 +91,21 @@ public:
      * @param pos Position to be set
      * @param rMax Maximum moved distance from last positioning
      */
-    MapPosition setPosition(const Position &pos, double rMax);
+    const MapPosition & setPosition(const Position &pos, double rMax);
 
 
     /**
      * Returns the position of the agent
      * @return Position of the agent
      */
-    Position getPosition() const;
+    const Position & getPosition() const;
 
 
     /**
      * Returns the current map position of the agent
      * @return Map position
      */
-    MapPosition getMapPosition() const;
+    const MapPosition & getMapPosition() const;
 
 
     /**
@@ -115,14 +128,21 @@ public:
      * Returns a list of targets. The number of returned (and ordered) targets can be set by macro NO_OF_TARGETS
      * @return List of targets
      */
-    std::vector<simmap::TargetInformation> getTargets();
+    std::vector<Target> getTargets() const;
 
 
     /**
      * Returns lane information around the agent
      * @return Lane information vector
      */
-    std::vector<simmap::LaneInformation> getLanes();
+    std::vector<Lane> getLanes() const;
+
+
+    /**
+     * Return the horizon information around the agent
+     * @return Horizon information as sequence of knots
+     */
+    std::vector<HorizonKnot> getHorizon(const std::vector<double> &steps) const;
 
 
     /**
@@ -133,9 +153,18 @@ public:
     std::vector<sim::data::IStorable::DataEntry> getData(sim::data::IStorable::Context context) const override;
 
 
+    /**
+     * Transforms the given absolute position into the coordinate system of the agent
+     * @param global Global position to be transformed to local position
+     * @return Updated position (angle is also updated to relative angle)
+     */
+    Position global2local(const Position& global) const;
+
+
 protected:
 
     virtual std::pair<double, double> getPathLengths() const;
+
 
 
 };

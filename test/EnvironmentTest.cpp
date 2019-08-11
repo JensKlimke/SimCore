@@ -32,7 +32,6 @@ public:
         std::stringstream ss{};
         ss << SIMMAP_SRC << "/tests/tracks/CircleR100.xodr";
         file = ss.str();
-        std::cout << file << std::endl;
 
         // load map
         this->registerMap(file);
@@ -153,5 +152,33 @@ TEST_F(EnvironmentTest, MatchAgent) {
     EXPECT_EQ("R1-LS2-R2", std::string(mpos.edgeID));
     EXPECT_NEAR(47.9203673205, mpos.longPos, 1e-4);
     EXPECT_NEAR(0.5, mpos.latPos, 1e-4);
+
+}
+
+
+TEST_F(EnvironmentTest, Horizon) {
+
+    // set position
+    agent.setMapPosition("R1-LS1-R1", 100.0, 0.0);
+
+    // set position
+    std::vector<double> s = {-1.0, 0.0, 1.0, 10.0, 100.0};
+    auto hor = agent.getHorizon(s);
+
+    EXPECT_DOUBLE_EQ(s[0], hor[0].s);
+
+    EXPECT_DOUBLE_EQ(s[1], hor[1].s);
+    EXPECT_DOUBLE_EQ(0.0, hor[1].pos.x);
+    EXPECT_DOUBLE_EQ(0.0, hor[1].pos.y);
+
+    EXPECT_DOUBLE_EQ(s[2], hor[2].s);
+
+    EXPECT_DOUBLE_EQ(s[3], hor[3].s);
+    EXPECT_NEAR(10.17, hor[3].pos.x, 1e-3);
+    EXPECT_NEAR(0.509, hor[3].pos.y, 1e-3);
+
+    EXPECT_DOUBLE_EQ(s[4], hor[4].s);
+    EXPECT_NEAR(85.725, hor[4].pos.x, 1e-3);
+    EXPECT_NEAR(46.832, hor[4].pos.y, 1e-3);
 
 }
