@@ -60,7 +60,7 @@ void Agent::setMapPosition(const std::string &edgeID, double s, double t) {
 
 
 
-const MapPosition& Agent::setPosition(const Position &pos, double rMax) {
+const Agent::MapPosition& Agent::setPosition(const Position &pos, double rMax) {
 
     // try to match agent
     auto err = simmap::match(getID(), pos, rMax, &_map_pos);
@@ -78,7 +78,7 @@ const MapPosition& Agent::setPosition(const Position &pos, double rMax) {
 
 
 
-const Position & Agent::getPosition() const {
+const Agent::Position & Agent::getPosition() const {
 
     return _pos;
 
@@ -86,7 +86,7 @@ const Position & Agent::getPosition() const {
 
 
 
-const MapPosition & Agent::getMapPosition() const {
+const Agent::MapPosition & Agent::getMapPosition() const {
 
     // update map position and return
     simmap::getMapPosition(getID(), &_map_pos);
@@ -159,7 +159,7 @@ std::vector<Agent::HorizonKnot> Agent::getHorizon(const std::vector<double> &ste
 
     // instantiate vector
     unsigned long n = steps.size();
-    std::vector<HorizonInformation> hor(n);
+    std::vector<simmap::HorizonInformation> hor(n);
 
     // get horizon information
     if(simmap::horizon(getID(), steps.data(), hor.data(), n) != 0)
@@ -206,7 +206,7 @@ std::vector<sim::data::IStorable::DataEntry> Agent::getData(sim::data::IStorable
 }
 
 
-Position Agent::global2local(const Position &global) const {
+Agent::Position Agent::global2local(const Position &global) const {
 
     // pre-calculate relative position and trigonometric values
     auto dx = global.x - _pos.x;

@@ -28,8 +28,8 @@ class Agent : public sim::data::IStorable {
 
     unsigned int _id = 0;
 
-    Position _pos{};
-    mutable MapPosition _map_pos{};
+    simmap::Position _pos{};
+    mutable simmap::MapPosition _map_pos{};
 
     double _length = VEH_DEFAULT_LENGTH;
     double _width  = VEH_DEFAULT_WIDTH;
@@ -37,10 +37,10 @@ class Agent : public sim::data::IStorable {
 
 public:
 
-    typedef Position Position;
-    typedef MapPosition MapPosition;
-    typedef TargetInformation Target;
-    typedef LaneInformation Lane;
+    typedef simmap::Position Position;
+    typedef simmap::MapPosition MapPosition;
+    typedef simmap::TargetInformation Target;
+    typedef simmap::LaneInformation Lane;
 
     struct HorizonKnot {
         double s;
