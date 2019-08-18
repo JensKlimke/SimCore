@@ -25,6 +25,7 @@ class Agent : public sim::data::IStorable {
 
     static const unsigned long MAX_NO_OF_TARGETS = 64;
     static const unsigned long MAX_NO_OF_LANES   = 32;
+    static const unsigned long MAX_NO_OF_OBJECTS = 64;
 
     unsigned int _id = 0;
 
@@ -41,6 +42,7 @@ public:
     typedef simmap::MapPosition MapPosition;
     typedef simmap::TargetInformation Target;
     typedef simmap::LaneInformation Lane;
+    typedef simmap::ObjectInformation RoadObject;
 
     struct HorizonKnot {
         double s;
@@ -136,6 +138,13 @@ public:
      * @return Lane information vector
      */
     std::vector<Lane> getLanes() const;
+
+
+    /**
+     * Returns the signals in the path of the agent
+     * @return Signals in the path of the agent
+     */
+    std::vector<RoadObject> getRoadObjects() const;
 
 
     /**

@@ -180,6 +180,21 @@ std::vector<Agent::HorizonKnot> Agent::getHorizon(const std::vector<double> &ste
 }
 
 
+std::vector<Agent::RoadObject> Agent::getRoadObjects() const {
+
+    // instantiate vector
+    unsigned long n = MAX_NO_OF_OBJECTS;
+    std::vector<simmap::ObjectInformation> obj(n);
+
+    if(simmap::objects(getID(), obj.data(), &n) != 0)
+        throw std::runtime_error("Could not generate object list");
+
+    // resize vector
+    return std::vector<RoadObject>(obj.begin(), std::next(obj.begin(), n));
+
+}
+
+
 std::vector<sim::data::IStorable::DataEntry> Agent::getData(sim::data::IStorable::Context context) const {
 
     using namespace sim::data;
