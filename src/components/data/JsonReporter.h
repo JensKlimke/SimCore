@@ -60,8 +60,18 @@ protected:
 
         // write data
         unsigned int i = 0;
-        for(auto &p : _values)
-            (*_outstream) << (i++ == 0 ? "" : ",") << "\"" << p.first << "\":" << *p.second;
+        for(auto &p : _values) {
+
+            // stream field name
+            (*_outstream) << (i++ == 0 ? "" : ",") << "\"" << p.first << "\":";
+
+            // check for inf and nan
+            if(std::isinf(*p.second) || std::isnan(*p.second))
+                (*_outstream) << "null";
+            else
+                (*_outstream) << *p.second;
+            
+        }
 
         // close object brackets
         (*_outstream) << "}}";
