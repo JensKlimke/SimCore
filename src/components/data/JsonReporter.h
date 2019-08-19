@@ -70,7 +70,7 @@ protected:
                 (*_outstream) << "null";
             else
                 (*_outstream) << *p.second;
-            
+
         }
 
         // close object brackets
