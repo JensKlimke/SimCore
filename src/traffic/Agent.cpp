@@ -108,6 +108,14 @@ void Agent::move(double ds, double t) {
 }
 
 
+void Agent::setDynamics(double v, double a) {
+
+    _v = v;
+    _a = a;
+
+}
+
+
 std::pair<double, double> Agent::getPathLengths() const {
 
     return {200.0, 50.0};

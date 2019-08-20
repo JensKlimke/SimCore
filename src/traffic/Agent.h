@@ -27,11 +27,18 @@ class Agent : public sim::data::IStorable {
     static const unsigned long MAX_NO_OF_LANES   = 32;
     static const unsigned long MAX_NO_OF_OBJECTS = 64;
 
+    // ID
     unsigned int _id = 0;
 
+    // position and map position
     simmap::Position _pos{};
     mutable simmap::MapPosition _map_pos{};
 
+    // dynamic state
+    double _a = 0.0; // acceleration
+    double _v = 0.0; // velocity
+
+    // dimensions
     double _length = VEH_DEFAULT_LENGTH;
     double _width  = VEH_DEFAULT_WIDTH;
 
@@ -116,6 +123,14 @@ public:
      * @param t Lateral offset to be set
      */
     void move(double ds, double t);
+
+
+    /**
+     * Sets the dynamic state of the agent
+     * @param v Current velocity
+     * @param a Current acceleration
+     */
+    void setDynamics(double v, double a);
 
 
     /**
