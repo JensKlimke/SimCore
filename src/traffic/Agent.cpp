@@ -132,6 +132,14 @@ void Agent::setDimensions(double length, double width) {
 }
 
 
+
+Agent::AgentData Agent::getState() const {
+
+    return {_v, _a, _length, _width};
+
+}
+
+
 std::vector<Agent::Target> Agent::getTargets() const {
 
     // define number of targets
@@ -215,6 +223,8 @@ std::vector<sim::data::IStorable::DataEntry> Agent::getData(sim::data::IStorable
         ret.push_back(createDataEntry("z",     &_pos.z));
         ret.push_back(createDataEntry("psi",   &_pos.phi));
         ret.push_back(createDataEntry("kappa", &_pos.kappa));
+        ret.push_back(createDataEntry("v",     &_v));
+        ret.push_back(createDataEntry("a",     &_a));
 
     } else if(context == sim::data::IStorable::PARAMETER) {
 

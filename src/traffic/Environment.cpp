@@ -5,6 +5,12 @@
 #include <iostream>
 #include "Environment.h"
 
+Environment::~Environment() {
+
+    clear();
+
+}
+
 
 void Environment::createAgent(Agent *agent, unsigned int id, const std::vector<std::string> &track) {
 
@@ -31,23 +37,6 @@ Agent* Environment::getAgent(unsigned int id) {
 
     // return agent with given ID
     return _index.at(id);
-
-}
-
-
-void Environment::initialize(double) {
-
-}
-
-
-bool Environment::step(double simTime) {
-
-    return false;
-
-}
-
-
-void Environment::terminate(double) {
 
 }
 

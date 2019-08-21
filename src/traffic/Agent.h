@@ -59,6 +59,13 @@ public:
         double leftLaneWidth;
     };
 
+    struct AgentData {
+        double velocity;
+        double acceleration;
+        double length;
+        double width;
+    };
+
 
     Agent() = default;
     virtual ~Agent() = default;
@@ -139,6 +146,13 @@ public:
      * @param width Width to be set
      */
     void setDimensions(double length, double width);
+
+
+    /**
+     * Returns the state of the agent
+     * @return A struct with velocity, acceleration, length and width of the agent
+     */
+    AgentData getState() const;
 
 
     /**

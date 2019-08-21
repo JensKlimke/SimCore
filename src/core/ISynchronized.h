@@ -20,12 +20,22 @@ namespace sim {
 
     public:
 
+        /**
+         * Initializes the component. Increases the nexte execution time by the initialization time
+         * @param initTime Initialization time
+         */
         void initialize(double initTime) override {
 
             _nextExecTime += initTime;
 
         }
 
+
+        /**
+         * Performs a simulation step, when the next execution time is reached
+         * @param simTime Current simulation time
+         * @return Returns a flag whether the step is executed or skipped
+         */
         bool step(double simTime) override {
 
             if(simTime + EPS_TIME >= _nextExecTime) {

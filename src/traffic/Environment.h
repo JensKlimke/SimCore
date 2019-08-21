@@ -13,7 +13,7 @@
 #include "Agent.h"
 
 
-class Environment : public ::sim::IComponent {
+class Environment {
 
 
     ::simmap::id_type_t _map_id = 0;
@@ -25,15 +25,16 @@ class Environment : public ::sim::IComponent {
 public:
 
 
-    void initialize(double) override;
+    /**
+     * Default constructor
+     */
+    Environment() = default;
 
 
-
-    bool step(double simTime) override;
-
-
-
-    void terminate(double) override;
+    /**
+     * Destructor (clears the map)
+     */
+    ~Environment();
 
 
     /**
