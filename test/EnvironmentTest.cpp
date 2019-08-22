@@ -36,9 +36,6 @@ public:
         // load map
         this->registerMap(file);
 
-        // add virtual horizon as component
-        sim.addComponent(this);
-
         // add agents
         this->createAgent(&agent, 1, {"1", "-2"});
         agent.setMapPosition("R1-LS2-R2", 42.9203673205, 0.5);
