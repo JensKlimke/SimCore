@@ -68,6 +68,12 @@ public:
     unsigned int getMapID() const;
 
 
+    /**
+     * Returns the vector of agents
+     * @return Vector of agents
+     */
+    const std::vector<Agent*> &getAgents() const;
+
 
     /**
      * Clears all maps and agents from the map framework

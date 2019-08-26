@@ -52,6 +52,7 @@ namespace data {
             _dataManager->streamTo(ss);
 
             // .. and send
+            std::cout << ss.str() << std::endl;
             _websocket->send(ss.str());
 
         }

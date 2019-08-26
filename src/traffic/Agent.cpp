@@ -45,13 +45,12 @@ void Agent::setTrack(const std::vector<std::string> &track) {
 void Agent::setMapPosition(const std::string &edgeID, double s, double t) {
 
     // create map coordinate
-    simmap::MapPosition pos;
-    pos.edgeID = edgeID.c_str();
-    pos.latPos = t;
-    pos.longPos = s;
+    _map_pos.edgeID = edgeID.c_str();
+    _map_pos.latPos = t;
+    _map_pos.longPos = s;
 
     auto pl = getPathLengths();
-    simmap::setMapPosition(getID(), pos, &pl.first, &pl.second);
+    simmap::setMapPosition(getID(), _map_pos, &pl.first, &pl.second);
 
     // get absolute position and set
     simmap::getPosition(getID(), &_pos);
@@ -218,6 +217,7 @@ std::vector<sim::data::IStorable::DataEntry> Agent::getData(sim::data::IStorable
     std::vector<sim::data::IStorable::DataEntry> ret{};
     if(context == sim::data::IStorable::Context::STATE) {
 
+        // absolute position and state
         ret.push_back(createDataEntry("x",     &_pos.x));
         ret.push_back(createDataEntry("y",     &_pos.y));
         ret.push_back(createDataEntry("z",     &_pos.z));
@@ -225,6 +225,11 @@ std::vector<sim::data::IStorable::DataEntry> Agent::getData(sim::data::IStorable
         ret.push_back(createDataEntry("kappa", &_pos.kappa));
         ret.push_back(createDataEntry("v",     &_v));
         ret.push_back(createDataEntry("a",     &_a));
+
+        // map position
+        // ret.push_back(createDataEntry("edge", &_map_pos.edgeID));
+        ret.push_back(createDataEntry("s",    &_map_pos.longPos));
+        ret.push_back(createDataEntry("t",    &_map_pos.latPos));
 
     } else if(context == sim::data::IStorable::PARAMETER) {
 

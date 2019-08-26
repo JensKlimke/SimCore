@@ -64,6 +64,13 @@ unsigned int Environment::getMapID() const {
 }
 
 
+const std::vector<Agent*>& Environment::getAgents() const {
+
+    return _agents;
+
+}
+
+
 void Environment::clear() const {
 
     auto err = simmap::clear();
