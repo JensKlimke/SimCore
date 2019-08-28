@@ -110,7 +110,7 @@ var update = function(log) {
     log.size.y1 =  120;
 
     d3.select('#time')
-        .html(log.time);
+        .html(log.time / 1000.0);
 
     if(!svg) {
 

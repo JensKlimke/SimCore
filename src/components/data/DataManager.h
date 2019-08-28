@@ -70,16 +70,18 @@ namespace data {
         /**
          * Registers the given storable container vector to the data manager
          * @param name Name of the vector
-         * @param stores Storable container vector
+         * @param storage Storable container vector
          */
-        void registerStorableVector(const std::string &name, const std::vector<const IStorable*> &stores) {
+        void registerStorableVector(const std::string &name, const std::vector<const IStorable *> &storage) {
 
+            // create node in root and get pointer
             _root.nodeMap.emplace_back(name, DataNode{});
             auto &dr = _root.nodeMap.back().second;
 
-            for(auto &store : stores) {
+            // iterate over container
+            for(auto &store : storage) {
 
-                // create array
+                // create element in array
                 dr.nodeArray.emplace_back(DataNode{});
                 auto dn = &dr.nodeArray.back();
 
