@@ -51,10 +51,18 @@ bool VehicleModel::step(double simTime) {
     auto aRoll  = rollCoeff * aGround;
     auto aSlope = sin(_input.slope) * G_ACC;
 
+    // calculate power
+    auto x = _state.v / _param.lowSpeedThreshold;
+    auto power = _param.maxPower * (
+                 _param.powerCoefficient[0]
+              + (_param.powerCoefficient[1]
+              + (_param.powerCoefficient[2]
+              +  _param.powerCoefficient[3] * x) * x) * x);
+
     // calculate acceleration
     _state.a = -aRoll - aAir - aSlope                          // resistance
          + aGround * std::min(_input.pedal, 0.0)               // braking
-         + std::max(_input.pedal, 0.0) * _param.power          // acceleration
+         + std::max(_input.pedal, 0.0) * power                 // acceleration
            / (std::max(fabs(_state.v), 1.0) * _param.mass);
 
     return true;

@@ -15,14 +15,16 @@ class VehicleModel : public ::sim::Model {
 public:
 
     struct Parameters {
-        double steerTransmission  = 0.474;
-        double wheelBase          = 2.7;
-        double cwA                = 0.6;
-        double mass               = 1.8e3;
-        double power              = 1.2e5;
-        double rollCoefficient[3] = {9.91e-3, 1.95e-5, 1.76e-9};
-        double size[2]            = {5.0, 2.2};
-        double driverPos[2]       = {0.5, 0.5};
+        double steerTransmission   = 0.474;
+        double wheelBase           = 2.7;
+        double cwA                 = 0.6;
+        double mass                = 1.8e3;
+        double powerCoefficient[4] = {0.1, 2.7, -2.7, 0.9};
+        double maxPower            = 1e5;
+        double lowSpeedThreshold   = 3.0;
+        double rollCoefficient[3]  = {9.91e-3, 1.95e-5, 1.76e-9};
+        double size[2]             = {5.0, 2.2};
+        double driverPos[2]        = {0.5, 0.5};
     };
 
 
