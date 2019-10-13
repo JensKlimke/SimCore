@@ -18,6 +18,7 @@ public:
     struct Input {
         double *value;
         double *target;
+        double *direct;
     };
 
     struct State {
@@ -31,6 +32,8 @@ public:
         double k_I = 0.0;
         double k_D = 0.0;
         double range[2] = {-1.0, 1.0};
+        double d_P = 1.0;
+        double dyMax = INFINITY;
     };
 
 

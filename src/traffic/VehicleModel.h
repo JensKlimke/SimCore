@@ -19,7 +19,7 @@ public:
         double wheelBase           = 2.7;
         double cwA                 = 0.6;
         double mass                = 1.8e3;
-        double powerCoefficient[4] = {0.1, 2.7, -2.7, 0.9};
+        double powerCoefficient[4] = {0.01, 2.97, -2.97, 0.99};
         double maxPower            = 1e5;
         double lowSpeedThreshold   = 3.0;
         double rollCoefficient[3]  = {9.91e-3, 1.95e-5, 1.76e-9};
@@ -31,6 +31,7 @@ public:
     struct Input {
         double steer = 0.0;
         double pedal = 0.0;
+        int gear = 1;
         double slope = 0.0;
     };
 
@@ -42,6 +43,9 @@ public:
         double dPsi;
         double xy[2];
         double v;
+        double FBody;
+        double FBrake;
+        double FAccel;
         double a;
     };
 

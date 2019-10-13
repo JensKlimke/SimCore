@@ -2,6 +2,7 @@
 // Created by Jens Klimke on 2019-04-15.
 //
 
+#include <cmath>
 #include "PrimaryController.h"
 
 
@@ -13,14 +14,25 @@ bool PrimaryController::step(double simTime) {
     auto u = *_input.target - *_input.value;
 
     // calculate integral (I)
-    _state.in += (u + _state.u) * dt;
+    _state.in += 0.5 * (u + _state.u) * dt;
 
     // calculate derivative (D)
     auto der = _reset ? 0.0 : (u - _state.u) / dt;
     _state.u = u;
 
-    // calculate controller change and integrate
-    auto dy = _parameters.k_P * _state.u + _parameters.k_I * _state.in + _parameters.k_D * der;
+    // initialize change of value
+    double dy = 0.0;
+
+    // override when direct value is set, otherwise calculate controller change
+    if(_input.direct != nullptr && !std::isinf(*_input.direct))
+        dy = _parameters.d_P * (*_input.direct - *_state.y);
+    else
+        dy = _parameters.k_P * _state.u + _parameters.k_I * _state.in + _parameters.k_D * der;
+
+    // limit change in controller
+    dy = std::max(std::min(dy, _parameters.dyMax), -_parameters.dyMax);
+
+    // integrate
     *_state.y = std::max(_parameters.range[0], std::min(_parameters.range[1], *_state.y + dy * dt));
 
     // unset reset flag
@@ -40,9 +52,9 @@ void PrimaryController::reset() {
 
 void PrimaryController::setVariables(double *value, double *target, double *output) {
 
-    _input.value = value;
+    _input.value  = value;
     _input.target = target;
-    _state.y = output;
+    _state.y      = output;
 
 }
 
@@ -78,6 +90,7 @@ std::vector<sim::data::IStorable::DataEntry> PrimaryController::getData(sim::dat
         case Context::INPUT:
             ADD_PTR(ret, value,  _input);
             ADD_PTR(ret, target, _input);
+            ADD_PTR(ret, direct, _input);
             break;
         case Context::STATE:
             ADD(ret,    in, _state);
