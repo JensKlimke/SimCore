@@ -57,8 +57,11 @@ bool VehicleModel::step(double simTime) {
 
     // calculate forces
     _state.FBody  = -(aRoll + aSlope) * _param.mass - fAir;
-    _state.FAccel = min(G_ACC * _param.mass, max(_input.pedal, 0.0) * power / max(0.1, v1));
+    _state.FAccel = max(_input.pedal, 0.0) * power / v1;
     _state.FBrake = dir * G_ACC * min(_input.pedal, 0.0) * _param.mass; // TODO: Limit to slope
+
+    if(v1 < 5.0)
+        _state.FAccel = max(_input.pedal, 0.0) * G_ACC * _param.mass;
 
     // calculate yaw rate
     _state.dPsi = _state.v * (_param.steerTransmission * _input.steer) / _param.wheelBase;
