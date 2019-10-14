@@ -32,7 +32,7 @@ bool VehicleModel::step(double simTime) {
 
     // get parameters
     auto rc = _param.rollCoefficient;
-    auto pc = _param.powerCoefficient;
+    // auto pc = _param.powerCoefficient;
 
     // save yaw angle for later
     double psi = _state.psi;
@@ -43,25 +43,19 @@ bool VehicleModel::step(double simTime) {
     auto v2 = v * v;
     auto dir = sgn(v);
 
-    if(v < 1.0 && _input.pedal >= 0.0)
-        std::cout << "STOP" << std::endl;
-
     // calculate accelerations
     auto aSlope = sin(_input.slope) * G_ACC;
     auto fAir = dir * 0.5 * RHO_AIR * _param.cwA * v2;
     auto aRoll = dir * (rc[0] + rc[1] * v1 + rc[2] * v2) * cos(_input.slope) * G_ACC;
 
     // calculate power
-    auto x = max(0.0, min(1.0, _state.v / _param.lowSpeedThreshold));
-    auto power = _param.maxPower * (pc[0] + (pc[1] + (pc[2] +  pc[3] * x) * x) * x);
+    // auto x = max(0.0, min(1.0, _state.v / _param.lowSpeedThreshold));
+    // auto power = _param.maxPower * (pc[0] + (pc[1] + (pc[2] +  pc[3] * x) * x) * x);
 
     // calculate forces
     _state.FBody  = -(aRoll + aSlope) * _param.mass - fAir;
-    _state.FAccel = max(_input.pedal, 0.0) * power / v1;
+    _state.FAccel = max(_input.pedal, 0.0) * G_ACC * _param.mass;
     _state.FBrake = dir * G_ACC * min(_input.pedal, 0.0) * _param.mass; // TODO: Limit to slope
-
-    if(v1 < 5.0)
-        _state.FAccel = max(_input.pedal, 0.0) * G_ACC * _param.mass;
 
     // calculate yaw rate
     _state.dPsi = _state.v * (_param.steerTransmission * _input.steer) / _param.wheelBase;
