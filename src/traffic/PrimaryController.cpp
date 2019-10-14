@@ -21,7 +21,7 @@ bool PrimaryController::step(double simTime) {
     _state.u = u;
 
     // initialize change of value
-    double dy = 0.0;
+    double dy;
 
     // override when direct value is set, otherwise calculate controller change
     if(_input.direct != nullptr && !std::isinf(*_input.direct))

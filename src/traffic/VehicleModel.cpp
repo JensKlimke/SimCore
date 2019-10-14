@@ -43,7 +43,7 @@ bool VehicleModel::step(double simTime) {
     auto v2 = v * v;
     auto dir = sgn(v);
 
-    if(v < 0.0)
+    if(v < 1.0 && _input.pedal >= 0.0)
         std::cout << "STOP" << std::endl;
 
     // calculate accelerations
@@ -57,7 +57,7 @@ bool VehicleModel::step(double simTime) {
 
     // calculate forces
     _state.FBody  = -(aRoll + aSlope) * _param.mass - fAir;
-    _state.FAccel = max(_input.pedal, 0.0) * power / max(v1, 1.0);
+    _state.FAccel = min(G_ACC * _param.mass, max(_input.pedal, 0.0) * power / max(0.1, v1));
     _state.FBrake = dir * G_ACC * min(_input.pedal, 0.0) * _param.mass; // TODO: Limit to slope
 
     // calculate yaw rate
