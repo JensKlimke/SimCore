@@ -117,7 +117,7 @@ void Agent::setDynamics(double v, double a) {
 
 std::pair<double, double> Agent::getPathLengths() const {
 
-    return {200.0, 50.0};
+    return {std::max(200.0, _v * 20.0), std::max(50.0, _v * 5.0)};
 
 }
 
