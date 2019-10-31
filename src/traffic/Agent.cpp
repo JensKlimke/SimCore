@@ -5,6 +5,7 @@
 #include "Agent.h"
 #include <SimMap/lib.h>
 #include <iostream>
+#include <functions.h>
 
 
 void Agent::setID(unsigned int id) {
@@ -117,7 +118,7 @@ void Agent::setDynamics(double v, double a) {
 
 std::pair<double, double> Agent::getPathLengths() const {
 
-    return {std::max(200.0, _v * 20.0), std::max(50.0, _v * 5.0)};
+    return {MAX(200.0, _v * 20.0), MAX(50.0, _v * 5.0)};
 
 }
 

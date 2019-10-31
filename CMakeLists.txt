@@ -36,10 +36,25 @@ if(SIMCORE_ENABLE_TESTING)
 endif()
 
 # include folders
-include_directories(src/core src/components src/socket)
+include_directories(src/core src/components)
 
-#find_package(Boost COMPONENTS program_options REQUIRED )
-find_package(Boost 1.69)
+
+if(NOT DEFINED SIMCORE_ENABLE_SOCKET)
+    set(SIMCORE_ENABLE_SOCKET ON CACHE BOOL "" FORCE)
+endif(NOT DEFINED SIMCORE_ENABLE_SOCKET)
+
+# find boost if
+if(SIMCORE_ENABLE_SOCKET)
+
+    message(">> generating with socket")
+
+    # include socket directories
+    include_directories(src/socket)
+
+    #find_package(Boost COMPONENTS program_options REQUIRED )
+    find_package(Boost 1.69)
+
+endif()
 
 # add source folder
 add_subdirectory(src)

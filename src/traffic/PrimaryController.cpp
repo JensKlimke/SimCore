@@ -4,6 +4,7 @@
 
 #include <cmath>
 #include "PrimaryController.h"
+#include <functions.h>
 
 
 bool PrimaryController::step(double simTime) {
@@ -30,10 +31,10 @@ bool PrimaryController::step(double simTime) {
         dy = _parameters.k_P * _state.u + _parameters.k_I * _state.in + _parameters.k_D * der;
 
     // limit change in controller
-    dy = std::max(std::min(dy, _parameters.dyMax), -_parameters.dyMax);
+    dy = MAX(MIN(dy, _parameters.dyMax), -_parameters.dyMax);
 
     // integrate
-    *_state.y = std::max(_parameters.range[0], std::min(_parameters.range[1], *_state.y + dy * dt));
+    *_state.y = MAX(_parameters.range[0], MIN(_parameters.range[1], *_state.y + dy * dt));
 
     // unset reset flag
     _reset = false;

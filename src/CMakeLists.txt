@@ -1,5 +1,3 @@
-add_subdirectory(socket)
-
 set(SOURCE_FILES
         core/Loop.cpp
         traffic/VehicleModel.cpp
@@ -8,5 +6,18 @@ set(SOURCE_FILES
         traffic/PrimaryController.cpp)
 
 add_library(simcore STATIC ${SOURCE_FILES})
-target_link_libraries(simcore PUBLIC simmap websocket)
-target_include_directories(simcore PUBLIC ./)
+
+if(SIMCORE_ENABLE_SOCKET)
+
+    add_subdirectory(socket)
+    target_link_libraries(simcore PRIVATE simmap websocket)
+
+else()
+
+    target_link_libraries(simcore PRIVATE simmap)
+
+endif()
+
+target_include_directories(simcore PRIVATE ./)
+
+set(simmap_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR} CACHE STRING "" FORCE)
