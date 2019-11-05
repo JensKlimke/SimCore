@@ -53,14 +53,22 @@ namespace sim {
          * Sets the timer of the loop
          * @param timer Timer to be set
          */
-        void setTimer(ITimer *timer);
+        void setTimer(ITimer *timer) {
+
+            _timer = timer;
+
+        }
 
 
         /**
          * Adds an stop condition to the loop
          * @param stop Stop condition
          */
-        void addStopCondition(IStopCondition *stop);
+        void addStopCondition(IStopCondition *stop) {
+
+            _stop_conditions.push_back(stop);
+
+        }
 
 
         /**
@@ -68,26 +76,84 @@ namespace sim {
          * @param name Name of the model
          * @param comp Model to be set
          */
-        void addComponent(sim::IComponent *comp);
+        void addComponent(sim::IComponent *comp) {
+
+            _components.push_back(comp);
+
+        }
 
 
         /**
          * Run simulation
          */
-        void run();
+        void run() {
+
+            // check status
+            initialize();
+
+            // start timer
+            _timer->start();
+
+            // iterate while stop flag is not set
+            while(!_stop) {
+
+                // iterate over components ...
+                for (auto &m : _components) {
+
+                    // ... and run component step
+                    m->step(_timer->time());
+
+                }
+
+                // iterate over stop conditions ...
+                for(auto &sc : _stop_conditions) {
+
+                    // ... and check status
+                    if (sc->hasStopped())
+                        _stop = true;
+
+                }
+
+                // time step
+                if(!_stop)
+                    _timer->step();
+
+            }
+
+            // stop timer
+            _timer->stop();
+
+            // if loop ended, terminate regularly
+            terminate();
+
+        }
 
 
         /**
          * Abort the running simulation
          */
-        void stop();
+        void stop() {
+
+            // check state
+            if(_status != Status::RUNNING)
+                throw ProcessException("Simulation is not running.");
+
+            // set stop flag
+            _stop = true;
+
+        }
 
 
         /**
          * Returns the status of the loops
          * @return Status
          */
-        Status getStatus() const;
+        Status getStatus() const {
+
+            // status
+            return _status;
+
+        }
 
 
     private:
@@ -96,13 +162,59 @@ namespace sim {
         /**
          * Initialize simulation
          */
-        void initialize();
+        void initialize() {
+
+            // check status
+            if(_status != Status::STOPPED)
+                throw ProcessException("Simulation must be stopped to be initialized.");
+
+            // reset timer
+            _timer->reset();
+
+
+            // iterate over stop conditions ...
+            for(auto &sc : _stop_conditions) {
+
+                // ... and reset
+                sc->reset();
+
+            }
+
+            // iterate over components ...
+            for(auto &m : _components) {
+
+                // ... and initialize models
+                m->initialize(_timer->time());
+
+            }
+
+            // reset stop flag
+            _stop = false;
+
+            // set status
+            _status = Status::INITIALIZED;
+
+        }
 
 
         /**
          * Terminate simulation
          */
-        void terminate();
+        void terminate() {
+
+
+            // iterate over components ...
+            for (auto &m : _components) {
+
+                // ... and terminate
+                m->terminate(_timer->time());
+
+            }
+
+            // set status
+            _status = Status::STOPPED;
+
+        }
 
 
     };

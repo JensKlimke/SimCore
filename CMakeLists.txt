@@ -6,15 +6,6 @@ set(CMAKE_CXX_STANDARD 14)
 # add ./cmake to CMAKE_MODULE_PATH
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
-# include sim map lib and provide path to source (for tracks)
-set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
-set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
-set(SIMMAP_ENABLE_TESTING OFF CACHE BOOL "" FORCE)
-
-add_subdirectory(lib/SimMap)
-include_directories(${PROJECT_SOURCE_DIR}/lib/SimMap/include)
-add_definitions(-DSIMMAP_SRC=\"${PROJECT_SOURCE_DIR}/lib/SimMap\")
-
 # download gtest when enabled
 if(NOT DEFINED SIMCORE_ENABLE_TESTING)
     set(SIMCORE_ENABLE_TESTING true)
