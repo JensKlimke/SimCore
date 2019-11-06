@@ -53,6 +53,7 @@ namespace sim {
 
     public:
 
+
         /**
          * Default constructor
          */
@@ -60,7 +61,7 @@ namespace sim {
 
 
         /**
-         * Default deconstructor
+         * Default destructor
          */
         virtual ~Loop() = default;
 

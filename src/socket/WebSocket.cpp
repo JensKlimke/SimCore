@@ -22,13 +22,20 @@
 // Created by Jens Klimke on 2019-06-09.
 //
 
-#include <simcore/socket/WebSocket.h>
+#include "WebSocket.h"
 
 
 void WebSocket::setHost(const std::string &host, const std::string &port) {
 
     _host = host;
     _port = port;
+
+}
+
+
+void WebSocket::setPath(const std::string &path) {
+
+    _path = path;
 
 }
 
@@ -44,7 +51,7 @@ bool WebSocket::connect() {
         boost::asio::connect(_ws.next_layer(), results.begin(), results.end());
 
         // Perform the websocket handshake
-        _ws.handshake(_host, "/");
+        _ws.handshake(_host, _path);
 
     } catch(...) {
 

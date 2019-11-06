@@ -27,13 +27,53 @@
 #include <simcore/timers/RealTimeTimer.h>
 #include <simcore/timers/TimeIsUp.h>
 #include <simcore/socket/DataPublisher.h>
+#include <simcore/functions.h>
 #include <gtest/gtest.h>
 
-class PublishTest : public ::testing::Test, public sim::IComponent {
+
+
+class DataContainer : public sim::data::IStorable {
+
+    double velocity = 0.0;
+    double acceleration = 0.0;
+
 
 public:
 
-    double time  = 0.0;
+    DataContainer() = default;
+    virtual ~DataContainer() = default;
+
+
+    void step(double dt) {
+
+        // a model which accelerates to reach a velocity of 10.0
+        acceleration = 1.0 - std::pow(velocity / 10.0, 4.0);
+        velocity += acceleration * dt;
+
+    }
+
+    std::vector<DataEntry> getData(Context context) const override {
+
+        // create vector
+        std::vector<DataEntry> vector{};
+
+        // add values
+        if(context == Context::STATE) {
+            vector.emplace_back(sim::data::createDataEntry("velocity", &velocity));
+            vector.emplace_back(sim::data::createDataEntry("acceleration", &acceleration));
+        }
+
+        // return vector
+        return vector;
+
+    }
+
+
+};
+
+
+
+class PublishTest : public ::testing::Test, public sim::data::DataPublisher, public sim::data::DataManager {
 
 
 protected:
@@ -43,45 +83,60 @@ protected:
     TimeIsUp stop;
     ::sim::Loop loop;
 
+    // data container
+    DataContainer container;
 
     void SetUp() override {
 
         // set parameters
-        timer.setTimeStepSize(0.1);
-        stop.setStopTime(10.0);
+        timer.setTimeStepSize(1.0);
+        timer.setAcceleration(1.0);
+        stop.setStopTime(30.0);
 
         // set timer and stop condition
         loop.setTimer(&timer);
         loop.addStopCondition(&stop);
 
-        // models
+        // models (stop condition and data publisher)
         loop.addComponent(&stop);
+        loop.addComponent(this);
+
+        // setup data publisher
+        this->setHost("raspberrypi.local", "1880");
+        this->setPath("/ws/chat");
+
+        // add container to data manager and add data manager
+        this->registerStorable("container", container);
+        this->setDataManager(this);
 
     }
 
 
 private:
 
-    bool step(double simTime) override {
-
-        // write data into variable
-        time = simTime;
-        return true;
-
-    }
-
-
-public:
 
     void initialize(double initTime) override {
 
-        time = initTime;
+        // initialize data publisher
+        DataPublisher::initialize(initTime);
+
+        // initialize timer
+        initializeTimer(initTime);
 
     }
 
-    void terminate(double simTime) override {
+    bool step(double simTime) override {
 
-        time = simTime;
+        // get time step size
+        auto dt = timeStep(simTime);
+
+        // run publisher step
+        DataPublisher::step(simTime);
+
+        // run the container step
+        container.step(dt);
+
+        return true;
 
     }
 
@@ -89,18 +144,18 @@ public:
 };
 
 
-
 TEST_F(PublishTest, Publisher) {
-
-    // create out-stream
-    std::stringstream ostr;
-
-    // register this (this updates the time variable)
-    loop.addComponent(this);
-
-    // TODO: test
 
     // initialize simulation
     EXPECT_NO_THROW(loop.run());
+
+    // get data from container
+    auto state = container.getData(sim::data::IStorable::Context::STATE);
+
+    auto v = *((double*) state[0].data->v());
+    auto a = *((double*) state[1].data->v());
+
+    EXPECT_NEAR(10.0, v, 1e-3);
+    EXPECT_NEAR( 0.0, a, 1e-3);
 
 }

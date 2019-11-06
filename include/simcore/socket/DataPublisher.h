@@ -43,15 +43,15 @@ namespace data {
 
 
         /**
-         * Default constructor
+         * Constructor
          */
-        DataPublisher() = default;
+        DataPublisher();
 
 
         /**
-         * Default destructor
+         * Destructor
          */
-        ~DataPublisher() override = default;
+        ~DataPublisher() override;
 
 
         /**
@@ -67,6 +67,13 @@ namespace data {
          * @param port Port of the server
          */
         void setHost(const std::string &host, const std::string &port);
+
+
+        /**
+         * Sets the path of the websocket server (default is "/")
+         * @param path Path of the websocket server
+         */
+        void setPath(const std::string &path);
 
 
         /**

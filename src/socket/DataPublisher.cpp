@@ -27,10 +27,25 @@
 
 #include <simcore/functions.h>
 #include <simcore/socket/DataPublisher.h>
-#include <simcore/socket/WebSocket.h>
+#include "WebSocket.h"
 
 namespace sim {
 namespace data {
+
+    DataPublisher::DataPublisher() {
+
+        // create web socket
+        _websocket = new WebSocket;
+
+    }
+
+
+    DataPublisher::~DataPublisher() {
+
+        // delete websocket
+        delete _websocket;
+
+    }
 
 
     void DataPublisher::setDataManager(sim::data::DataManager *dataManager) {
@@ -47,18 +62,20 @@ namespace data {
     }
 
 
+    void DataPublisher::setPath(const std::string &path) {
+
+        _websocket->setPath(path);
+
+    }
+
+
     void DataPublisher::initialize(double initTime) {
 
         ::sim::ISynchronized::initialize(initTime);
 
-        // create web socket
-        _websocket = new WebSocket;
-
         // connect and send name
         _websocket->connect();
-        _websocket->send("sim");
-
-        // TODO: wait for acceptance
+        _websocket->send(R"({"name":"sim"})");
 
     }
 
@@ -85,7 +102,6 @@ namespace data {
 
         // close and delete web socket
         _websocket->close();
-        delete _websocket;
 
     }
 

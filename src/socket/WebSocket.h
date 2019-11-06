@@ -47,11 +47,10 @@ class WebSocket : public std::enable_shared_from_this<WebSocket> {
     tcp::resolver _resolver;
 
     websocket::stream<tcp::socket> _ws;
-    boost::beast::multi_buffer _buffer;
 
     std::string _host = "127.0.0.1";
     std::string _port = "4500";
-    std::string _name = "sim";
+    std::string _path = "/";
 
 
 public:
@@ -63,6 +62,9 @@ public:
 
 
     void setHost(const std::string &host, const std::string &port);
+
+
+    void setPath(const std::string &path);
 
 
     bool connect();

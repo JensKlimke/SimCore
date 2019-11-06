@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 14)
 
 # set options
 option(SIMCORE_ENABLE_TESTING "Sets or unsets the option to generate the test target" ON)
-option(SIMCORE_ENABLE_WEBSOCKET "Activates or deactivates the websocket module of the SimCore" ON)
+option(SIMCORE_ENABLE_WEBSOCKET "Activates or deactivates the websocket module of the SimCore" OFF)
 
 # add ./cmake to CMAKE_MODULE_PATH
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})

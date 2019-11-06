@@ -1,6 +1,9 @@
 # SimCore
 A C++ Simulation Core
 
+This little header only tool allows you to build your own simulation software. The framework currently supports the following base features:
+* Handling components 
+
 ## Compiling
 Run cmake (libraries will be installed automatically) and compile
 
