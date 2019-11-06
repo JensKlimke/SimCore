@@ -27,7 +27,7 @@
 
 #include "../IStopCondition.h"
 #include "../IComponent.h"
-#include "../Exceptions.h"
+#include "../exceptions.h"
 #include "SignalTube.h"
 
 class ValueOutOfTube : public SignalTube, public sim::IStopCondition, public sim::IComponent {

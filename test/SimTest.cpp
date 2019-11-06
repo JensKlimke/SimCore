@@ -124,8 +124,11 @@ TEST_F(SimTest, Model) {
     RealTimeTimer timer;
     TimeIsUp stop;
 
-    // set parameters
+    // set timer parameters
     timer.setTimeStepSize(0.01);
+    timer.setAcceleration(10.0);
+
+    // set stop time
     stop.setStopTime(10.0);
 
     // create loop

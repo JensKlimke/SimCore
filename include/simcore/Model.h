@@ -27,7 +27,7 @@
 
 #include "IComponent.h"
 #include "IStorable.h"
-#include "DataAccessMacros.h"
+#include "data_access_macros.h"
 #include "ISynchronized.h"
 
 namespace sim {

@@ -28,7 +28,7 @@
 #include <map>
 #include <string>
 #include "../IComponent.h"
-#include "../Exceptions.h"
+#include "../exceptions.h"
 
 
 class JsonReporter : public sim::IComponent {

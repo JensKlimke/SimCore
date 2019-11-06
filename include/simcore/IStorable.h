@@ -31,10 +31,10 @@
 #include <memory>
 
 
-#define ADD(vector, name, structure)                                         \
+#define ADD(vector, name, structure)                                            \
     vector.emplace_back(sim::data::createDataEntry(#name, &(structure).name))   \
 
-#define ADD_PTR(vector, name, structure)                                     \
+#define ADD_PTR(vector, name, structure)                                        \
     vector.emplace_back(sim::data::createDataEntry(#name, (structure).name))    \
 
 

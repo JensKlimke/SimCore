@@ -27,8 +27,8 @@
 
 #include "IComponent.h"
 
-#ifndef EPS_TIME
-#define EPS_TIME 1e-9
+#ifndef EPS_SIM_TIME
+#define EPS_SIM_TIME 1e-9
 #endif
 
 namespace sim {
@@ -37,6 +37,7 @@ namespace sim {
 
         double _timeStepSize;
         double _nextExecTime;
+
 
     public:
 
@@ -58,7 +59,7 @@ namespace sim {
          */
         bool step(double simTime) override {
 
-            if(simTime + EPS_TIME >= _nextExecTime) {
+            if(simTime + EPS_SIM_TIME >= _nextExecTime) {
 
                 _nextExecTime += _timeStepSize;
                 return true;

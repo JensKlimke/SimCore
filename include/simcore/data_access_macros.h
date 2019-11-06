@@ -22,8 +22,8 @@
 // Created by Jens Klimke on 2019-03-20
 //
 
-#ifndef SIMCORE_DATAACCESSMACROS_H
-#define SIMCORE_DATAACCESSMACROS_H
+#ifndef SIMCORE_DATA_ACCESS_MACROS_H
+#define SIMCORE_DATA_ACCESS_MACROS_H
 
 
 #define PARAM_ACCESS(struct_name, var)                                  \
@@ -60,4 +60,4 @@ bool getStates(struct_name **states) {                                  \
 }                                                                       \
 
 
-#endif //SIMCORE_DATAACCESSMACROS_H
+#endif //SIMCORE_DATA_ACCESS_MACROS_H
