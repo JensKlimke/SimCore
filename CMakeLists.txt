@@ -4,7 +4,7 @@ project(SimCore CXX)
 set(CMAKE_CXX_STANDARD 14)
 
 # set options
-option(SIMCORE_ENABLE_TESTING "Sets or unsets the option to generate the test target" ON)
+option(BUILD_TESTS "Sets or unsets the option to generate the test target" OFF)
 option(SIMCORE_ENABLE_WEBSOCKET "Activates or deactivates the websocket module of the SimCore" OFF)
 
 # add ./cmake to CMAKE_MODULE_PATH
@@ -17,7 +17,7 @@ set(BIN_DIR ${PROJECT_SOURCE_DIR}/bin CACHE PATH "BIN_DIR")
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
 ## Enable google testing of SimCore
-if(SIMCORE_ENABLE_TESTING)
+if(BUILD_TESTS)
 
     message("-- Testing of SimCore enabled")
 
