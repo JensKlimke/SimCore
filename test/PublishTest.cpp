@@ -2,9 +2,11 @@
 // Created by Jens Klimke on 2019-04-22.
 //
 
-#include <core/Model.h>
-#include <components/timers/RealTimeTimer.h>
-#include <components/data/DataPublisher.h>
+#include <simcore/Loop.h>
+#include <simcore/Model.h>
+#include <simcore/timers/RealTimeTimer.h>
+#include <simcore/timers/TimeIsUp.h>
+#include <simcore/socket/DataPublisher.h>
 #include <gtest/gtest.h>
 
 class PublishTest : public ::testing::Test, public sim::IComponent {
@@ -76,13 +78,7 @@ TEST_F(PublishTest, Publisher) {
     // register this (this updates the time variable)
     loop.addComponent(this);
 
-    // add publisher
-    DataPublisher pub;
-    pub.registerValue("time", &time);
-    pub.setTimeStepSize(1.0);
-
-    // add publisher to look
-    loop.addComponent(&pub);
+    // TODO: test
 
     // initialize simulation
     EXPECT_NO_THROW(loop.run());

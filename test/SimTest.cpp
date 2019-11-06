@@ -2,12 +2,12 @@
 // Created by Jens Klimke on 2019-03-19.
 //
 
-#include <core/IComponent.h>
-#include <core/Loop.h>
-#include <components/data/DataManager.h>
-#include <components/timers/BasicTimer.h>
-#include <components/timers/TimeIsUp.h>
-#include <components/timers/RealTimeTimer.h>
+#include <simcore/IComponent.h>
+#include <simcore/Loop.h>
+#include <simcore/data/DataManager.h>
+#include <simcore/timers/BasicTimer.h>
+#include <simcore/timers/TimeIsUp.h>
+#include <simcore/timers/RealTimeTimer.h>
 #include <gtest/gtest.h>
 
 
@@ -106,7 +106,7 @@ TEST_F(SimTest, Model) {
 
     // set parameters
     timer.setTimeStepSize(0.01);
-    stop.setStopTime(1.0);
+    stop.setStopTime(10.0);
 
     // create loop
     Loop sim;
@@ -123,14 +123,14 @@ TEST_F(SimTest, Model) {
     // check status
     EXPECT_EQ(Loop::Status::STOPPED, sim.getStatus());
 
-    // run simulation, TODO: check time
+    // run simulation
     sim.run();
 
     // check time and steps
-    EXPECT_NEAR(1.0, timer.time(), 1e-8);
-    EXPECT_NEAR(1.0, time, 1e-8);
-    EXPECT_NEAR(1.0, finalTime, 1e-8);
-    EXPECT_EQ(101, this->steps);
+    EXPECT_NEAR(10.0, timer.time(), 1e-8);
+    EXPECT_NEAR(10.0, time, 1e-8);
+    EXPECT_NEAR(10.0, finalTime, 1e-8);
+    EXPECT_EQ(1001, this->steps);
 
     // check status
     EXPECT_EQ(Loop::Status::STOPPED, sim.getStatus());

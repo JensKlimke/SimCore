@@ -2,15 +2,15 @@
 // Created by klimke on 16.04.2019.
 //
 
-#include <core/IComponent.h>
-#include <core/Loop.h>
-#include <core/IStopCondition.h>
-#include <components/value/SignalCurve.h>
-#include <components/value/SignalTube.h>
-#include <components/value/ValueExceed.h>
-#include <components/value/ValueOutOfTube.h>
-#include <components/timers/BasicTimer.h>
-#include <components/timers/TimeIsUp.h>
+#include <simcore/IComponent.h>
+#include <simcore/Loop.h>
+#include <simcore/IStopCondition.h>
+#include <simcore/value/SignalCurve.h>
+#include <simcore/value/SignalTube.h>
+#include <simcore/value/ValueExceed.h>
+#include <simcore/value/ValueOutOfTube.h>
+#include <simcore/timers/BasicTimer.h>
+#include <simcore/timers/TimeIsUp.h>
 #include <gtest/gtest.h>
 
 

@@ -5,8 +5,8 @@ set(SOURCE_FILES
         PublishTest.cpp
         )
 
-add_executable(SimTest ${SOURCE_FILES})
-target_include_directories(SimTest PRIVATE ${PROJECT_SOURCE_DIR}/src)
-target_link_libraries(SimTest PRIVATE simcore)
+add_executable(SimCoreTest ${SOURCE_FILES})
+target_include_directories(SimCoreTest PRIVATE ${GTEST_INCLUDE_DIR})
+target_link_libraries(SimCoreTest PRIVATE simcore_publisher)
 
-add_gtest(SimTest)
+add_gtest(SimCoreTest)

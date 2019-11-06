@@ -2,14 +2,14 @@
 // Created by klimke on 16.04.2019.
 //
 
-#include <core/Model.h>
-#include <core/Loop.h>
-#include <core/IStopCondition.h>
-#include <core/IStorable.h>
-#include <components/timers/BasicTimer.h>
-#include <components/timers/TimeIsUp.h>
-#include <components/data/TimeReporter.h>
-#include <components/data/DataManager.h>
+#include <simcore/Model.h>
+#include <simcore/Loop.h>
+#include <simcore/IStopCondition.h>
+#include <simcore/IStorable.h>
+#include <simcore/timers/BasicTimer.h>
+#include <simcore/timers/TimeIsUp.h>
+#include <simcore/data/TimeReporter.h>
+#include <simcore/data/DataManager.h>
 #include <gtest/gtest.h>
 #include <map>
 
