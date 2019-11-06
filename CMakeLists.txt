@@ -38,10 +38,10 @@ endif()
 
 if(SIMCORE_ENABLE_WEBSOCKET)
 
-    # include folders
-    add_subdirectory(src/socket)
-
     # find boost
     find_package(Boost 1.69)
+
+    # include folders
+    add_subdirectory(src/socket)
 
 endif()
