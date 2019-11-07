@@ -18,6 +18,6 @@ else()
 endif()
 
 # include gtest directory
-target_include_directories(SimCoreTest PRIVATE ${GTEST_INCLUDE_DIR})
+target_include_directories(SimCoreTest PUBLIC ${GTEST_INCLUDE_DIR})
 
 add_gtest(SimCoreTest)
