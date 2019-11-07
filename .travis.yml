@@ -17,4 +17,4 @@ script:
   - cd build
   - cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON ..
   - make
-  - make test-
+  - make test
