@@ -3,6 +3,11 @@ language: cpp
 os:
   - linux
   - osx
+  - windows
+
+compiler:
+  - gcc
+  - clang
 
 script:
   ############################################################################
@@ -12,4 +17,4 @@ script:
   - cd build
   - cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON ..
   - make
-  - make test
+  - make test-
