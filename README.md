@@ -1,7 +1,7 @@
 # SimCore
 A C++ Simulation Core
 
-[![Build Status](https://travis-ci.com/JensKlimke/SimCore.svg?branch=sim-only)](https://travis-ci.com/JensKlimke/SimCore)
+[![Build Status](https://travis-ci.com/JensKlimke/SimCore.svg?branch=master)](https://travis-ci.com/JensKlimke/SimCore)
 
 This little header only tool allows you to build your own simulation software. The framework currently supports the following base features:
 * Handling and registering components (or simulation models) synchronously with defined time step sizes 
