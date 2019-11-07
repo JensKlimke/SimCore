@@ -4,22 +4,20 @@ set(SOURCE_FILES
         DataTest.cpp
         )
 
+set(WEBSOCKET_SOURCE_FILES
+        PublishTest.cpp
+        )
+
 
 # only test publisher, when websocket is active
-if(SIMCORE_ENABLE_WEBSOCKET)
-    set(WEBSOCKET_SOURCE_FILES PublishTest.cpp)
-else()
-    set(WEBSOCKET_SOURCE_FILES "")
-endif()
-
-
-add_executable(SimCoreTest ${SOURCE_FILES} ${WEBSOCKET_SOURCE_FILES})
-target_include_directories(SimCoreTest PRIVATE ${GTEST_INCLUDE_DIR})
-
-
-# link publisher
-if(SIMCORE_ENABLE_WEBSOCKET)
+if(BUILD_WEBSOCKET)
+    add_executable(SimCoreTest ${SOURCE_FILES} ${WEBSOCKET_SOURCE_FILES})
     target_link_libraries(SimCoreTest PRIVATE simcore_publisher)
+else()
+    add_executable(SimCoreTest ${SOURCE_FILES})
 endif()
+
+# include gtest directory
+target_include_directories(SimCoreTest PRIVATE ${GTEST_INCLUDE_DIR})
 
 add_gtest(SimCoreTest)
