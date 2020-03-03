@@ -22,7 +22,7 @@
 // Created by Jens Klimke on 2019-06-09.
 //
 
-#include "WebSocket.h"
+#include <WebSocket.h>
 
 
 void WebSocket::setHost(const std::string &host, const std::string &port) {
