@@ -8,7 +8,7 @@ compiler:
   - gcc
   - clang
 
-install:
+before_install:
   - cd /tmp && git clone https://github.com/google/googletest && cd googletest && mkdir build & cd build
   - cd /tmp/googletest/build && cmake .. && make && sudo make install
 
