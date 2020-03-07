@@ -17,7 +17,4 @@ else()
     add_executable(SimCoreTest ${SOURCE_FILES})
 endif()
 
-# include gtest directory
-target_include_directories(SimCoreTest PRIVATE ${GTEST_INCLUDE_DIR})
-
 add_gtest(SimCoreTest)

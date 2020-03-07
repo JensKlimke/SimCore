@@ -8,6 +8,9 @@ compiler:
   - gcc
   - clang
 
+install:
+  - cd /tmp &&
+
 script:
   ############################################################################
   # Build main and tests

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.10)
 
 project(SimCore CXX)
 set(CMAKE_CXX_STANDARD 14)
@@ -69,8 +69,9 @@ if(BUILD_TESTS)
     # enable testing
     enable_testing()
 
-    # add subdirectory (gtest)
-    add_subdirectory(lib/gtest)
+    # find gtest
+    find_package(GTest REQUIRED)
+    include_directories(${GTEST_INCLUDE_DIRS})
 
     # load macros for tests
     include(AddGoogleTest)
