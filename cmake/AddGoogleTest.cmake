@@ -1,7 +1,7 @@
 # Target must already exist
 macro(add_gtest TESTNAME)
 
-    target_link_libraries(${TESTNAME} PUBLIC ${GTEST_BOTH_LIBRARIES})
+    target_link_libraries(${TESTNAME} PUBLIC ${GTEST_BOTH_LIBRARIES} pthread)
     
     if(GOOGLE_TEST_INDIVIDUAL)
         if(CMAKE_VERSION VERSION_LESS 3.10)
