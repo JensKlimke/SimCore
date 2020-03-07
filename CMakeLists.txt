@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 14)
 
 # set options
 option(BUILD_TESTS "Sets or unsets the option to generate the test target" OFF)
+option(BUILD_GTEST "Sets or unsets the option to build gtest" OFF)
 option(BUILD_FOR_COVERAGE "Sets or unsets the option to generate with coverage flags" OFF)
 option(BUILD_WEBSOCKET "Activates or deactivates the websocket module of the SimCore" OFF)
 option(BUILD_TRAFFIC_SIMULATION "Activates or deactivates the traffic simulation library target to be generated." OFF)
@@ -69,9 +70,20 @@ if(BUILD_TESTS)
     # enable testing
     enable_testing()
 
-    # find gtest
-    find_package(GTest REQUIRED)
-    include_directories(${GTEST_INCLUDE_DIRS})
+    if(BUILD_GTEST)
+
+        # add subdirectory
+        add_subdirectory(googletest)
+        set(GTEST_BOTH_LIBRARIES gtest_main)
+        include_directories(${PROJECT_SOURCE_DIR}/googletest/googletest/include)
+
+    else()
+
+        # find gtest
+        find_package(GTest REQUIRED)
+        include_directories(${GTEST_INCLUDE_DIRS})
+
+    endif()
 
     # load macros for tests
     include(AddGoogleTest)
