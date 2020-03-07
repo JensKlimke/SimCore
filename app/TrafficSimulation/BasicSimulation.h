@@ -20,8 +20,8 @@
  */
 
 
-#ifndef SIMCORE_BASICSIMULATION_H
-#define SIMCORE_BASICSIMULATION_H
+#ifndef SIMCORE_TS_BASICSIMULATION_H
+#define SIMCORE_TS_BASICSIMULATION_H
 
 #include <simcore/Loop.h>
 #include <simcore/data/JsonFileReporter.h>
@@ -60,4 +60,4 @@ public:
 
 };
 
-#endif //SIMCORE_BASICSIMULATION_H
+#endif // SIMCORE_TS_BASICSIMULATION_H

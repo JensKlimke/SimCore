@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Jens Klimke <jens.klimke@rwth-aachen.de>. All rights reserved.
+// Copyright (c) 2019-2020 Jens Klimke <jens.klimke@rwth-aachen.de>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,12 +18,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke on 29.11.2019.
+// Created by Jens Klimke on 2019-11-29.
 //
 
 
-#ifndef SIMDRIVE_DRIVERCONTROLLER_H
-#define SIMDRIVE_DRIVERCONTROLLER_H
+#ifndef SIMCORE_VM_DRIVERCONTROLLER_H
+#define SIMCORE_VM_DRIVERCONTROLLER_H
 
 #include "PrimaryController.h"
 
@@ -84,4 +84,4 @@ public:
 };
 
 
-#endif //SIMDRIVE_DRIVERCONTROLLER_H
+#endif // SIMCORE_VM_DRIVERCONTROLLER_H

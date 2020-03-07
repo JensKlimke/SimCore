@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Institute for Automotive Engineering (ika), RWTH Aachen University. All rights reserved.
+// Copyright (c) 2019-2020 Jens Klimke <jens.klimke@rwth-aachen.de>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,8 +21,8 @@
 // Created by Jens Klimke on 2019-03-22.
 //
 
-#ifndef PRIMARY_CONTROLLER_H
-#define PRIMARY_CONTROLLER_H
+#ifndef SIMCORE_VM_PRIMARY_CONTROLLER_H
+#define SIMCORE_VM_PRIMARY_CONTROLLER_H
 
 
 #include <cmath>
@@ -121,4 +121,4 @@ public:
 
 };
 
-#endif // PRIMARY_CONTROLLER_H
+#endif // SIMCORE_VM_PRIMARY_CONTROLLER_H
