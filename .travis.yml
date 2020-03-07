@@ -9,7 +9,7 @@ compiler:
   - clang
 
 before_install:
-  - install_gtest.sh
+  - bash ./install_gtest.sh
 
 script:
   ############################################################################

@@ -3,14 +3,13 @@ MAINTAINER Jens Klimke (jens.klimke@rwth-aachen.de)
 
 # installation
 RUN apt-get update
-RUN apt-get -y install git g++ make cmake nano libgtest-dev # libpthread-stubs0-dev
-
-RUN cd /usr/src/gtest && cmake CMakeLists.txt && make && make install
-#RUN cd /tmp && git clone https://github.com/google/googletest && cd googletest && mkdir build && cd build \
-#    && cmake .. && make && make install
+RUN apt-get -y install git g++ make cmake nano
 
 # copy code
 COPY . /app
+
+# install gtest
+RUN cd /app && bash ./install_gtest.sh
 
 # installation
 RUN rm -rf /app/build
