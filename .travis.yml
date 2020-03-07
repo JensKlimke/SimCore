@@ -9,8 +9,7 @@ compiler:
   - clang
 
 before_install:
-  - cd /tmp && git clone https://github.com/google/googletest && cd googletest && mkdir build && cd build
-  - cd /tmp/googletest/build && cmake –DCMAKE_CXX_STANDARD=14 .. && make && sudo make install
+  - install_gtest.sh
 
 script:
   ############################################################################

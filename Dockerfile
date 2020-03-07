@@ -5,7 +5,7 @@ MAINTAINER Jens Klimke (jens.klimke@rwth-aachen.de)
 RUN apt-get update
 RUN apt-get -y install git g++ make cmake nano libgtest-dev # libpthread-stubs0-dev
 
-RUN cd /usr/src/gtest && cmake –DCMAKE_CXX_STANDARD=14 CMakeLists.txt && make && make install
+RUN cd /usr/src/gtest && cmake CMakeLists.txt && make && make install
 #RUN cd /tmp && git clone https://github.com/google/googletest && cd googletest && mkdir build && cd build \
 #    && cmake .. && make && make install
 
