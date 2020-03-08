@@ -14,9 +14,6 @@ option(BUILD_VEHICLE_MODEL "Build the vehicle model target." OFF)
 # add ./cmake to CMAKE_MODULE_PATH
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
-# set binary directory
-set(BIN_DIR ${PROJECT_SOURCE_DIR}/bin CACHE PATH "BIN_DIR")
-
 # set include directory
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
@@ -70,6 +67,7 @@ if(BUILD_TESTS)
     # enable testing
     enable_testing()
 
+    # switch (build or use installed lib)
     if(BUILD_GTEST)
 
         # add subdirectory

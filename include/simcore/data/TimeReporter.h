@@ -43,6 +43,9 @@ public:
 
     void initialize(double initTime) override {
 
+        // run
+        sim::ISynchronized::initialize(initTime);
+
         // take std::cout if no stream is set
         if(_stream == nullptr)
             _stream = &std::cout;
