@@ -29,6 +29,10 @@
 #include <simcore/timers/BasicTimer.h>
 #include <simcore/timers/RealTimeTimer.h>
 #include <simcore/timers/TimeIsUp.h>
+#include <simcore/value/ValueExceed.h>
+#include <VehicleModel/VehicleModel.h>
+#include <VehicleModel/PrimaryController.h>
+#include "PlotLogger.h"
 
 class BasicSimulation : public sim::Loop {
 
@@ -37,6 +41,11 @@ protected:
     BasicTimer *timer = nullptr;
     TimeReporter *timeReporter = nullptr;
     TimeIsUp *stopTimer = nullptr;
+
+    std::vector<ValueExceed<double>*> stopConditions{};
+
+    PlotLogger *plotLog = nullptr;
+    JsonFileReporter *jsonLog = nullptr;
 
 
 public:
@@ -55,8 +64,32 @@ public:
      * Creates a simulation
      * @param endTime End time of the simulation
      * @param stepSize Time step size of the simulation
+     * @param realTime Real-time flag
+     * @param stopValues Values to be checked for excess (then simulation is stopped)
      */
-    void create(double endTime, double stepSize, bool realTime = false);
+    void create(double endTime, double stepSize, bool realTime = false,
+            const std::vector<std::pair<double*, double>> &stopValues = {});
+
+
+    /**
+     * Destroys the simulation (deletes all elements)
+     */
+    void destroy();
+
+
+    /**
+     * Adds a value to be logged
+     * @param key Key of the value
+     * @param val Pointer to the actual value
+     */
+    void addLogValue(const std::string &key, const double *val);
+
+
+    /**
+     * Returns the logger
+     * @return Logger
+     */
+    PlotLogger *getLogger();
 
 };
 

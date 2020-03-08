@@ -36,6 +36,7 @@ namespace sim {
     class ISynchronized : public sim::IComponent {
 
         double _timeStepSize;
+        double _deltaStartTime;
         double _nextExecTime;
 
 
@@ -47,7 +48,7 @@ namespace sim {
          */
         void initialize(double initTime) override {
 
-            _nextExecTime += initTime;
+            _nextExecTime = _deltaStartTime + initTime;
 
         }
 
@@ -78,7 +79,7 @@ namespace sim {
         void setTimeStepSize(double timeStepSize, double firstExecutionAfterStart = 0.0) {
 
             _timeStepSize = timeStepSize;
-            _nextExecTime = firstExecutionAfterStart;
+            _deltaStartTime = firstExecutionAfterStart;
 
         }
 

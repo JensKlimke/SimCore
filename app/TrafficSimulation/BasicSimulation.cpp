@@ -23,14 +23,31 @@
 
 BasicSimulation::~BasicSimulation() {
 
-    delete timer;
-    delete stopTimer;
-    delete timeReporter;
+    destroy();
 
 }
 
 
-void BasicSimulation::create(double endTime, double stepSize, bool realTime) {
+void BasicSimulation::destroy() {
+
+    // timers
+    delete timer;
+    delete stopTimer;
+    delete timeReporter;
+
+    // logger
+    delete plotLog;
+    delete jsonLog;
+
+    // delete stop conditions
+    for(auto e : stopConditions)
+        delete e;
+
+}
+
+
+void BasicSimulation::create(double endTime, double stepSize, bool realTime,
+        const std::vector<std::pair<double*, double>> &stopValues) {
 
     // create timer
     timer = realTime ? new RealTimeTimer : new BasicTimer;
@@ -39,9 +56,23 @@ void BasicSimulation::create(double endTime, double stepSize, bool realTime) {
     timer->setTimeStepSize(stepSize);
     setTimer(timer);
 
-    // stop condition
+    // stop condition (time)
     stopTimer = new TimeIsUp();
     stopTimer->setStopTime(endTime);
+
+    // stop condition (distance) TODO: test
+    for(auto e : stopValues) {
+
+        // create stop condition
+        auto b = new ValueExceed<double>();
+        b->setValueAndLimit(e.first, e.second);
+
+        // add stop condition
+        stopConditions.push_back(b);
+        addComponent(b);
+        addStopCondition(b);
+
+    }
 
     // add component and stop condition
     addComponent(stopTimer);
@@ -58,5 +89,20 @@ void BasicSimulation::create(double endTime, double stepSize, bool realTime) {
         addComponent(timeReporter);
 
     }
+
+}
+
+
+void BasicSimulation::addLogValue(const std::string &key, const double *val) {
+
+    if(jsonLog != nullptr)
+        jsonLog->addValue(key, val);
+
+}
+
+
+PlotLogger * BasicSimulation::getLogger() {
+
+    return plotLog;
 
 }
