@@ -24,14 +24,15 @@
 // PlotLogger.h
 //
 
-#ifndef DRIVERMODEL_PLOTLOGGER_H
-#define DRIVERMODEL_PLOTLOGGER_H
+#ifndef SIMCORE_PLOTLOGGER_H
+#define SIMCORE_PLOTLOGGER_H
 
 #include <sstream>
+#include <fstream>
 #include <utility>
 #include <map>
 #include <vector>
-#include <simcore/IComponent.h>
+#include "../IComponent.h"
 
 class PlotLogger : public sim::IComponent {
 
@@ -308,4 +309,4 @@ public:
 };
 
 
-#endif //DRIVERMODEL_PLOTLOGGER_H
+#endif // SIMCORE_PLOTLOGGER_H

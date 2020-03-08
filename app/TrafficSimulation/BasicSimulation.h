@@ -23,6 +23,7 @@
 #ifndef SIMCORE_TS_BASICSIMULATION_H
 #define SIMCORE_TS_BASICSIMULATION_H
 
+#include <string>
 #include <simcore/Loop.h>
 #include <simcore/data/JsonFileReporter.h>
 #include <simcore/data/TimeReporter.h>
@@ -32,7 +33,7 @@
 #include <simcore/value/ValueExceed.h>
 #include <VehicleModel/VehicleModel.h>
 #include <VehicleModel/PrimaryController.h>
-#include "PlotLogger.h"
+#include "simcore/data/PlotLogger.h"
 
 class BasicSimulation : public sim::Loop {
 
@@ -44,21 +45,21 @@ protected:
 
     std::vector<ValueExceed<double>*> stopConditions{};
 
-    PlotLogger *plotLog = nullptr;
-    JsonFileReporter *jsonLog = nullptr;
-
 
 public:
+
 
     /**
      * Constructor
      */
     BasicSimulation() = default;
 
+
     /**
      * Destructor
      */
     ~BasicSimulation() override;
+
 
     /**
      * Creates a simulation
@@ -75,21 +76,6 @@ public:
      * Destroys the simulation (deletes all elements)
      */
     void destroy();
-
-
-    /**
-     * Adds a value to be logged
-     * @param key Key of the value
-     * @param val Pointer to the actual value
-     */
-    void addLogValue(const std::string &key, const double *val);
-
-
-    /**
-     * Returns the logger
-     * @return Logger
-     */
-    PlotLogger *getLogger();
 
 };
 

@@ -35,10 +35,6 @@ void BasicSimulation::destroy() {
     delete stopTimer;
     delete timeReporter;
 
-    // logger
-    delete plotLog;
-    delete jsonLog;
-
     // delete stop conditions
     for(auto e : stopConditions)
         delete e;
@@ -90,19 +86,5 @@ void BasicSimulation::create(double endTime, double stepSize, bool realTime,
 
     }
 
-}
-
-
-void BasicSimulation::addLogValue(const std::string &key, const double *val) {
-
-    if(jsonLog != nullptr)
-        jsonLog->addValue(key, val);
-
-}
-
-
-PlotLogger * BasicSimulation::getLogger() {
-
-    return plotLog;
 
 }
