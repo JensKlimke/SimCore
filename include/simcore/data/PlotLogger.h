@@ -81,8 +81,8 @@ public:
 
     void create(std::string fname, std::string title) {
 
-        _filename = fname;
-        _title = title;
+        _filename = std::move(fname);
+        _title = std::move(title);
 
     }
 
