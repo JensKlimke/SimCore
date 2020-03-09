@@ -69,7 +69,7 @@ class PlotLogger : public sim::IComponent {
 
 public:
 
-    PlotLogger(std::string fname, std::string title) : _title(std::move(title)), _filename(std::move(fname)) {}
+    PlotLogger() = default;
 
     ~PlotLogger() override {
 
@@ -79,6 +79,12 @@ public:
 
     }
 
+    void create(std::string fname, std::string title) {
+
+        _filename = fname;
+        _title = title;
+
+    }
 
     Figure *createFigure(const std::string& label) {
 
@@ -189,8 +195,10 @@ public:
         bool first = true;
         for(auto const &p : _figures) {
 
-            _file << (first ? "" : ",") << std::endl << R"( {"title":")" << p->title << R"(","xlabel":")" << p->xLabel << R"(","ylabel":")" << p->yLabel
-                  << R"(","traces":[)";
+            _file << (first ? "" : ",") << std::endl << R"( {"layout":{"title":")" << p->title
+                << R"(","xaxis":{"title":")" << p->xLabel << R"(","showgrid":true,"zeroline":true})"
+                << R"(,"yaxis":{"title":")" << p->yLabel << R"(","showgrid":true,"zeroline":true})"
+                << R"(},"traces":[)";
 
             for(size_t i = 0; i < p->traces.size(); ++i) {
 
@@ -221,15 +229,19 @@ public:
                 // store to file
                 _file << (i == 0 ? "" : ",")
                       << std::endl
-                      << R"(  {"name":")" << tr->name << "\""
+                      << R"({"name":")" << tr->name << "\""
                       << R"(,"x":)" << (tr->x.empty() ? xRef.str() : xData.str())
                       << R"(,"y":)" << (tr->y.empty() ? yRef.str() : yData.str())
-                      << R"(,"color":")" << tr->color << "\""
-                      << R"(,"lineWidth":)" << tr->lineWidth << "}";
+                      << R"(,"type":"scatter"})";
 
             }
 
-            _file << "],\"axisEqual\":" << (p->axisEqual ? "true" : "false") << "}";
+            _file << "]}";
+
+            // TODO: equal axis
+            // TODO: line width
+            // TODO: color
+            // TODO: line groups
 
             first = false;
 

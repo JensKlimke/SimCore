@@ -56,6 +56,9 @@ public:
      */
     void addValue(const std::string &key, const double *val) {
 
+        if(key == "time")
+            throw std::invalid_argument("time key word is reserved.");
+
         _values[key] = val;
 
     }
@@ -78,7 +81,7 @@ protected:
     bool step(double simTime) override {
 
         // save time and open object brackets
-        (*_outstream) << (_hasContent ? ",\n" : "[\n") << "\t" << R"({"time":)" << simTime << R"(,"data":{)";
+        (*_outstream) << (_hasContent ? ",\n" : "[\n") << "\t" << R"({"time":)" << simTime << ",";
 
         // write data
         unsigned int i = 0;
@@ -96,7 +99,7 @@ protected:
         }
 
         // close object brackets
-        (*_outstream) << "}}";
+        (*_outstream) << "}";
 
         // save that data was already written
         _hasContent = true;
