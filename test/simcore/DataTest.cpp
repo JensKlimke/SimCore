@@ -34,7 +34,7 @@
 #include <map>
 
 
-class DataTest : public ::testing::Test, public sim::Model {
+class DataTest : public ::testing::Test, public sim::Model, public sim::data::IStorable {
 
 public:
 

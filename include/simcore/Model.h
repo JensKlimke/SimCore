@@ -26,13 +26,12 @@
 #define SIMCORE_MODEL_H
 
 #include "IComponent.h"
-#include "IStorable.h"
 #include "data_access_macros.h"
 #include "ISynchronized.h"
 
 namespace sim {
 
-    class Model : public ISynchronized, public data::IStorable {
+    class Model : public ISynchronized {
 
     public:
 

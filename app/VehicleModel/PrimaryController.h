@@ -105,14 +105,6 @@ public:
     void setParameters(double k_p, double k_i, double k_d);
 
 
-    /**
-     * Returns the data of the model
-     * @param context Context of the data
-     * @return
-     */
-    std::vector<DataEntry> getData(Context context) const override;
-
-
     // generate accessor methods
     PARAM_ACCESS(Parameters, _parameters);
     INPUT_ACCESS(Input, _input);

@@ -108,15 +108,6 @@ public:
     INPUT_ACCESS(Input,      _input)
     STATE_ACCESS(State,      _state)
 
-    /**
-     * Data accessor
-     * @param context Context of the data (e.g. input, state, parameters)
-     * @return Returns nothing in the moment (TODO:)
-     */
-    std::vector<DataEntry> getData(Context context) const override {
-        return {};
-    }
-
 
 };
 

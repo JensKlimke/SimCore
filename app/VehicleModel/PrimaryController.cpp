@@ -102,32 +102,3 @@ void PrimaryController::initialize(double initTime) {
     reset();
 
 }
-
-std::vector<sim::data::IStorable::DataEntry> PrimaryController::getData(sim::data::IStorable::Context context) const {
-
-    std::vector<DataEntry> ret;
-    ret.reserve(2);
-
-    switch(context) {
-        case Context::PARAMETER:
-            ADD(ret, k_P, _parameters);
-            ADD(ret, k_I, _parameters);
-            ADD(ret, k_D, _parameters);
-            break;
-        case Context::INPUT:
-            ADD_PTR(ret, value,  _input);
-            ADD_PTR(ret, target, _input);
-            break;
-        case Context::STATE:
-            ADD(ret,    in, _state);
-            ADD(ret,     u, _state);
-            ADD_PTR(ret, y, _state);
-            break;
-        default:
-            break;
-    }
-
-    return ret;
-
-}
-
