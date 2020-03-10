@@ -25,6 +25,7 @@
 #include <TrafficSimulation/BasicSimulation.h>
 #include <VehicleModel/DriverController.h>
 #include <VehicleModel/VehicleModel.h>
+#include <simcore/functions.h>
 
 class VehicleModelTest : public ::testing::Test, public BasicSimulation, public VehicleModel {
 
@@ -34,20 +35,24 @@ public:
     VehicleModel::Parameters *param = nullptr;
     VehicleModel::State *state = nullptr;
 
+    PlotLogger plotLogger;
+    JsonFileReporter jsonLogger;
+
     VehicleModelTest() = default;
     ~VehicleModelTest() override = default;
 
 
-    void SetUp() override {}
-
-
-    void create() {
+    void SetUp() override {
 
         // create simulation
         BasicSimulation::create(1000.0, 0.01, false);
 
         // add vehicle as component
         addComponent(this);
+
+        // add loggers
+        addComponent(&jsonLogger);
+        addComponent(&plotLogger);
 
         // get pointers
         this->getInputs(&input);
@@ -81,8 +86,6 @@ public:
 
 TEST_F(VehicleModelTest, MaxSpeed) {
 
-    create();
-
     // set pedal and steering value
     input->pedal = 1.0;
     input->steer = 0.0;
@@ -114,8 +117,6 @@ TEST_F(VehicleModelTest, MaxSpeed) {
 
 TEST_F(VehicleModelTest, MaxSpeedWithStdParams) {
 
-    create();
-
     // set pedal and steering value
     input->pedal = 1.0;
     input->steer = 0.0;
@@ -127,14 +128,12 @@ TEST_F(VehicleModelTest, MaxSpeedWithStdParams) {
     EXPECT_NEAR(    0.0,       state->a,  1e-3);
     EXPECT_NEAR(   38.1739642, state->v,  1e-7);
     EXPECT_NEAR(    0.3817396, state->ds, 1e-7);
-    EXPECT_NEAR(37822.5064121, state->s,  1e-7);
+    EXPECT_NEAR(37819.9506131, state->s,  1e-7);
 
 }
 
 
 TEST_F(VehicleModelTest, IdleSpeedWithStdParams) {
-
-    create();
 
     // set pedal and steering value
     input->pedal = 0.0;
@@ -144,16 +143,14 @@ TEST_F(VehicleModelTest, IdleSpeedWithStdParams) {
     run();
 
     EXPECT_NEAR(    0.0,       state->a,  1e-3);
-    EXPECT_NEAR(   8.11176029, state->v,  1e-7);
-    EXPECT_NEAR(    0.0811176, state->ds, 1e-7);
-    EXPECT_NEAR(7789.26159312, state->s,  1e-7);
+    EXPECT_NEAR(    7.4348037, state->v,  1e-7);
+    EXPECT_NEAR(    0.0743480, state->ds, 1e-7);
+    EXPECT_NEAR(7085.12497010, state->s,  1e-7);
 
 }
 
 
 TEST_F(VehicleModelTest, SteadyTurn) {
-
-    create();
 
     // set pedal and steering value
     input->pedal = 0.1;
@@ -167,14 +164,12 @@ TEST_F(VehicleModelTest, SteadyTurn) {
     EXPECT_NEAR(19.5095, state->v, 1e-4);
 
     EXPECT_NEAR(  0.3251588, state->dPsi, 1e-7);
-    EXPECT_NEAR(318.9511627, state->psi,  1e-7);
+    EXPECT_NEAR(318.7671439, state->psi,  1e-7);
 
 }
 
 
 TEST_F(VehicleModelTest, ControlledYawRate) {
-
-    create();
 
     double accTarget = 0.0;
     double dPsiTarget = 0.5;
@@ -215,8 +210,6 @@ TEST_F(VehicleModelTest, ControlledYawRate) {
 
 TEST_F(VehicleModelTest, ControlledCurvature) {
 
-    create();
-
     double accTarget = 0.0;
     double kappaTarget = 0.1;
 
@@ -250,5 +243,33 @@ TEST_F(VehicleModelTest, ControlledCurvature) {
     // this values need to fit
     EXPECT_NEAR(0.0,         state->a,     1e-7);
     EXPECT_NEAR(kappaTarget, state->kappa, 1e-7);
+
+}
+
+
+TEST_F(VehicleModelTest, PlotForce) {
+
+    // set data file
+    auto dataFile = sim::fnc::string_format("%s/data.json", LOG_DIR);
+    auto plotFile = sim::fnc::string_format("%s/plot.json", LOG_DIR);
+
+    // create logger
+    jsonLogger.setFilename(dataFile);
+    jsonLogger.addValue("F", &state->force);
+    jsonLogger.addValue("v", &state->v);
+    jsonLogger.addValue("a", &state->a);
+
+    // create plot definition
+    plotLogger.create(plotFile, "Plot Test");
+    plotLogger.setDataFile(dataFile);
+    plotLogger.addFigure("Velocity", "Velocity over time", "Time [s]", "Velocity [m/s]", "time", "v", true);
+    plotLogger.addFigure("Acceleration", "Acceleration over time", "Time [s]", "Acceleration [m/s^2]", "time", "a", true);
+    plotLogger.addFigure("Force", "Force over velocity", "Velocity [m/s]", "Force F [N]", "v", "F", true);
+
+    // full pedal
+    input->pedal = 1.0;
+
+    // run loop
+    run();
 
 }

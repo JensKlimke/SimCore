@@ -44,6 +44,7 @@ public:
         double rollCoefficient[3] = {4.0 * 9.91e-3, 4.0 * 1.95e-5, 4.0 * 1.76e-9};
         double size[2]            = {5.0, 2.2};
         double driverPos[2]       = {0.5, 0.5};
+        double lowSpeedBound      = 10.0;
     };
 
 
@@ -67,6 +68,7 @@ public:
         double v;
         double a;
         double ay;
+        double force;
     };
 
 
@@ -95,11 +97,13 @@ public:
      */
     bool step(double simTime) override;
 
+
     /**
      * Terminates the vehicle model
      * @param simTime Simulation time
      */
     void terminate(double simTime) override;
+
 
     /**
      * default accessors

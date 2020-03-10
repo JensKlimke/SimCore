@@ -74,9 +74,20 @@ bool VehicleModel::step(double simTime) {
     auto aSlope = sin(_input.slope) * G_ACC;
     auto aBrake = aGround * std::min(_input.pedal, 0.0);
 
+    // calculate smooth force curve
+    double _v0 = _param.powerMax / _param.forceMax;
+    double _v1 = _param.lowSpeedBound;
+    double F0 = _param.forceMax;
+    double F1 = _param.powerMax / _v1;
+    double _x = _state.v / _v1;
+
     // calculate drive force
-    auto force = std::min(_param.powerMax / _state.v, _param.forceMax);
-    auto aAccel = pedal * force / _param.mass;
+    _state.force = _x < 1.0
+            ? (F0 + _x * _x * (4.0 * F1 -  3.0 * F0) + _x * _x * _x * (2.0 * F0 - 3.0 * F1))    // low speed
+            : _param.powerMax / _state.v;                                                       // high speed
+
+    // calculate acceleration
+    auto aAccel = pedal * _state.force / _param.mass;
 
     // calculate acceleration
     _state.a  = -aRoll - aAir - aSlope + aBrake + aAccel;
