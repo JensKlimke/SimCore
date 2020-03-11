@@ -49,6 +49,7 @@ namespace sim {
         void initialize(double initTime) override {
 
             _nextExecTime = _deltaStartTime + initTime;
+            initializeTimer(initTime);
 
         }
 
