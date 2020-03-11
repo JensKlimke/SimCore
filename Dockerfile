@@ -14,7 +14,7 @@ RUN cd /app && bash ./install_gtest.sh
 # installation
 RUN rm -rf /app/build
 RUN cd /app && mkdir build && cd build && cmake -G "Unix Makefiles" -DBUILD_TESTS=ON -DBUILD_WEBSOCKET=OFF \
-    -DBUILD_TRAFFIC_SIMULATION=ON -DBUILD_VEHICLE_MODEL=ON -DBUILD_GTEST=ON ..
+    -DBUILD_TRAFFIC_SIMULATION=ON -DBUILD_GTEST=ON ..
 RUN cd /app/build && make
 
 # documentation

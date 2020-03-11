@@ -17,6 +17,6 @@ script:
   ############################################################################
   - mkdir build
   - cd build
-  - cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON -DBUILD_WEBSOCKET=OFF -DBUILD_TRAFFIC_SIMULATION=ON -DBUILD_VEHICLE_MODEL=ON -DBUILD_GTEST=ON ..
+  - cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON -DBUILD_WEBSOCKET=OFF -DBUILD_TRAFFIC_SIMULATION=ON -DBUILD_GTEST=ON ..
   - make
   - make test

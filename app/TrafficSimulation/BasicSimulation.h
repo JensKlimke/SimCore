@@ -31,8 +31,6 @@
 #include <simcore/timers/RealTimeTimer.h>
 #include <simcore/timers/TimeIsUp.h>
 #include <simcore/value/ValueExceed.h>
-#include <VehicleModel/VehicleModel.h>
-#include <VehicleModel/PrimaryController.h>
 #include "simcore/data/PlotLogger.h"
 
 class BasicSimulation : public sim::Loop {

@@ -72,7 +72,7 @@ TEST_F(SimulationTest, NonRealTime) {
     // create simulation
     create(10000.0, 0.01, false);
 
-    // add vehicle as component
+    // add this as component
     addComponent(this);
 
     // run simulation
@@ -89,7 +89,7 @@ TEST_F(SimulationTest, RealTime) {
     // create simulation
     create(2.0, 0.001, true);
 
-    // add vehicle as component
+    // add this as component
     addComponent(this);
 
     // run simulation
