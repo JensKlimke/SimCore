@@ -29,11 +29,11 @@
 #include <string>
 #include <cmath>
 #include <iostream>
-#include "../IComponent.h"
+#include "../ISynchronized.h"
 #include "../exceptions.h"
 
 
-class JsonReporter : public sim::IComponent {
+class JsonReporter : public sim::ISynchronized {
 
     std::ostream *_outstream = nullptr;
     std::map<std::string, const double*> _values{};
@@ -80,6 +80,10 @@ protected:
 
     bool step(double simTime) override {
 
+        // only step when its time
+        if(!sim::ISynchronized::step(simTime))
+            return false;
+
         // save time and open object brackets
         (*_outstream) << (_hasContent ? ",\n" : "[\n") << "\t" << R"({"time":)" << simTime << ",";
 
@@ -111,6 +115,9 @@ protected:
 
 
     void initialize(double initTime) override {
+
+        // init synchronized
+        sim::ISynchronized::initialize(initTime);
 
         if(_outstream == nullptr)
             throw std::runtime_error("Output stream is not initialized.");

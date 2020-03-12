@@ -32,9 +32,9 @@
 #include <utility>
 #include <map>
 #include <vector>
-#include "../IComponent.h"
+#include "../ISynchronized.h"
 
-class PlotLogger : public sim::IComponent {
+class PlotLogger : public sim::ISynchronized {
 
     struct Trace {
         std::string name;
@@ -293,6 +293,9 @@ public:
 
     void initialize(double initTime) override {
 
+        // init synchronized
+        sim::ISynchronized::initialize(initTime);
+
         // create and open file
         _file = std::fstream(_filename.c_str(), std::ios::out);
 
@@ -302,6 +305,10 @@ public:
     }
 
     bool step(double simTime) override {
+
+        // only step when its time
+        if(!sim::ISynchronized::step(simTime))
+            return false;
 
         // write data
         writeData();
