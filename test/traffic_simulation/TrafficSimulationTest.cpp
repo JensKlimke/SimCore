@@ -24,7 +24,7 @@
 #include <gtest/gtest.h>
 #include <TrafficSimulation/BasicSimulation.h>
 
-class SimulationTest : public ::testing::Test, public BasicSimulation, public sim::IComponent {
+class TrafficSimulationTest : public ::testing::Test, public BasicSimulation, public sim::IComponent {
 
 public:
 
@@ -34,8 +34,8 @@ public:
     double _simTime = INFINITY;
     double _termTime = INFINITY;
 
-    SimulationTest() = default;
-    ~SimulationTest() override = default;
+    TrafficSimulationTest() = default;
+    ~TrafficSimulationTest() override = default;
 
 
     void initialize(double initTime) override {
@@ -67,7 +67,7 @@ public:
 };
 
 
-TEST_F(SimulationTest, NonRealTime) {
+TEST_F(TrafficSimulationTest, NonRealTime) {
 
     // create simulation
     create(10000.0, 0.01, false);
@@ -84,7 +84,7 @@ TEST_F(SimulationTest, NonRealTime) {
 
 }
 
-TEST_F(SimulationTest, RealTime) {
+TEST_F(TrafficSimulationTest, RealTime) {
 
     // create simulation
     create(2.0, 0.001, true);

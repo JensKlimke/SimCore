@@ -77,6 +77,7 @@ if(BUILD_TESTS)
 
     # add test folder
     add_subdirectory(test/simcore)
+    add_subdirectory(test/model_generation)
 
     # tests for traffic simulation
     if(BUILD_TRAFFIC_SIMULATION)

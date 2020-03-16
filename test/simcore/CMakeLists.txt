@@ -14,7 +14,7 @@ set(SOURCE_FILES
 # websocket
 set(WEBSOCKET_SOURCE_FILES
         PublishTest.cpp
-    )
+        ../model_generation/ModelClass.h)
 
 # only test publisher, when websocket is active
 if(BUILD_WEBSOCKET)

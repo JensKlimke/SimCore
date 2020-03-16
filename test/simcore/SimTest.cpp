@@ -163,3 +163,14 @@ TEST_F(SimTest, Model) {
     EXPECT_TRUE(this->wasTerminated);
 
 }
+
+TEST_F(SimTest, NotSetProperly) {
+
+    using namespace ::sim;
+
+    // create loop
+    Loop sim;
+    EXPECT_THROW(sim.run(), ProcessException);
+
+
+}
