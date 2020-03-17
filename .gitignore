@@ -38,3 +38,5 @@ build
 .idea
 .DS_Store
 .vs
+
+log/*.json

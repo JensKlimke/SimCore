@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2019 Jens Klimke <jens.klimke@rwth-aachen.de>. All rights reserved.
+// Copyright (c) 2019-2020 Jens Klimke <jens.klimke@rwth-aachen.de>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,11 +27,13 @@
 
 #include <map>
 #include <string>
-#include "../IComponent.h"
+#include <cmath>
+#include <iostream>
+#include "../ISynchronized.h"
 #include "../exceptions.h"
 
 
-class JsonReporter : public sim::IComponent {
+class JsonReporter : public sim::ISynchronized {
 
     std::ostream *_outstream = nullptr;
     std::map<std::string, const double*> _values{};
@@ -54,6 +56,9 @@ public:
      */
     void addValue(const std::string &key, const double *val) {
 
+        if(key == "time")
+            throw std::invalid_argument("time key word is reserved.");
+
         _values[key] = val;
 
     }
@@ -75,8 +80,12 @@ protected:
 
     bool step(double simTime) override {
 
+        // only step when its time
+        if(!sim::ISynchronized::step(simTime))
+            return false;
+
         // save time and open object brackets
-        (*_outstream) << (_hasContent ? ",\n" : "[\n") << "\t" << R"({"time":)" << simTime << R"(,"data":{)";
+        (*_outstream) << (_hasContent ? ",\n" : "[\n") << "\t" << R"({"time":)" << simTime << ",";
 
         // write data
         unsigned int i = 0;
@@ -94,7 +103,7 @@ protected:
         }
 
         // close object brackets
-        (*_outstream) << "}}";
+        (*_outstream) << "}";
 
         // save that data was already written
         _hasContent = true;
@@ -106,6 +115,9 @@ protected:
 
 
     void initialize(double initTime) override {
+
+        // init synchronized
+        sim::ISynchronized::initialize(initTime);
 
         if(_outstream == nullptr)
             throw std::runtime_error("Output stream is not initialized.");

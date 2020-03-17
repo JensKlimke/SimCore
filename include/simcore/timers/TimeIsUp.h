@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2019 Jens Klimke <jens.klimke@rwth-aachen.de>. All rights reserved.
+// Copyright (c) 2019-2020 Jens Klimke <jens.klimke@rwth-aachen.de>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -52,7 +52,10 @@ public:
     TimeIsUp() = default;
 
 
-
+    /**
+     * Initialize
+     * @param initTime Initialization time
+     */
     void initialize(double initTime) override {
 
         reset();
@@ -60,6 +63,11 @@ public:
     }
 
 
+    /**
+     * Step method
+     * @param simTime Simulation time
+     * @return Success flag
+     */
     bool step(double simTime) override {
 
         // set status to ended if time is reached
@@ -71,9 +79,17 @@ public:
     }
 
 
+    /**
+     * Termination method
+     * @param simTime Simulation time
+     */
     void terminate(double simTime) override {}
 
 
+    /**
+     * Method to set the stop time
+     * @param stopTime Stop time
+     */
     void setStopTime(double stopTime) {
 
         _stopTime = stopTime;

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2019 Jens Klimke <jens.klimke@rwth-aachen.de>. All rights reserved.
+// Copyright (c) 2019-2020 Jens Klimke <jens.klimke@rwth-aachen.de>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,7 @@
 // Created by Jens Klimke on 2019-06-09.
 //
 
-#include "WebSocket.h"
+#include <WebSocket.h>
 
 
 void WebSocket::setHost(const std::string &host, const std::string &port) {

@@ -3,4 +3,6 @@ set(SOURCE_FILES
         WebSocket.cpp)
 
 add_library(simcore_publisher STATIC ${SOURCE_FILES})
-target_include_directories(simcore_publisher PRIVATE ${Boost_INCLUDE_DIRS})
+target_include_directories(simcore_publisher PRIVATE
+        ${PROJECT_SOURCE_DIR}/include/simcore/socket
+        ${Boost_INCLUDE_DIRS})

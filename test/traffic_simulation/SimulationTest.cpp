@@ -1,4 +1,3 @@
-//
 // Copyright (c) 2019-2020 Jens Klimke <jens.klimke@rwth-aachen.de>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,59 +18,86 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke on 2019-03-30
+// Created by Jens Klimke on 2020-03-07.
 //
 
-#ifndef SIMCORE_VALUEEXCEED_H
-#define SIMCORE_VALUEEXCEED_H
+#include <gtest/gtest.h>
+#include <TrafficSimulation/BasicSimulation.h>
 
-#include "../IStopCondition.h"
-#include "../IComponent.h"
-
-template<typename T>
-class ValueExceed : public ::sim::IStopCondition, public ::sim::IComponent {
-
-    IStopCondition::StopCode _mode = IStopCondition::StopCode::SIM_ENDED;
-
-    const T* _value = nullptr;
-    T _limit{};
+class SimulationTest : public ::testing::Test, public BasicSimulation, public sim::IComponent {
 
 public:
 
-    typedef IStopCondition::StopCode Mode;
+    unsigned int _counter = 0;
 
-    void setValueAndLimit(const T* value, const T &limit, Mode mode = Mode::SIM_ENDED) {
+    double _initTime = INFINITY;
+    double _simTime = INFINITY;
+    double _termTime = INFINITY;
 
-        _value = value;
-        _limit = limit;
-        _mode  = mode;
-
-    }
+    SimulationTest() = default;
+    ~SimulationTest() override = default;
 
 
     void initialize(double initTime) override {
 
-        reset();
+        _initTime = initTime;
 
     }
-
 
     bool step(double simTime) override {
 
-        // the limit has been reached
-        if(*_value > _limit)
-            stop(_mode);
+        bool valid = _counter == 1000;
 
-        return true;
+        if(valid)
+            _simTime = simTime;
+
+        _counter++;
+
+        return valid;
 
     }
-
 
     void terminate(double simTime) override {
 
+        _termTime = simTime;
+
     }
+
 
 };
 
 
-#endif //SIMCORE_VALUEEXCEED_H
+TEST_F(SimulationTest, NonRealTime) {
+
+    // create simulation
+    create(10000.0, 0.01, false);
+
+    // add this as component
+    addComponent(this);
+
+    // run simulation
+    run();
+
+    EXPECT_NEAR(0.0, _initTime, 1e-6);
+    EXPECT_NEAR(10.0, _simTime, 1e-6);
+    EXPECT_NEAR(10000.0, _termTime, 1e-6);
+
+}
+
+TEST_F(SimulationTest, RealTime) {
+
+    // create simulation
+    create(2.0, 0.001, true);
+
+    // add this as component
+    addComponent(this);
+
+    // run simulation
+    run();
+
+    EXPECT_NEAR(0.0, _initTime, 1e-6);
+    EXPECT_NEAR(1.0, _simTime, 1e-6);
+    EXPECT_NEAR(2.0, _termTime, 1e-6);
+
+}
+

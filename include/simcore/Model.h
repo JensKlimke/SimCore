@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2019 Jens Klimke <jens.klimke@rwth-aachen.de>. All rights reserved.
+// Copyright (c) 2019-2020 Jens Klimke <jens.klimke@rwth-aachen.de>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,13 +26,12 @@
 #define SIMCORE_MODEL_H
 
 #include "IComponent.h"
-#include "IStorable.h"
 #include "data_access_macros.h"
 #include "ISynchronized.h"
 
 namespace sim {
 
-    class Model : public ISynchronized, public data::IStorable {
+    class Model : public ISynchronized {
 
     public:
 
