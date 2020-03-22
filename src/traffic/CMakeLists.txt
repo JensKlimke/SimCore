@@ -36,7 +36,3 @@ add_library(traffic_simulation STATIC ${SOURCE_FILES})
 target_include_directories(traffic_simulation PRIVATE
         ${PROJECT_SOURCE_DIR}/include
         )
-
-target_include_directories(traffic_simulation PUBLIC
-        ${PROJECT_SOURCE_DIR}/lib/json/include
-        )
