@@ -10,7 +10,6 @@ target_link_libraries(TrafficSimulationTest PRIVATE
 
 # include directories
 target_include_directories(TrafficSimulationTest PRIVATE
-        ${PROJECT_SOURCE_DIR}/app
         ${PROJECT_SOURCE_DIR}/include
         )
 

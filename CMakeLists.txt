@@ -42,7 +42,7 @@ if(BUILD_TRAFFIC_SIMULATION)
 
     message("-- Traffic simulation target enabled")
 
-    add_subdirectory(${PROJECT_SOURCE_DIR}/app/TrafficSimulation)
+    add_subdirectory(${PROJECT_SOURCE_DIR}/src/traffic)
 
 endif(BUILD_TRAFFIC_SIMULATION)
 
@@ -77,7 +77,6 @@ if(BUILD_TESTS)
 
     # add test folder
     add_subdirectory(test/simcore)
-    add_subdirectory(test/model_generation)
 
     # tests for traffic simulation
     if(BUILD_TRAFFIC_SIMULATION)

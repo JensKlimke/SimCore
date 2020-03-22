@@ -7,5 +7,4 @@ add_library(traffic_simulation STATIC ${SOURCE_FILES})
 # include directories
 target_include_directories(traffic_simulation PRIVATE
         ${PROJECT_SOURCE_DIR}/include
-        ${PROJECT_SOURCE_DIR}/app
         )

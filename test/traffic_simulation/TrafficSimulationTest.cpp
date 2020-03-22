@@ -22,7 +22,7 @@
 //
 
 #include <gtest/gtest.h>
-#include <TrafficSimulation/BasicSimulation.h>
+#include <simcore/traffic/BasicSimulation.h>
 
 class TrafficSimulationTest : public ::testing::Test, public BasicSimulation, public sim::IComponent {
 
