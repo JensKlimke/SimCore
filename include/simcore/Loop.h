@@ -185,6 +185,10 @@ namespace sim {
             if(_status != Status::STOPPED)
                 throw ProcessException("Simulation must be stopped to be initialized.");
 
+            // check timer
+            if(_timer == nullptr)
+                throw ProcessException("A timer must be set.");
+
             // reset timer
             _timer->reset();
 
