@@ -56,7 +56,7 @@ public:
     struct Parameters {
         double wheelBase = 3.0; // The wheel base (in *m*)
         Vector3 size = {5.0, 2.2, 1.5}; // The size of the vehicle
-        Vector2 driverPosition = {0.5, 0.5, 1.1}; // The position of the driver related to the center
+        Vector3 driverPosition = {0.5, 0.5, 1.1}; // The position of the driver related to the center
     };
 
 

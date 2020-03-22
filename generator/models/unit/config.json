@@ -2,18 +2,18 @@
     "generation": [
         {
             "template":  "generator/models/unit/UnitInterface.h.mustache",
-            "target": "include/simcore/traffic/UnitModel.h",
-            "includeGuard": "UNIT_MODEL_INTERFACE_H"
+            "target": "include/simcore/traffic/UnitInterface.h",
+            "includeGuard": "UNIT_INTERFACE_H"
         },
         {
             "template":  "generator/models/unit/UnitData.h.mustache",
-            "target": "include/simcore/traffic/UnitModelData.h",
-            "includeGuard": "UNIT_MODEL_DATA_H"
+            "target": "include/simcore/traffic/UnitData.h",
+            "includeGuard": "UNIT_DATA_H"
         },
         {
             "template":  "generator/models/unit/UnitData.cpp.mustache",
-            "target": "src/traffic/UnitModelData.cpp",
-            "headerFile": "UnitModelData.h"
+            "target": "src/traffic/UnitData.cpp",
+            "headerFile": "simcore/traffic/UnitData.h"
         }
     ],
     "content": {

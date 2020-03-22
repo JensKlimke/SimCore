@@ -1,4 +1,4 @@
-// Copyright (c) {{&year}} {{&copyright}}. All rights reserved.
+// Copyright (c) 2020 Jens Klimke <jens.klimke@rwth-aachen.de>. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,51 +18,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// {{fileName}}
-// Created by {{&author}} on {{&date}}.
+// 
+// Created by Jens Klimke on 2020-03-22.
 //
 
 
-#include <{{&headerFile}}>
+#ifndef UNIT_DATA_H
+#define UNIT_DATA_H
 
-{{#namespace}}
-namespace {{namespace}} {
+#include <nlohmann/json.hpp>
+#include "UnitInterface.h"
 
+using json = nlohmann::json;
 
-{{/namespace}}
-{{#structs}}
-void from_json(const json& j, {{className}}::{{name}}& o) {
-    {{#fields}}
-    j.at("{{name}}").get_to(o.{{name}});
-    {{/fields}}
-}
+void to_json(json& j, const UnitInterface& o);
+void from_json(const json& j, UnitInterface& o);
 
-void to_json(json& j, const {{className}}::{{name}}& o) {
-    j = json{
-    {{#fields}}
-        {"{{name}}", o.{{name}}}{{^last}},{{/last}}
-    {{/fields}}
-    };
-}
+void to_json(json& j, const UnitInterface::Vector3& o);
+void from_json(const json& j, UnitInterface::Vector3& o);
+void to_json(json& j, const UnitInterface::State& o);
+void from_json(const json& j, UnitInterface::State& o);
+void to_json(json& j, const UnitInterface::Parameters& o);
+void from_json(const json& j, UnitInterface::Parameters& o);
 
 
-{{/structs}}
-void from_json(const json& j, {{className}}& o) {
-    {{#attributes}}
-    j.at("{{name}}").get_to(*o.get{{key}}());
-    {{/attributes}}
-}
-
-void to_json(json& j, const {{className}}& o) {
-    j = json{
-        {{#attributes}}
-        {"{{name}}", *o.get{{key}}()}{{^last}},{{/last}}
-        {{/attributes}}
-    };
-}
-
-{{#namespace}}
-
-} // namespace
-{{/namespace}}
-
+#endif // UNIT_DATA_H

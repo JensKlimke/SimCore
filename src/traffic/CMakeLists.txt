@@ -27,14 +27,12 @@ set(SOURCE_FILES
         BasicSimulation.cpp
         UnitData.cpp)
 
-if(EXISTS "UnitData.cpp")
 
-    # define target
-    add_library(traffic_simulation STATIC ${SOURCE_FILES})
+# define target
+add_library(traffic_simulation STATIC ${SOURCE_FILES})
 
-    # include directories
-    target_include_directories(traffic_simulation PRIVATE
-            ${PROJECT_SOURCE_DIR}/include
-            )
-
-endif()
+# include directories
+target_include_directories(traffic_simulation PRIVATE
+        ${PROJECT_SOURCE_DIR}/include
+        ${PROJECT_SOURCE_DIR}/lib/json/include
+        )

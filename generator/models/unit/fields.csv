@@ -10,4 +10,4 @@
 "State","wheelAngle","double","","The actual wheel steer angle","rad","0.0"
 "Parameters","wheelBase","double","","The wheel base","m","3.0"
 "Parameters","size","Vector3","","The size of the vehicle","","{5.0, 2.2, 1.5}"
-"Parameters","driverPosition","Vector2","","The position of the driver related to the center","","{0.5, 0.5, 1.1}"
+"Parameters","driverPosition","Vector3","","The position of the driver related to the center","","{0.5, 0.5, 1.1}"
