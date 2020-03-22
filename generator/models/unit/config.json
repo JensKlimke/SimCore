@@ -1,0 +1,57 @@
+{
+    "generation": [
+        {
+            "template":  "generator/models/unit/UnitInterface.h.mustache",
+            "target": "include/simcore/traffic/UnitModel.h",
+            "includeGuard": "UNIT_MODEL_INTERFACE_H"
+        },
+        {
+            "template":  "generator/models/unit/UnitData.h.mustache",
+            "target": "include/simcore/traffic/UnitModelData.h",
+            "includeGuard": "UNIT_MODEL_DATA_H"
+        },
+        {
+            "template":  "generator/models/unit/UnitData.cpp.mustache",
+            "target": "src/traffic/UnitModelData.cpp",
+            "headerFile": "UnitModelData.h"
+        }
+    ],
+    "content": {
+        "author": "Jens Klimke",
+        "copyright": "Jens Klimke <jens.klimke@rwth-aachen.de>",
+        "className": "UnitInterface",
+        "classDescription": "@brief A traffic unit interface.",
+        "includes": [],
+        "attributes": [
+            {
+                "type": "State",
+                "key": "State",
+                "name": "state",
+                "init": "{}",
+                "description": "The state of the unit."
+            },
+            {
+                "type": "Parameters",
+                "key": "Parameters",
+                "name": "parameters",
+                "init": "{}",
+                "description": "The parameters of the unit."
+            }
+        ],
+        "structs": [
+            {
+                "name": "Vector3",
+                "description": "A class to store a three dimensional value."
+            },
+            {
+                "name": "State",
+                "description": "A class to store the states."
+            },
+            {
+                "name": "Parameters",
+                "description": "A class to store the parameters."
+            }
+        ]
+    },
+    "fields": "generator/models/unit/fields.csv"
+}

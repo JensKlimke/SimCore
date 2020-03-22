@@ -9,6 +9,7 @@ option(BUILD_GTEST "Sets or unsets the option to build gtest" OFF)
 option(BUILD_FOR_COVERAGE "Sets or unsets the option to generate with coverage flags" OFF)
 option(BUILD_WEBSOCKET "Activates or deactivates the websocket module of the SimCore" OFF)
 option(BUILD_TRAFFIC_SIMULATION "Activates or deactivates the traffic simulation library target to be generated." OFF)
+option(CREATE_INTERFACE_GENERATOR_TARGETS "Activates or deactivates the interface generator targets to be generated." OFF)
 
 # add ./cmake to CMAKE_MODULE_PATH
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
