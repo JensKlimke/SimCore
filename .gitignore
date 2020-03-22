@@ -40,3 +40,5 @@ build
 .vs
 
 log/*.json
+
+node_modules
