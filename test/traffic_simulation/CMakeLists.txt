@@ -1,6 +1,7 @@
 # create executable
 add_executable(TrafficSimulationTest
         TrafficSimulationTest.cpp
+        UnitInterfaceTest.cpp
         )
 
 # link libs

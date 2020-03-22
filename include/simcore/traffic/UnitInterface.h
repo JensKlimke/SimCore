@@ -48,7 +48,7 @@ public:
         double velocity = 0.0; // The actual velocity (in *m/s*)
         double acceleration = 0.0; // The actual acceleration (in *m/s^2*)
         double yawAngle = 0.0; // The actual yaw angle (in *rad*)
-        double yaRate = 0.0; // The actual yaw rate (in *rad/s*)
+        double yawRate = 0.0; // The actual yaw rate (in *rad/s*)
         double wheelAngle = 0.0; // The actual wheel steer angle (in *rad*)
     };
 
@@ -63,6 +63,7 @@ public:
 
 protected:
 
+    unsigned long id = 0; // A unique ID for the unit.
     State state{}; // The state of the unit.
     Parameters parameters{}; // The parameters of the unit.
 
@@ -78,41 +79,69 @@ public:
 
 
     /** This method resets the vehicle memory */
-    void reset();
+    virtual void reset() = 0;
+
+    /**
+    * Returns the ID the model
+    * @return The ID
+    */
+    virtual unsigned long getID() const {
+        return id;
+    }
 
 
-    /** performs a simulation step
-     * @param timeStepSize The simulation time step size
-     */
-    bool step(double timeStepSize);
+    /**
+    * Returns the pointer for the ID structure of the model
+    * @return The ID pointer
+    */
+    virtual unsigned long *getID_ptr() {
+        return &id;
+    }
+
+
+    /**
+    * Returns the const pointer for the ID structure of the model
+    * @return The const ID point
+    */
+    virtual const unsigned long *getID_ptr() const {
+        return &id;
+    }
 
 
     /**
     * Returns the pointer for the state structure of the model
-    * @return The State pointer
+    * @return The state pointer
     */
-    State *getState();
+    virtual State *getState() {
+        return &state;
+    }
 
 
     /**
     * Returns the const pointer for the state structure of the model
-    * @return The const State point
+    * @return The const state point
     */
-    const State *getState() const;
+    virtual const State *getState() const {
+        return &state;
+    }
 
 
     /**
     * Returns the pointer for the parameters structure of the model
-    * @return The Parameters pointer
+    * @return The parameters pointer
     */
-    Parameters *getParameters();
+    virtual Parameters *getParameters() {
+        return &parameters;
+    }
 
 
     /**
     * Returns the const pointer for the parameters structure of the model
-    * @return The const Parameters point
+    * @return The const parameters point
     */
-    const Parameters *getParameters() const;
+    virtual const Parameters *getParameters() const {
+        return &parameters;
+    }
 
 
 };

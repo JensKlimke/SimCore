@@ -6,7 +6,7 @@
 "State","velocity","double","","The actual velocity","m/s","0.0"
 "State","acceleration","double","","The actual acceleration","m/s^2","0.0"
 "State","yawAngle","double","","The actual yaw angle","rad","0.0"
-"State","yaRate","double","","The actual yaw rate","rad/s","0.0"
+"State","yawRate","double","","The actual yaw rate","rad/s","0.0"
 "State","wheelAngle","double","","The actual wheel steer angle","rad","0.0"
 "Parameters","wheelBase","double","","The wheel base","m","3.0"
 "Parameters","size","Vector3","","The size of the vehicle","","{5.0, 2.2, 1.5}"

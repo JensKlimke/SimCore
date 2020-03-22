@@ -73,28 +73,38 @@ public:
 
 
     /** This method resets the vehicle memory */
-    void reset();
-
-
-    /** performs a simulation step
-     * @param timeStepSize The simulation time step size
-     */
-    bool step(double timeStepSize);
-
+    virtual void reset() = 0;
 
 {{#attributes}}
+{{#getter}}
     /**
-    * Returns the pointer for the {{name}} structure of the model
-    * @return The {{key}} pointer
+    * Returns the {{label}} the model
+    * @return The {{label}}
     */
-    {{type}} *get{{key}}();
+    virtual {{type}} {{getter}}() const {
+        return {{name}};
+    }
+
+
+{{/getter}}
+{{/attributes}}
+{{#attributes}}
+    /**
+    * Returns the pointer for the {{label}} structure of the model
+    * @return The {{label}} pointer
+    */
+    virtual {{type}} *get{{key}}() {
+        return &{{name}};
+    }
 
 
     /**
-    * Returns the const pointer for the {{name}} structure of the model
-    * @return The const {{key}} point
+    * Returns the const pointer for the {{label}} structure of the model
+    * @return The const {{label}} point
     */
-    const {{type}} *get{{key}}() const;
+    virtual const {{type}} *get{{key}}() const {
+        return &{{name}};
+    }
 
 
 {{/attributes}}

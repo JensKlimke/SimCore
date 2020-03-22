@@ -45,7 +45,7 @@ void from_json(const json& j, UnitInterface::State& o) {
     j.at("velocity").get_to(o.velocity);
     j.at("acceleration").get_to(o.acceleration);
     j.at("yawAngle").get_to(o.yawAngle);
-    j.at("yaRate").get_to(o.yaRate);
+    j.at("yawRate").get_to(o.yawRate);
     j.at("wheelAngle").get_to(o.wheelAngle);
 }
 
@@ -55,7 +55,7 @@ void to_json(json& j, const UnitInterface::State& o) {
         {"velocity", o.velocity},
         {"acceleration", o.acceleration},
         {"yawAngle", o.yawAngle},
-        {"yaRate", o.yaRate},
+        {"yawRate", o.yawRate},
         {"wheelAngle", o.wheelAngle}
     };
 }
@@ -77,12 +77,14 @@ void to_json(json& j, const UnitInterface::Parameters& o) {
 
 
 void from_json(const json& j, UnitInterface& o) {
+    j.at("id").get_to(*o.getID_ptr());
     j.at("state").get_to(*o.getState());
     j.at("parameters").get_to(*o.getParameters());
 }
 
 void to_json(json& j, const UnitInterface& o) {
     j = json{
+        {"id", *o.getID_ptr()},
         {"state", *o.getState()},
         {"parameters", *o.getParameters()}
     };

@@ -24,9 +24,19 @@
         "includes": [],
         "attributes": [
             {
+                "type": "unsigned long",
+                "key": "ID_ptr",
+                "getter": "getID",
+                "label": "ID",
+                "name": "id",
+                "init": " = 0",
+                "description": "A unique ID for the unit."
+            },
+            {
                 "type": "State",
                 "key": "State",
                 "name": "state",
+                "label": "state",
                 "init": "{}",
                 "description": "The state of the unit."
             },
@@ -34,6 +44,7 @@
                 "type": "Parameters",
                 "key": "Parameters",
                 "name": "parameters",
+                "label": "parameters",
                 "init": "{}",
                 "description": "The parameters of the unit."
             }
