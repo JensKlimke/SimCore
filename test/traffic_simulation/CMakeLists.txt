@@ -1,18 +1,18 @@
 # create executable
-add_executable(SimulationTest
-        SimulationTest.cpp
+add_executable(TrafficSimulationTest
+        TrafficSimulationTest.cpp
+        UnitInterfaceTest.cpp
         )
 
 # link libs
-target_link_libraries(SimulationTest PRIVATE
+target_link_libraries(TrafficSimulationTest PRIVATE
         traffic_simulation
         )
 
 # include directories
-target_include_directories(SimulationTest PRIVATE
-        ${PROJECT_SOURCE_DIR}/app
+target_include_directories(TrafficSimulationTest PRIVATE
         ${PROJECT_SOURCE_DIR}/include
         )
 
 # add test
-add_gtest(SimulationTest)
+add_gtest(TrafficSimulationTest)

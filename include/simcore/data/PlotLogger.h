@@ -195,9 +195,13 @@ public:
         bool first = true;
         for(auto const &p : _figures) {
 
+            std::string eq = "";
+            if(p->axisEqual)
+                eq = ",\"scaleanchor\":\"x\", \"scaleratio\":1";
+
             _file << (first ? "" : ",") << std::endl << R"( {"layout":{"title":")" << p->title
                 << R"(","xaxis":{"title":")" << p->xLabel << R"(","showgrid":true,"zeroline":true})"
-                << R"(,"yaxis":{"title":")" << p->yLabel << R"(","showgrid":true,"zeroline":true})"
+                << R"(,"yaxis":{"title":")" << p->yLabel << R"(","showgrid":true,"zeroline":true)" << eq << "}"
                 << R"(},"traces":[)";
 
             for(size_t i = 0; i < p->traces.size(); ++i) {

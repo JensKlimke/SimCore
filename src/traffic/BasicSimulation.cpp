@@ -18,7 +18,7 @@
  * date: 2020-03-07
  */
 
-#include "BasicSimulation.h"
+#include <simcore/traffic/BasicSimulation.h>
 
 
 BasicSimulation::~BasicSimulation() {
