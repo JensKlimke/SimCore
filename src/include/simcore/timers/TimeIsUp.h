@@ -22,8 +22,8 @@
 // Created by Jens Klimke on 2019-03-20
 //
 
-#ifndef SIMCORE_TIMEISUP_H
-#define SIMCORE_TIMEISUP_H
+#ifndef SIMCORE_TIME_IS_UP_H
+#define SIMCORE_TIME_IS_UP_H
 
 #include "../IStopCondition.h"
 #include "../IComponent.h"
@@ -99,4 +99,4 @@ public:
 };
 
 
-#endif //SIMCORE_TIMEISUP_H
+#endif // SIMCORE_TIME_IS_UP_H

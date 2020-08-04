@@ -19,64 +19,39 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke on 2019-03-14
+// Created by Jens Klimke on 2019-03-19.
 //
 
-#ifndef SIMCORE_EXCEPTIONS_H
-#define SIMCORE_EXCEPTIONS_H
-
-#include <utility>
-#include <exception>
-#include <string>
+#include <simcore/Loop.h>
+#include <simcore/timers/BasicTimer.h>
+#include <simcore/timers/TimeIsUp.h>
+#include <gtest/gtest.h>
 
 
-class ProcessException : public std::exception
-{
+TEST(SimBasicTest, SimpleProcess) {
 
-    std::string _msg;
+    using namespace ::sim;
 
-public:
+    // create objects
+    BasicTimer timer;
+    TimeIsUp stop;
 
+    // set parameters
+    timer.setTimeStepSize(1.0);
+    stop.setStopTime(10.0);
 
-    /**
-     * Constructor of an process exception
-     * @param msg Message to be set
-     */
-    explicit ProcessException(const char* msg) : _msg(msg) {}
+    // create loop
+    Loop sim;
 
+    // set timer and stop condition
+    sim.setTimer(&timer);
+    sim.addStopCondition(&stop);
 
-    /**
-     * Copy constructor
-     * @param ex Exception to be copied
-     */
-    ProcessException(const ProcessException& ex) noexcept : _msg(ex._msg) {}
+    // models
+    sim.addComponent(&stop);
 
+    // initialize simulation
+    EXPECT_NO_THROW(sim.run());
+    EXPECT_EQ(IStopCondition::StopCode::SIM_ENDED, stop.getCode());
 
-    /**
-     * Assignment operator
-     * @param ex Exception to be copied
-     * @return The copied exception
-     */
-    ProcessException& operator=(const ProcessException& ex) noexcept {
-        _msg = ex._msg;
-        return *this;
-    }
-
-
-    /**
-     * Destructor
-     */
-    ~ProcessException() noexcept override = default;
-
-
-    /**
-     *
-     * @return
-     */
-    [[nodiscard]] const char* what() const noexcept override {
-        return _msg.c_str();
-    }
-};
-
-
-#endif //SIMCORE_SIMULATIONERRORS_H
+}

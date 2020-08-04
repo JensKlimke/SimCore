@@ -64,11 +64,11 @@ namespace sim::traffic {
         explicit Unit(id_type id) : _id(id) {
 
             // store to index
-            __index[id] = this;
+            _index[id] = this;
 
             // reset counter
-            if(id > __id_counter)
-                __id_counter = id;
+            if(id > _id_counter)
+                _id_counter = id;
 
         }
 
@@ -76,7 +76,7 @@ namespace sim::traffic {
         /**
          * Creates an unit with a auto-generated ID
          */
-        Unit() : Unit(++__id_counter) {};
+        Unit() : Unit(++_id_counter) {};
 
 
         /**
@@ -84,7 +84,7 @@ namespace sim::traffic {
          * Removes the unit from the index
          */
         virtual ~Unit() {
-            __index.erase(_id);
+            _index.erase(_id);
         };
 
 
@@ -132,8 +132,8 @@ namespace sim::traffic {
 
     private:
 
-        static id_type __id_counter;
-        static std::map<id_type, Unit *> __index;
+        static id_type _id_counter;
+        static std::map<id_type, Unit *> _index;
 
         id_type _id;
 

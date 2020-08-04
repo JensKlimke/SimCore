@@ -22,8 +22,8 @@
 // Created by Jens Klimke on 2019-03-19
 //
 
-#ifndef SIMCORE_ICOMPONENT_H
-#define SIMCORE_ICOMPONENT_H
+#ifndef SIMCORE_I_COMPONENT_H
+#define SIMCORE_I_COMPONENT_H
 
 
 namespace sim {
@@ -91,7 +91,7 @@ namespace sim {
         * Returns the time since the last time step was performed
         * @return Time passed
         */
-        double sinceLastTimeStep(double simTime) const {
+        [[nodiscard]] double sinceLastTimeStep(double simTime) const {
 
             return simTime - _last_time_step;
 
@@ -120,4 +120,4 @@ namespace sim {
 } // namespace sim::model;
 
 
-#endif //SIMCORE_IPLUGIN_H
+#endif // SIMCORE_I_COMPONENT_H

@@ -25,11 +25,11 @@
 #ifndef SIMCORE_LOOP_H
 #define SIMCORE_LOOP_H
 
+#include <vector>
 #include "exceptions.h"
 #include "ITimer.h"
 #include "IStopCondition.h"
 #include "IComponent.h"
-#include <vector>
 
 namespace sim {
 
@@ -108,6 +108,59 @@ namespace sim {
             // check status
             initialize();
 
+            execute();
+
+            // if loop ended, terminate regularly
+            terminate();
+
+        }
+
+
+        /**
+         * Abort the running simulation
+         */
+        void stop() {
+
+            // check state
+            if(_status != Status::RUNNING)
+                throw ProcessException("Simulation is not running.");
+
+            // set stop flag
+            _stop = true;
+
+            // set status
+            _status = Status::STOPPED;
+
+        }
+
+
+        /**
+         * Returns the status of the loops
+         * @return Status
+         */
+        [[nodiscard]] Status getStatus() const {
+
+            // status
+            return _status;
+
+        }
+
+
+    protected:
+
+
+        /**
+         * Execute simulation
+         */
+        void execute() {
+
+            // check status
+            if(_status != Status::INITIALIZED)
+                throw ProcessException("Simulation must be initialized before running.");
+
+            // set status
+            _status = Status::RUNNING;
+
             // start timer
             _timer->start();
 
@@ -140,40 +193,7 @@ namespace sim {
             // stop timer
             _timer->stop();
 
-            // if loop ended, terminate regularly
-            terminate();
-
         }
-
-
-        /**
-         * Abort the running simulation
-         */
-        void stop() {
-
-            // check state
-            if(_status != Status::RUNNING)
-                throw ProcessException("Simulation is not running.");
-
-            // set stop flag
-            _stop = true;
-
-        }
-
-
-        /**
-         * Returns the status of the loops
-         * @return Status
-         */
-        Status getStatus() const {
-
-            // status
-            return _status;
-
-        }
-
-
-    private:
 
 
         /**
@@ -241,7 +261,7 @@ namespace sim {
     };
 
 
-}; // namespace ::sim
+}
 
 
 #endif //SIMCORE_LOOP_H

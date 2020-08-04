@@ -98,7 +98,7 @@ public:
 TEST_F(PlotTest, SaveData) {
 
     // set data file
-    auto dataFile = "data.json";
+    auto dataFile = sim::fnc::string_format("%s/data.json", LOG_DIR);
     auto plotFile = sim::fnc::string_format("%s/plot.json", LOG_DIR);
 
     // data pairs

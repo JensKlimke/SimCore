@@ -22,19 +22,25 @@
 // Created by Jens Klimke on 2019-03-19.
 //
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-pragmas"
+#pragma ide diagnostic ignored "cert-err58-cpp"
+
 #include <simcore/IComponent.h>
 #include <simcore/Loop.h>
 #include <simcore/data/DataManager.h>
-#include <simcore/timers/BasicTimer.h>
 #include <simcore/timers/TimeIsUp.h>
 #include <simcore/timers/RealTimeTimer.h>
 #include <gtest/gtest.h>
 
 
-class SimTest : public ::testing::Test, public sim::IComponent {
+class SimTest : public ::testing::Test, public sim::IComponent, protected sim::Loop {
 
 
 public:
+
+    std::function<void(double, double)> pre;
+    std::function<void(double, double)> post;
 
     double time = 0.0;
     double finalTime = 0.0;
@@ -48,8 +54,6 @@ public:
 
 
     SimTest() = default;
-
-
     ~SimTest() override = default;
 
 
@@ -67,11 +71,22 @@ public:
 
     bool step(double simTime) override {
 
+        // delta time step
         auto dt = IComponent::timeStep(simTime);
 
+        // call pre step
+        if(pre)
+            pre(simTime, dt);
+
+        // main step
         time += dt;
         steps++;
 
+        // call pre step
+        if(post)
+            post(simTime, dt);
+
+        // success
         return true;
 
     }
@@ -85,35 +100,6 @@ public:
     }
 
 };
-
-
-TEST(SimTestBasic, SimpleProcess) {
-
-    using namespace ::sim;
-
-    // create objects
-    BasicTimer timer;
-    TimeIsUp stop;
-
-    // set parameters
-    timer.setTimeStepSize(1.0);
-    stop.setStopTime(10.0);
-
-    // create loop
-    Loop sim;
-
-    // set timer and stop condition
-    sim.setTimer(&timer);
-    sim.addStopCondition(&stop);
-
-    // models
-    sim.addComponent(&stop);
-
-    // initialize simulation
-    EXPECT_NO_THROW(sim.run());
-    EXPECT_EQ(IStopCondition::StopCode::SIM_ENDED, stop.getCode());
-
-}
 
 
 TEST_F(SimTest, Model) {
@@ -131,23 +117,19 @@ TEST_F(SimTest, Model) {
     // set stop time
     stop.setStopTime(10.0);
 
-    // create loop
-    Loop sim;
-    data::DataManager data;
-
     // set timer and stop condition
-    sim.setTimer(&timer);
-    sim.addStopCondition(&stop);
+    this->setTimer(&timer);
+    this->addStopCondition(&stop);
 
     // models
-    sim.addComponent(&stop);
-    sim.addComponent(this);
+    this->addComponent(&stop);
+    this->addComponent(this);
 
     // check status
-    EXPECT_EQ(Loop::Status::STOPPED, sim.getStatus());
+    EXPECT_EQ(Loop::Status::STOPPED, this->getStatus());
 
     // run simulation
-    sim.run();
+    this->run();
 
     // check time and steps
     EXPECT_NEAR(10.0, timer.time(), 1e-8);
@@ -156,7 +138,7 @@ TEST_F(SimTest, Model) {
     EXPECT_EQ(1001, this->steps);
 
     // check status
-    EXPECT_EQ(Loop::Status::STOPPED, sim.getStatus());
+    EXPECT_EQ(Loop::Status::STOPPED, this->getStatus());
 
     // check values
     EXPECT_TRUE(this->wasInitialized);
@@ -164,13 +146,84 @@ TEST_F(SimTest, Model) {
 
 }
 
+
+TEST_F(SimTest, Interrupt) {
+
+    using namespace ::sim;
+
+    // create objects
+    BasicTimer timer;
+    timer.setTimeStepSize(0.01);
+
+    // interrupt
+    pre = [this] (double t, double dt) {
+
+        // stop at 10.0 s
+        if(t > 9.999 && t < 10.001)
+            this->stop();
+
+    };
+
+    // set timer and stop condition
+    this->setTimer(&timer);
+    this->addComponent(this);
+
+    // run simulation
+    this->run();
+
+    // check time and steps
+    EXPECT_NEAR(10.0, timer.time(), 1e-8);
+    EXPECT_NEAR(10.0, time, 1e-8);
+    EXPECT_NEAR(10.0, finalTime, 1e-8);
+    EXPECT_EQ(1001, this->steps);
+
+    // check status
+    EXPECT_EQ(Loop::Status::STOPPED, this->getStatus());
+
+    // check values
+    EXPECT_TRUE(this->wasInitialized);
+    EXPECT_TRUE(this->wasTerminated);
+
+}
+
+
 TEST_F(SimTest, NotSetProperly) {
 
     using namespace ::sim;
 
-    // create loop
-    Loop sim;
-    EXPECT_THROW(sim.run(), ProcessException);
+    // erroneous calls
+    EXPECT_THROW(this->run(), ProcessException);
+    EXPECT_THROW(this->stop(), ProcessException);
+    EXPECT_THROW(this->execute(), ProcessException);
 
+    // create objects
+    BasicTimer timer;
+    timer.setTimeStepSize(0.01);
+
+    // interrupt
+    pre = [this] (double t, double dt) {
+
+        // at t=0.1 s
+        if(t > 0.1) {
+
+            // try to initialize
+            EXPECT_THROW(Loop::initialize(), ProcessException);
+
+            // stop
+            stop();
+
+        }
+
+    };
+
+    // set timer and stop condition
+    this->setTimer(&timer);
+    this->addComponent(this);
+
+    // run simulation
+    this->run();
 
 }
+
+
+#pragma clang diagnostic pop

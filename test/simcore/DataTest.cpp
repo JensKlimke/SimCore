@@ -22,6 +22,10 @@
 // Created by Jens Klimke on 2019-04-16.
 //
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-pragmas"
+#pragma ide diagnostic ignored "cert-err58-cpp"
+
 #include <simcore/Model.h>
 #include <simcore/Loop.h>
 #include <simcore/IStorable.h>
@@ -132,7 +136,7 @@ public:
     }
 
 
-    std::vector<DataEntry> getData(Context context) const override {
+    [[nodiscard]] std::vector<DataEntry> getData(Context context) const override {
 
         std::vector<DataEntry> ret;
         ret.reserve(2);
@@ -172,7 +176,7 @@ public:
 TEST_F(DataTest, ReportTime) {
 
     // create out-stream
-    std::stringstream ostr;
+    std::stringstream o_str;
 
     // create synchronized model (in this case time reporter)
     TimeReporter timeRep;
@@ -180,7 +184,7 @@ TEST_F(DataTest, ReportTime) {
 
     // setup for time reporter
     timeRep.setTimeStepSize(5.0, 1.0);
-    timeRep.ostream(ostr);
+    timeRep.ostream(o_str);
 
     // initialize simulation
     loop.run();
@@ -189,7 +193,7 @@ TEST_F(DataTest, ReportTime) {
     EXPECT_NEAR(10.0, timer.time(), 1e-8);
 
     // check output of timer
-    EXPECT_EQ("1s\n6s\n", ostr.str());
+    EXPECT_EQ("1s\n6s\n", o_str.str());
 
 }
 
@@ -232,3 +236,5 @@ TEST_F(DataTest, DataManager) {
 
 }
 
+
+#pragma clang diagnostic pop
