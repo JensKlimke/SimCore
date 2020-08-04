@@ -161,13 +161,6 @@ public:
     }
 
 
-    void _data() {
-
-
-
-    }
-
-
     // accessors
     PARAM_ACCESS(Parameters, _param)
     INPUT_ACCESS(Input, _input)
@@ -227,12 +220,14 @@ TEST_F(DataTest, DataManager) {
     EXPECT_NEAR(5.0,  *((double*) data.getValue("Test.parameter.pb")), 1e-9);
     EXPECT_EQ("DataTest",  *((std::string*) data.getValue("Test.parameter.name")));
 
+    // check json output
     std::string json(R"({"Test":{"parameter":{"pa":4,"pb":5,"name":"DataTest"},"input":{"ia":2,"ib":3},"state":{"sa":0.1,"sb":10,"time":10}}})");
     std::stringstream ss;
     data.streamTo(ss);
 
     EXPECT_EQ(json, ss.str());
 
+    // check unset values
     EXPECT_THROW(data.getValue("another_value"), std::invalid_argument);
 
 }

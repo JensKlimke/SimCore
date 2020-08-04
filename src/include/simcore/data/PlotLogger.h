@@ -195,9 +195,9 @@ public:
         bool first = true;
         for(auto const &p : _figures) {
 
-            std::string eq = "";
+            std::string eq;
             if(p->axisEqual)
-                eq = ",\"scaleanchor\":\"x\", \"scaleratio\":1";
+                eq = R"(,"scaleanchor":"x", "scaleratio":1)";
 
             _file << (first ? "" : ",") << std::endl << R"( {"layout":{"title":")" << p->title
                 << R"(","xaxis":{"title":")" << p->xLabel << R"(","showgrid":true,"zeroline":true})"
