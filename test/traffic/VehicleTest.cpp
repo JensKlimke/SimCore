@@ -1,4 +1,4 @@
-// Copyright (c) 2020 Jens Klimke.
+// Copyright (c) 2019-2020 Jens Klimke <jens.klimke@rwth-aachen.de>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,27 +18,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke on 2020-03-20
+// Created by Jens Klimke on 2020-08-04.
 //
 
+#include <gtest/gtest.h>
+#include <simcore/traffic/VehicleModel.h>
 
-#include <simcore/traffic/Unit.h>
+TEST(VehicleTest, CreateVehicle) {
 
+    using namespace sim::traffic;
 
-unsigned int Unit::__id_counter = 0;
+    VehicleModel vehicle1{};
+    VehicleModel vehicle2{};
 
-
-Unit::Unit() {
-
-    // set ID
-    id = ++Unit::__id_counter;
-
-}
-
-
-void Unit::reset() {
-
-    state.acceleration = 0.0;
-    state.yawRate = 0.0;
+    EXPECT_EQ(1, vehicle1.getID());
+    EXPECT_EQ(2, vehicle1.getID());
 
 }
+

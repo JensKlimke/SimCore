@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 project(SimCore CXX)
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 # set options
 option(SIMCORE_BUILD_TESTS "Sets or unsets the option to generate the test target" OFF)

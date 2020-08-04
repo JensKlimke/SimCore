@@ -5,3 +5,4 @@ add_definitions(-DLOG_DIR=\"${PROJECT_LOG_DIR}\")
 
 # add sub directories
 add_subdirectory(simcore)
+add_subdirectory(traffic)

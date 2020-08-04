@@ -18,24 +18,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke on 2020-08-04
+// Created by Jens Klimke on 2020-08-04.
 //
 
 
-#ifndef SIMCORE_SIM_TYPES_H
-#define SIMCORE_SIM_TYPES_H
+#ifndef SIMCORE_VEHICLEMODEL_H
+#define SIMCORE_VEHICLEMODEL_H
+
+#include "Unit.h"
 
 namespace sim::traffic {
 
-    typedef unsigned int id_type; //!< ID type definition for simulation objects
+    class VehicleModel : public Unit {
 
-    /** A class to store a three dimensional value. */
-    struct Vector3 {
-        double x; // The x element (in *m*)
-        double y; // The y element (in *m*)
-        double z; // The z element (in *m*)
+
+
     };
 
 }
 
-#endif //SIMCORE_SIM_TYPES_H
+#endif //SIMCORE_VEHICLEMODEL_H
