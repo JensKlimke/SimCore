@@ -33,39 +33,11 @@
  */
 class UnitInterface {
 
-public:
-
-    /** A class to store a three dimensional value. */
-    struct Vector3 {
-        double x; // The x element (in *m*)
-        double y; // The y element (in *m*)
-        double z; // The z element (in *m*)
-    };
-
-    /** A class to store the states. */
-    struct State {
-        Vector3 position = {0.0, 0.0, 0.0}; // The actual position (in *m*)
-        double velocity = 0.0; // The actual velocity (in *m/s*)
-        double acceleration = 0.0; // The actual acceleration (in *m/s^2*)
-        double yawAngle = 0.0; // The actual yaw angle (in *rad*)
-        double yawRate = 0.0; // The actual yaw rate (in *rad/s*)
-        double wheelAngle = 0.0; // The actual wheel steer angle (in *rad*)
-    };
-
-    /** A class to store the parameters. */
-    struct Parameters {
-        double wheelBase = 3.0; // The wheel base (in *m*)
-        Vector3 size = {5.0, 2.2, 1.5}; // The size of the vehicle
-        Vector3 driverPosition = {0.5, 0.5, 1.1}; // The position of the driver related to the center
-    };
-
-
-
 protected:
 
     unsigned long id = 0; // A unique ID for the unit.
-    State state{}; // The state of the unit.
-    Parameters parameters{}; // The parameters of the unit.
+    VehicleState state{}; // The state of the unit.
+    VehicleParameters parameters{}; // The parameters of the unit.
 
 
 public:

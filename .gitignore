@@ -31,16 +31,17 @@
 *.out
 *.app
 
-
+# build folders
 cmake-*
 build
 
+# OS stuff
 .idea
 .DS_Store
 .vs
 
+# log files
 log/*.json
 
-node_modules
-
-*.txt
+# ignore some libs
+lib/googletest

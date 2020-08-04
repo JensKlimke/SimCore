@@ -24,7 +24,6 @@
 
 #include <simcore/IComponent.h>
 #include <simcore/Loop.h>
-#include <simcore/IStopCondition.h>
 #include <simcore/value/SignalCurve.h>
 #include <simcore/value/SignalTube.h>
 #include <simcore/value/ValueExceed.h>

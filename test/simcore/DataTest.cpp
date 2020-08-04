@@ -24,7 +24,6 @@
 
 #include <simcore/Model.h>
 #include <simcore/Loop.h>
-#include <simcore/IStopCondition.h>
 #include <simcore/IStorable.h>
 #include <simcore/timers/BasicTimer.h>
 #include <simcore/timers/TimeIsUp.h>

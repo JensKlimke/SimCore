@@ -24,7 +24,6 @@
 
 #include <simcore/Loop.h>
 #include <simcore/ISynchronized.h>
-#include <simcore/IStopCondition.h>
 #include <simcore/timers/BasicTimer.h>
 #include <simcore/timers/TimeIsUp.h>
 #include <simcore/data/PlotLogger.h>
