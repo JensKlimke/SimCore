@@ -224,12 +224,12 @@ TEST_F(DataTest, DataManager) {
     EXPECT_NEAR(5.0,  *((double*) data.getValue("Test.parameter.pb")), 1e-9);
     EXPECT_EQ("DataTest",  *((std::string*) data.getValue("Test.parameter.name")));
 
-    // check json output
-    std::string json(R"({"Test":{"parameter":{"pa":4,"pb":5,"name":"DataTest"},"input":{"ia":2,"ib":3},"state":{"sa":0.1,"sb":10,"time":10}}})");
+    // convert to string
     std::stringstream ss;
     data.streamTo(ss);
 
     // check strings
+    std::string json(R"({"Test":{"parameter":{"pa":4,"pb":5,"name":"DataTest"},"input":{"ia":2,"ib":3},"state":{"sa":0.1,"sb":10,"time":10}}})");
     EXPECT_EQ(json, ss.str());
 
     // check invalid values
