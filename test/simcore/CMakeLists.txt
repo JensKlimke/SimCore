@@ -2,6 +2,7 @@
 set(SOURCE_FILES
         SimBasicTest.cpp
         SimTest.cpp
+        SignalBasicTest.cpp
         SignalTest.cpp
         DataTest.cpp
         PlotTest.cpp

@@ -51,7 +51,7 @@ TEST(SimBasicTest, SimpleProcess) {
     sim.addComponent(&stop);
 
     // initialize simulation
-    EXPECT_NO_THROW(sim.run());
-    EXPECT_EQ(IStopCondition::StopCode::SIM_ENDED, stop.getCode());
+    ASSERT_NO_THROW(sim.run());
+    ASSERT_EQ(IStopCondition::StopCode::SIM_ENDED, stop.getCode());
 
 }

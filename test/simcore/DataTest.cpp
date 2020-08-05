@@ -229,9 +229,10 @@ TEST_F(DataTest, DataManager) {
     std::stringstream ss;
     data.streamTo(ss);
 
+    // check strings
     EXPECT_EQ(json, ss.str());
 
-    // check unset values
+    // check invalid values
     EXPECT_THROW(data.getValue("another_value"), std::invalid_argument);
 
 }
