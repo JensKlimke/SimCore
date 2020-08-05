@@ -63,7 +63,6 @@ TEST(UnitTest, SetData) {
     EXPECT_DOUBLE_EQ(0.0, ptr->getState().position.z);
     EXPECT_DOUBLE_EQ(0.0, ptr->getState().velocity);
     EXPECT_DOUBLE_EQ(0.0, ptr->getState().acceleration);
-    EXPECT_DOUBLE_EQ(0.0, ptr->getState().wheelAngle);
     EXPECT_DOUBLE_EQ(0.0, ptr->getState().yawAngle);
     EXPECT_DOUBLE_EQ(0.0, ptr->getState().yawRate);
 

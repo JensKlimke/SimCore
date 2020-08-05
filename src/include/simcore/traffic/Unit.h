@@ -43,7 +43,6 @@ namespace sim::traffic {
             double acceleration = 0.0;          // The actual acceleration (in *m/s^2*)
             double yawAngle = 0.0;              // The actual yaw angle (in *rad*)
             double yawRate = 0.0;               // The actual yaw rate (in *rad/s*)
-            double wheelAngle = 0.0;            // The actual wheel steer angle (in *rad*)
         };
 
 
