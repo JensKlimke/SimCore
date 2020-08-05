@@ -37,7 +37,7 @@ namespace sim::traffic {
     public:
 
         /** A class to store the state of a dynamic object. */
-        struct DynamicState {
+        struct State {
             Vector3 position = {0.0, 0.0, 0.0}; // The actual position (in *m*)
             double velocity = 0.0;              // The actual velocity (in *m/s*)
             double acceleration = 0.0;          // The actual acceleration (in *m/s^2*)
@@ -48,44 +48,31 @@ namespace sim::traffic {
 
 
         /** A class to store the parameters. */
-        struct DynamicParameters {
-            double wheelBase = 3.0;                 // The wheel base (distance between axles) (in *m*)
+        struct Parameters {
             Vector3 size = {5.0, 2.2, 1.5};         // The size of the vehicle (in *m*)
-            Vector3 reference = {0.5, 0.5, 1.1};    // The reference point related to the center point (e.g. the driver's position in the vehicle) (in *m*)
+            Vector3 reference = {0.0, 0.0, 0.0};    // The reference point related to the center point (e.g. the driver's position in the vehicle or the center of the rear axle) (in *m*)
         };
 
 
         /**
-         * @brief Construct unit with given ID
-         * Resets the auto counter to a higher value if ID is higher than counter
-         * Attention: Overwrites an exiting unit in index if ID already in use.
+         * Construct unit with given ID
          * @param id ID to be set
          */
-        explicit Unit(id_type id) : _id(id) {
-
-            // store to index
-            _index[id] = this;
-
-            // reset counter
-            if(id > _id_counter)
-                _id_counter = id;
-
-        }
+        explicit Unit(id_type id) : _id(id) {}
 
 
         /**
-         * Creates an unit with a auto-generated ID
+         * @brief Creates a unit
+         * The unit ID is zero and cannot be set
          */
-        Unit() : Unit(++_id_counter) {};
+        Unit() = default;
 
 
         /**
          * @brief Destructor of unit
          * Removes the unit from the index
          */
-        virtual ~Unit() {
-            _index.erase(_id);
-        };
+        virtual ~Unit() = default;
 
 
         /**
@@ -101,7 +88,7 @@ namespace sim::traffic {
          * Returns the parameters of the unit
          * @return Parameters of the unit
          */
-        const DynamicParameters &getParameters() const {
+        const Parameters &getParameters() const {
             return parameters;
         }
 
@@ -109,7 +96,7 @@ namespace sim::traffic {
          * Returns a reference to the parameters of the unit
          * @return Parameters of the unit
          */
-        DynamicParameters &getParameters() {
+        Parameters &getParameters() {
             return parameters;
         }
 
@@ -117,7 +104,7 @@ namespace sim::traffic {
          * Returns the state of the unit
          * @return State of the unit
          */
-        const DynamicState &getState() const {
+        const State &getState() const {
             return state;
         }
 
@@ -125,27 +112,20 @@ namespace sim::traffic {
          * Returns a reference to the state of the unit
          * @return State of the unit
          */
-        DynamicState getState() {
+        State &getState() {
             return state;
         }
 
-
-    private:
-
-        static id_type _id_counter;
-        static std::map<id_type, Unit *> _index;
-
-        id_type _id;
-
     protected:
 
-        DynamicParameters parameters{};
-        DynamicState state{};
+        id_type _id = 0;
+
+        Parameters parameters{};
+        State state{};
 
 
     };
 
 }
-
 
 #endif //SIMCORE_UNIT_H

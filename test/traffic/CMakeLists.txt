@@ -2,6 +2,7 @@
 add_executable(TrafficSimulationTest
         #TrafficSimulationTest.cpp
         #UnitInterfaceTest.cpp
+        UnitTest.cpp
         VehicleTest.cpp
         )
 
