@@ -59,8 +59,8 @@ public:
 private:
 
     Parameters _param{};
-    Input      _input{};
-    State      _state{};
+    Input      input{};
+    State      state{};
 
 
     double time = 0.0;
@@ -103,7 +103,7 @@ private:
         time = simTime;
 
         // save time step size to state.sa
-        _state.sa = dt;
+        state.sa = dt;
 
         return true;
 
@@ -116,10 +116,10 @@ public:
 
         IComponent::initializeTimer(initTime);
 
-        _state.sa = 1.0;
-        _state.sb = 1.0;
-        _input.ia = 2.0;
-        _input.ib = 3.0;
+        state.sa = 1.0;
+        state.sb = 1.0;
+        input.ia = 2.0;
+        input.ib = 3.0;
         _param.pa = 4.0;
         _param.pb = 5.0;
 
@@ -131,7 +131,7 @@ public:
     void terminate(double simTime) override {
 
         time = simTime;
-        _state.sb = simTime;
+        state.sb = simTime;
 
     }
 
@@ -148,12 +148,12 @@ public:
                 ret.emplace_back(sim::data::createDataEntry("name",  &name));
                 break;
             case Context::INPUT:
-                ADD(ret, ia, _input);
-                ADD(ret, ib, _input);
+                ADD(ret, ia, input);
+                ADD(ret, ib, input);
                 break;
             case Context::STATE:
-                ADD(ret, sa, _state);
-                ADD(ret, sb, _state);
+                ADD(ret, sa, state);
+                ADD(ret, sb, state);
                 ret.emplace_back(sim::data::createDataEntry("time", &time));
                 break;
             default:
@@ -167,8 +167,8 @@ public:
 
     // accessors
     PARAM_ACCESS(Parameters, _param)
-    INPUT_ACCESS(Input, _input)
-    STATE_ACCESS(State, _state)
+    INPUT_ACCESS(Input, input)
+    STATE_ACCESS(State, state)
 
 };
 
