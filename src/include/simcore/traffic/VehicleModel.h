@@ -28,6 +28,10 @@
 #include <cmath>
 #include "Unit.h"
 
+#ifndef M_PI_4
+#define M_PI_4 0.78539816339
+#endif
+
 namespace sim::traffic {
 
     class VehicleModel : public Unit {
@@ -47,6 +51,7 @@ namespace sim::traffic {
         /** A struct to store the vehicle parameters */
         struct Parameters {
             double wheelBase = 3.0;             //!< Wheel base (distance of axles, in *m*)
+            double dynWheelRadius = 0.6;        //!< Dynamic wheel radius (in *m*)
             double maxSteerAngle = M_PI_4;      //!< Maximum absolute wheel steer angle (in *rad*)
             double maxDrivePower = 4.13e5;      //!< Maximum drive power (in *W*)
             double maxDriveTorque = 775.0;      //!< Maximum drive torque (in *Nm*)
@@ -90,8 +95,10 @@ namespace sim::traffic {
             dPsi = v * delta / parameters.wheelBase;
 
             // drive train model
+            double power = parameters.maxDrivePower * range(input.drive, 0.0, 1.0);
+            double torque = min(parameters.maxDriveTorque, power / v);
+            auto force = 0.0;
             v += a * dt;
-            auto force = 0.0; // TODO
 
             // update state
             Unit::state.acceleration = a;
@@ -118,10 +125,16 @@ namespace sim::traffic {
          * @return The limited value
          */
         double range(double x, double xMin, double xMax) {
-
-            return std::min(std::max(x, xMin), xMax);
-
+            return min(max(x, xMin), xMax);
         }
+
+		double min(double x, double y) {
+			return x > y ? y : x;
+		}
+
+		double max(double x, double y) {
+			return x >= y ? x : y;
+		}
 
     };
 

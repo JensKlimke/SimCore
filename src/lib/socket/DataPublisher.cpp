@@ -27,7 +27,7 @@
 
 #include <simcore/functions.h>
 #include <simcore/socket/DataPublisher.h>
-#include "WebSocket.h"
+#include <simcore/socket/WebSocket.h>
 
 namespace sim {
 namespace data {

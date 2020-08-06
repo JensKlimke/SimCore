@@ -45,3 +45,5 @@ log/*.json
 
 # ignore some libs
 lib/googletest
+
+node_modules
