@@ -32,7 +32,6 @@
 #include <simcore/timers/TimeIsUp.h>
 #include <simcore/timers/RealTimeTimer.h>
 #include <gtest/gtest.h>
-#include <simcore/data/TimeReporter.h>
 
 
 class SimTest : public ::testing::Test, public sim::ISynchronized, protected sim::Loop {
@@ -41,7 +40,6 @@ class SimTest : public ::testing::Test, public sim::ISynchronized, protected sim
 public:
 
     std::function<void(double, double)> pre;
-    std::function<void(double, double)> post;
 
     double time = 0.0;
     double finalTime = 0.0;
@@ -49,6 +47,11 @@ public:
     bool wasInitialized = false;
     int steps = 0;
     bool wasTerminated = false;
+
+
+    SimTest() = default;
+    ~SimTest() override = default;
+
 
     void setPrePostChecks() {
 
@@ -109,13 +112,6 @@ public:
     }
 
 
-public:
-
-
-    SimTest() = default;
-    ~SimTest() override = default;
-
-
     void initialize(double initTime) override {
 
         time = initTime;
@@ -135,10 +131,6 @@ public:
         // main step
         time += dt;
         steps++;
-
-        // call pre step
-        if(post)
-            post(t, dt);
 
     }
 
@@ -167,6 +159,9 @@ TEST_F(SimTest, SimulationLifeCycle) {
     // set timer parameters
     timer.setTimeStepSize(0.01);
     timer.setStartTime(1.0);
+
+    // setup
+    setup(timer, stop);
 
     // run simulation
     this->run();
@@ -201,46 +196,6 @@ TEST_F(SimTest, RealTimeSimulation) {
 
     // check final state
     checkFinalState(timer, stop);
-
-}
-
-
-TEST_F(SimTest, Interrupt) {
-
-    using namespace ::sim;
-
-    // create objects
-    BasicTimer timer;
-    timer.setTimeStepSize(0.01);
-
-    // interrupt
-    pre = [this] (double t, double dt) {
-
-        // stop at 10.0 s
-        if(t > 9.999 && t < 10.001)
-            this->stop();
-
-    };
-
-    // set timer and stop condition
-    this->setTimer(&timer);
-    this->addComponent(this);
-
-    // run simulation
-    this->run();
-
-    // check time and steps
-    EXPECT_NEAR(10.0, timer.time(), 1e-8);
-    EXPECT_NEAR(10.0, time, 1e-8);
-    EXPECT_NEAR(10.0, finalTime, 1e-8);
-    EXPECT_EQ(1001, this->steps);
-
-    // check status
-    EXPECT_EQ(Loop::Status::STOPPED, this->getStatus());
-
-    // check values
-    EXPECT_TRUE(this->wasInitialized);
-    EXPECT_TRUE(this->wasTerminated);
 
 }
 

@@ -59,9 +59,9 @@ namespace sim {
 
         /**
          * Checks if the stop condition is set to a stopped state
-         * @return
+         * @return Stop flag
          */
-        virtual bool hasStopped() const {
+        [[nodiscard]] virtual bool hasStopped() const {
 
             return getCode() != StopCode::NONE;
 
@@ -80,9 +80,9 @@ namespace sim {
 
         /**
          * Returns the stop code
-         * @return
+         * @return Stop code
          */
-        StopCode getCode() const {
+        [[nodiscard]] StopCode getCode() const {
 
             return _code;
 
