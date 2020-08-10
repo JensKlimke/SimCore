@@ -14,8 +14,11 @@ RUN cd /app && bash ./install_gtest.sh
 
 # installation
 RUN rm -rf /app/build
-RUN cd /app && mkdir build && cd build && cmake -G "Unix Makefiles" -DBUILD_TESTS=ON -DBUILD_WEBSOCKET=OFF \
-    -DBUILD_GTEST=ON -DCREATE_INTERFACE_GENERATOR_TARGETS=ON ..
+RUN cd /app && mkdir build && cd build && cmake -G "Unix Makefiles" \
+    -DBUILD_TESTS=ON \
+    -DGTEST_BUILD_LIBRARY=ON \
+    -DENABLE_COVERAGE=OFF \
+    -DCREATE_DOXYGEN_TARGET=OFF
 
 # create targets
 RUN cd /app/build && make gen_interface_unit

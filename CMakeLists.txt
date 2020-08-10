@@ -5,7 +5,6 @@ set(CMAKE_CXX_STANDARD 17)
 
 # set options
 option(BUILD_TESTS "Sets or unsets the option to generate the test target" OFF)
-option(BUILD_GTEST "Sets or unsets the option to build gtest" OFF)
 option(ENABLE_COVERAGE "Enables the coverage check of the module" OFF)
 option(CREATE_DOXYGEN_TARGET "Enable to create a doxygen target" OFF)
 
