@@ -32,10 +32,7 @@
 #include "../functions.h"
 #include "../IStorable.h"
 
-namespace sim {
-namespace data {
-
-
+namespace sim::data {
 
     /**
      * TODO: DataNode etc.
@@ -253,9 +250,7 @@ namespace data {
     };
 
 
-
-
-}} // namespace ::sim::data
+} // namespace ::sim::data
 
 
 #endif //SIMCORE_DATAMANAGER_H

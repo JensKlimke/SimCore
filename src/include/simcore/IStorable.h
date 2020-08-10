@@ -22,8 +22,8 @@
 // Created by Jens Klimke on 2019-03-25
 //
 
-#ifndef SIMCORE_ISTORABLE_H
-#define SIMCORE_ISTORABLE_H
+#ifndef SIMCORE_I_STORABLE_H
+#define SIMCORE_I_STORABLE_H
 
 #include <iostream>
 #include <string>
@@ -38,15 +38,12 @@
     vector.emplace_back(sim::data::createDataEntry(#name, (structure).name))    \
 
 
-#include <vector>
-#include <string>
+namespace sim::data {
 
-namespace sim {
-namespace data {
 
     struct IDataSet {
         virtual std::ostream &s(std::ostream &os) const = 0;
-        virtual const void *v() const = 0;
+        [[nodiscard]] virtual const void *v() const = 0;
     };
 
 
@@ -69,7 +66,7 @@ namespace data {
          * Returns a vector with data entries
          * @return Data entry vector
          */
-        virtual std::vector<DataEntry> getData(Context context) const = 0;
+        [[nodiscard]] virtual std::vector<DataEntry> getData(Context context) const = 0;
 
     };
 
@@ -83,7 +80,7 @@ namespace data {
             os << *value;
             return os;
         }
-        const void *v() const override { return value; }
+        [[nodiscard]] const void *v() const override { return value; }
     };
 
 
@@ -110,7 +107,7 @@ namespace data {
     }
 
 
-}} // namespace ::sim::data
+}
 
 
-#endif //SIMCORE_ISTORABLE_H
+#endif

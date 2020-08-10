@@ -46,12 +46,6 @@ namespace sim {
         ~Model() override = default;
 
 
-    protected:
-
-
-
-
-
     };
 
 }

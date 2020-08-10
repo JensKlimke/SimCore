@@ -33,100 +33,103 @@
 #include "../exceptions.h"
 
 
-class JsonReporter : public sim::ISynchronized {
+namespace sim::data {
 
-    std::ostream *_outstream = nullptr;
-    std::map<std::string, const double*> _values{};
+    class JsonReporter : public sim::ISynchronized {
 
-    bool _hasContent = false;
+        std::ostream *_outstream = nullptr;
+        std::map<std::string, const double *> _values{};
 
-
-public:
-
-    /**
-     * Constructor
-     */
-    JsonReporter() = default;
+        bool _hasContent = false;
 
 
-    /**
-     * Adds an double value to be added to the
-     * @param val Pointer to the value
-     * @param key Key to be used in json
-     */
-    void addValue(const std::string &key, const double *val) {
+    public:
 
-        if(key == "time")
-            throw std::invalid_argument("time key word is reserved.");
-
-        _values[key] = val;
-
-    }
+        /**
+         * Constructor
+         */
+        JsonReporter() = default;
 
 
-    /**
-     * Sets the stream in which the data shall be written
-     * @param os Outstream
-     */
-    void setOutstream(std::ostream &os) {
+        /**
+         * Adds an double value to be added to the
+         * @param val Pointer to the value
+         * @param key Key to be used in json
+         */
+        void addValue(const std::string &key, const double *val) {
 
-        _outstream = &os;
+            if (key == "time")
+                throw std::invalid_argument("time key word is reserved.");
 
-    }
-
-
-protected:
-
-
-    void step(double simTime, double deltaTime) override {
-
-        // save time and open object brackets
-        (*_outstream) << (_hasContent ? ",\n" : "[\n") << "\t" << R"({"time":)" << simTime << ",";
-
-        // write data
-        unsigned int i = 0;
-        for(auto &p : _values) {
-
-            // stream field name
-            (*_outstream) << (i++ == 0 ? "" : ",") << "\"" << p.first << "\":";
-
-            // check for inf and nan
-            if(std::isinf(*p.second) || std::isnan(*p.second))
-                (*_outstream) << "null";
-            else
-                (*_outstream) << *p.second;
+            _values[key] = val;
 
         }
 
-        // close object brackets
-        (*_outstream) << "}";
 
-        // save that data was already written
-        _hasContent = true;
+        /**
+         * Sets the stream in which the data shall be written
+         * @param os Outstream
+         */
+        void setOutstream(std::ostream &os) {
 
-    }
+            _outstream = &os;
 
-
-    void initialize(double initTime) override {
-
-        if(_outstream == nullptr)
-            throw std::runtime_error("Output stream is not initialized.");
-
-        _hasContent = false;
-
-    }
+        }
 
 
-    void terminate(double simTime) override {
-
-        // close brackets
-        if(_hasContent)
-            (*_outstream) << "\n]" << std::endl;
-
-    }
+    protected:
 
 
-};
+        void step(double simTime, double deltaTime) override {
 
+            // save time and open object brackets
+            (*_outstream) << (_hasContent ? ",\n" : "[\n") << "\t" << R"({"time":)" << simTime << ",";
+
+            // write data
+            unsigned int i = 0;
+            for (auto &p : _values) {
+
+                // stream field name
+                (*_outstream) << (i++ == 0 ? "" : ",") << "\"" << p.first << "\":";
+
+                // check for inf and nan
+                if (std::isinf(*p.second) || std::isnan(*p.second))
+                    (*_outstream) << "null";
+                else
+                    (*_outstream) << *p.second;
+
+            }
+
+            // close object brackets
+            (*_outstream) << "}";
+
+            // save that data was already written
+            _hasContent = true;
+
+        }
+
+
+        void initialize(double initTime) override {
+
+            if (_outstream == nullptr)
+                throw std::runtime_error("Output stream is not initialized.");
+
+            _hasContent = false;
+
+        }
+
+
+        void terminate(double simTime) override {
+
+            // close brackets
+            if (_hasContent)
+                (*_outstream) << "\n]" << std::endl;
+
+        }
+
+
+    };
+
+}
 
 #endif //SIMCORE_JSONREPORTER_H

@@ -31,81 +31,80 @@
 #include <thread>
 #include "BasicTimer.h"
 
+namespace sim {
 
-class RealTimeTimer : public BasicTimer {
+    class RealTimeTimer : public BasicTimer {
 
-private:
+    private:
 
-    double _acceleration = 1.0;
+        double _acceleration = 1.0;
 
-    std::chrono::system_clock::time_point _refTime;
-    unsigned long _steps = 0;
-
-
-public:
-
-    RealTimeTimer() = default;
-
-    ~RealTimeTimer() override = default;
+        std::chrono::system_clock::time_point _refTime;
+        unsigned long _steps = 0;
 
 
-    void step() override {
+    public:
 
-        using namespace std::chrono;
+        RealTimeTimer() = default;
 
-        // create elapsed time
-        auto elapsed = duration_cast<milliseconds>(system_clock::now() - _refTime);
-        auto currTime = static_cast<double>(elapsed.count()) / 1000.0;
+        ~RealTimeTimer() override = default;
 
-        // step increment
-        _steps++;
 
-        // wait until elapsed time
-        auto nextTime = getTimeStepSize() * (double) _steps;
-        while (currTime < nextTime / _acceleration) {
+        void step() override {
 
-            // wait a thousandth of a second
-            std::this_thread::sleep_for(std::chrono::microseconds(100));
+            using namespace std::chrono;
 
-            // recalculate
-            elapsed = duration_cast<milliseconds>(system_clock::now() - _refTime);
-            currTime = static_cast<double>(elapsed.count()) / 1000.0;
+            // create elapsed time
+            auto elapsed = duration_cast<milliseconds>(system_clock::now() - _refTime);
+            auto currTime = static_cast<double>(elapsed.count()) / 1000.0;
+
+            // step increment
+            _steps++;
+
+            // wait until elapsed time
+            auto nextTime = getTimeStepSize() * (double) _steps;
+            while (currTime < nextTime / _acceleration) {
+
+                // wait a thousandth of a second
+                std::this_thread::sleep_for(std::chrono::microseconds(100));
+
+                // recalculate
+                elapsed = duration_cast<milliseconds>(system_clock::now() - _refTime);
+                currTime = static_cast<double>(elapsed.count()) / 1000.0;
+
+            }
+
+            // set current time
+            setTime(nextTime + getStartTime());
 
         }
 
-        // set current time
-        setTime(nextTime + getStartTime());
 
-    }
+        void start() override {
 
+            BasicTimer::start();
+            _refTime = std::chrono::system_clock::now();
 
-    void start() override {
-
-        BasicTimer::start();
-        _refTime = std::chrono::system_clock::now();
-
-    }
+        }
 
 
-    void reset() override {
+        void reset() override {
 
-        BasicTimer::reset();
-        _steps = 0;
+            BasicTimer::reset();
+            _steps = 0;
 
-    }
-
-
-    void setAcceleration(double acc) {
-
-        _acceleration = acc;
-
-    }
+        }
 
 
+        void setAcceleration(double acc) {
 
+            _acceleration = acc;
 
+        }
 
-};
+    };
+
+}
 
 
 #endif //SIMCORE_REALTIMETIMER_H

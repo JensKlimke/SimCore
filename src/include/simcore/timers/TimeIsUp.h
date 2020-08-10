@@ -29,87 +29,92 @@
 #include "../IStopCondition.h"
 #include "../IComponent.h"
 
-class TimeIsUp : public ::sim::IStopCondition, public ::sim::IComponent {
+namespace sim {
 
 
-private:
+    class TimeIsUp : public ::sim::IStopCondition, public ::sim::IComponent {
 
 
-    double _stopTime = INFINITY;
-    double _lastTime = INFINITY;
+    private:
 
 
-public:
-
-    /**
-     * Default constructor
-     */
-    TimeIsUp() = default;
+        double _stopTime = INFINITY;
+        double _lastTime = INFINITY;
 
 
-    /**
-     * Method to set the stop time
-     * @param stopTime Stop time
-     */
-    void setStopTime(double stopTime) {
+    public:
 
-        _stopTime = stopTime;
-
-    }
+        /**
+         * Default constructor
+         */
+        TimeIsUp() = default;
 
 
-    /**
-     * Returns the termination time
-     * @return
-     */
-    double getLastTime() const {
+        /**
+         * Method to set the stop time
+         * @param stopTime Stop time
+         */
+        void setStopTime(double stopTime) {
 
-        // return the termination time
-        return _lastTime;
+            _stopTime = stopTime;
 
-    }
-
-
-protected:
-
-    /**
-     * Initialize
-     * @param initTime Initialization time
-     */
-    void _init(double initTime) override {
-
-        reset();
-
-    }
+        }
 
 
-    /**
-     * Step method
-     * @param simTime Simulation time
-     * @return Success flag
-     */
-    void _exec(double simTime) override {
+        /**
+         * Returns the termination time
+         * @return
+         */
+        double getLastTime() const {
 
-        // set status to ended if time is reached
-        if(simTime >= (_stopTime - EPS_SIM_TIME))
-            end();
+            // return the termination time
+            return _lastTime;
 
-    }
+        }
 
 
-    /**
-     * Termination method
-     * @param simTime Simulation time
-     */
-    void _term(double simTime) override {
+    protected:
 
-        // set termination time
-        _lastTime = simTime;
+        /**
+         * Initialize
+         * @param initTime Initialization time
+         */
+        void _init(double initTime) override {
 
-    }
+            reset();
+
+        }
 
 
-};
+        /**
+         * Step method
+         * @param simTime Simulation time
+         * @return Success flag
+         */
+        void _exec(double simTime) override {
+
+            // set status to ended if time is reached
+            if (simTime >= (_stopTime - EPS_SIM_TIME))
+                end();
+
+        }
+
+
+        /**
+         * Termination method
+         * @param simTime Simulation time
+         */
+        void _term(double simTime) override {
+
+            // set termination time
+            _lastTime = simTime;
+
+        }
+
+
+    };
+
+}
 
 
 #endif // SIMCORE_TIME_IS_UP_H

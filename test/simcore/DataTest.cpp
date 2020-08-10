@@ -70,8 +70,8 @@ private:
 protected:
 
     // create objects
-    BasicTimer timer;
-    TimeIsUp stop;
+    ::sim::BasicTimer timer;
+    ::sim::TimeIsUp stop;
     ::sim::Loop loop;
 
 
@@ -173,7 +173,7 @@ TEST_F(DataTest, ReportTime) {
     std::stringstream o_str;
 
     // create synchronized model (in this case time reporter)
-    TimeReporter timeRep;
+    ::sim::data::TimeReporter timeRep;
     loop.addComponent(&timeRep);
 
     // setup for time reporter

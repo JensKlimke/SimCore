@@ -42,12 +42,13 @@ public:
     double value2;
 
     // create objects
-    BasicTimer timer;
-    TimeIsUp stop;
-    ::sim::Loop loop;
+    ::sim::BasicTimer timer{};
+    ::sim::TimeIsUp stop{};
+    ::sim::Loop loop{};
 
-    PlotLogger plotLogger;
-    JsonFileReporter jsonLogger;
+    // data components
+    ::sim::data::PlotLogger plotLogger{};
+    ::sim::data::JsonFileReporter jsonLogger{};
 
     void SetUp() override {
 

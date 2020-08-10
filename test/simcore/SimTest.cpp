@@ -71,7 +71,7 @@ public:
 
     }
 
-    void checkFinalState(const sim::ITimer &timer, const TimeIsUp &stop) {
+    void checkFinalState(const sim::ITimer &timer, const sim::TimeIsUp &stop) {
 
         // check time and steps
         EXPECT_NEAR(11.0, timer.time(), EPS_SIM_TIME);
@@ -90,7 +90,7 @@ public:
     }
 
 
-    void setup(sim::ITimer timer, TimeIsUp stop) {
+    void setup(sim::ITimer &timer, sim::TimeIsUp &stop) {
 
         // set stop time
         stop.setStopTime(11.0);
@@ -193,6 +193,9 @@ TEST_F(SimTest, RealTimeSimulation) {
     timer.setTimeStepSize(0.01);
     timer.setStartTime(1.0);
 
+    // setup
+    setup(timer, stop);
+
     // run simulation
     this->run();
 
@@ -259,7 +262,7 @@ TEST_F(SimTest, NotSetProperly) {
     pre = [this] (double t, double dt) {
 
         // at t=0.1 s
-        if(t > 0.1) {
+        if(t > 0.099999) {
 
             // try to initialize
             EXPECT_THROW(Loop::initialize(), ProcessException);

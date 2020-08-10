@@ -38,8 +38,8 @@ class SignalTest : public ::testing::Test, public sim::IComponent {
 protected:
 
     // create objects
-    BasicTimer timer;
-    TimeIsUp stop;
+    ::sim::BasicTimer timer;
+    ::sim::TimeIsUp stop;
     ::sim::Loop sim;
 
     double x     = 0.0;

@@ -28,132 +28,134 @@
 #include "../ITimer.h"
 
 
-class BasicTimer : public ::sim::ITimer {
+namespace sim {
 
-private:
+    class BasicTimer : public ::sim::ITimer {
 
-    double _time{};
-    double _stepSize{};
-    double _startTime = 0;
+    private:
 
-public:
+        double _time{};
+        double _stepSize{};
+        double _startTime = 0;
 
-
-    /**
-     * Default constructor
-     */
-    BasicTimer() = default;
+    public:
 
 
-    /**
-     * Default destructor
-     */
-    ~BasicTimer() override = default;
+        /**
+         * Default constructor
+         */
+        BasicTimer() = default;
 
 
-    /**
-     * Performs a time step
-     */
-    void step() override {
-
-        _time += _stepSize;
-
-    }
+        /**
+         * Default destructor
+         */
+        ~BasicTimer() override = default;
 
 
-    /**
-     * Starts the timer
-     */
-    void start() override {}
+        /**
+         * Performs a time step
+         */
+        void step() override {
+
+            _time += _stepSize;
+
+        }
 
 
-    /**
-     * Stops the timer
-     */
-    void stop() override {}
+        /**
+         * Starts the timer
+         */
+        void start() override {}
 
 
-    /**
-     * Returns the actual time
-     * @return
-     */
-    [[nodiscard]] double time() const override {
-
-        return _time;
-
-    }
+        /**
+         * Stops the timer
+         */
+        void stop() override {}
 
 
-    /**
-     * Resets the timer
-     */
-    void reset() override {
+        /**
+         * Returns the actual time
+         * @return
+         */
+        [[nodiscard]] double time() const override {
 
-        _time = _startTime;
+            return _time;
 
-    }
-
-
-    /**
-     * Sets the time step size of the timer
-     * @param stepSize Time step size
-     */
-    void setTimeStepSize(double stepSize) {
-
-        _stepSize = stepSize;
-
-    }
+        }
 
 
-    /**
-     * Sets the start time of the timer
-     * @param startTime Start time to be set
-     */
-    void setStartTime(double startTime) {
+        /**
+         * Resets the timer
+         */
+        void reset() override {
 
-        _startTime = startTime;
+            _time = _startTime;
 
-    }
-
-
-    /**
-     * Returns the step size of the timer
-     * @return Step size of the timer
-     */
-    [[nodiscard]] double getTimeStepSize() const {
-
-        return _stepSize;
-
-    }
+        }
 
 
-    /**
-     * Returns the start time
-     * @return Start time
-     */
-    [[nodiscard]] double getStartTime() const {
+        /**
+         * Sets the time step size of the timer
+         * @param stepSize Time step size
+         */
+        void setTimeStepSize(double stepSize) {
 
-        return _startTime;
+            _stepSize = stepSize;
 
-    }
-
-
-protected:
-
-    /**
-     * Sets the current time
-     * @param time Time to be set
-     */
-    void setTime(double time) {
-
-        _time = time;
-
-    }
+        }
 
 
-};
+        /**
+         * Sets the start time of the timer
+         * @param startTime Start time to be set
+         */
+        void setStartTime(double startTime) {
+
+            _startTime = startTime;
+
+        }
 
 
+        /**
+         * Returns the step size of the timer
+         * @return Step size of the timer
+         */
+        [[nodiscard]] double getTimeStepSize() const {
+
+            return _stepSize;
+
+        }
+
+
+        /**
+         * Returns the start time
+         * @return Start time
+         */
+        [[nodiscard]] double getStartTime() const {
+
+            return _startTime;
+
+        }
+
+
+    protected:
+
+        /**
+         * Sets the current time
+         * @param time Time to be set
+         */
+        void setTime(double time) {
+
+            _time = time;
+
+        }
+
+
+    };
+
+}
 
 
 #endif //SIMCORE_STEADYTIMER_H

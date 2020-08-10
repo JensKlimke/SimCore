@@ -29,48 +29,51 @@
 #include "../ISynchronized.h"
 #include <iostream>
 
-class TimeReporter : public sim::ISynchronized {
+namespace sim::data {
+
+    class TimeReporter : public sim::ISynchronized {
 
 
-    std::ostream *_stream = nullptr;
+        std::ostream *_stream = nullptr;
 
 
-public:
+    public:
 
-    TimeReporter() = default;
+        TimeReporter() = default;
 
-    ~TimeReporter() override = default;
+        ~TimeReporter() override = default;
 
-    void initialize(double initTime) override {
+        void initialize(double initTime) override {
 
-        // take std::cout if no stream is set
-        if(_stream == nullptr)
-            _stream = &std::cout;
+            // take std::cout if no stream is set
+            if (_stream == nullptr)
+                _stream = &std::cout;
 
-    }
+        }
 
-    void terminate(double simTime) override {}
-
-
-    void step(double t, double dt) override {
-
-        // put sim time to stream
-        (*_stream) << "t=" << t << "s, dt=" << dt << std::endl;
-
-    }
+        void terminate(double simTime) override {}
 
 
-    /**
-     * Sets the stream on which the time is logged
-     * @param str Stream the time is to be logged in
-     */
-    void ostream(std::ostream &str) {
+        void step(double t, double dt) override {
 
-        _stream = &str;
+            // put sim time to stream
+            (*_stream) << "t=" << t << "s, dt=" << dt << std::endl;
 
-    }
+        }
 
-};
 
+        /**
+         * Sets the stream on which the time is logged
+         * @param str Stream the time is to be logged in
+         */
+        void ostream(std::ostream &str) {
+
+            _stream = &str;
+
+        }
+
+    };
+
+}
 
 #endif //SIMCORE_TIMEREPORTER_H

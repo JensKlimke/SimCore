@@ -28,59 +28,62 @@
 #include <fstream>
 
 
-class JsonFileReporter : public JsonReporter {
+namespace sim::data {
+
+    class JsonFileReporter : public JsonReporter {
 
 
-    std::fstream _fstream;
-    std::string _filename;
+        std::fstream _fstream;
+        std::string _filename;
 
-public:
+    public:
 
-    JsonFileReporter() = default;
+        JsonFileReporter() = default;
 
-    ~JsonFileReporter() override = default;
-
-
-    /**
-     * Sets the file name
-     * @param name File name
-     */
-    void setFilename(const std::string &name) {
-
-        // save file name
-        _filename = name;
-
-    }
+        ~JsonFileReporter() override = default;
 
 
-protected:
+        /**
+         * Sets the file name
+         * @param name File name
+         */
+        void setFilename(const std::string &name) {
+
+            // save file name
+            _filename = name;
+
+        }
 
 
-
-    void initialize(double initTime) override {
-
-        // create file and open
-        _fstream.open(_filename, std::ios::out);
-        setOutstream(_fstream);
-
-        // init json reporter
-        JsonReporter::initialize(initTime);
-
-    }
+    protected:
 
 
-    void terminate(double simTime) override {
+        void initialize(double initTime) override {
 
-        // terminate json reporter
-        JsonReporter::terminate(simTime);
+            // create file and open
+            _fstream.open(_filename, std::ios::out);
+            setOutstream(_fstream);
 
-        // close file
-        _fstream.close();
+            // init json reporter
+            JsonReporter::initialize(initTime);
 
-    }
+        }
 
 
-};
+        void terminate(double simTime) override {
+
+            // terminate json reporter
+            JsonReporter::terminate(simTime);
+
+            // close file
+            _fstream.close();
+
+        }
+
+
+    };
+
+}
 
 
 #endif //SIMCORE_JSONFILEREPORTER_H

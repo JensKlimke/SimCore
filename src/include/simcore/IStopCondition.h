@@ -30,7 +30,6 @@
 namespace sim {
 
 
-
     class IStopCondition {
 
     public:
