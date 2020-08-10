@@ -188,7 +188,7 @@ TEST_F(DataTest, ReportTime) {
     EXPECT_NEAR(10.0, timer.time(), 1e-8);
 
     // check output of timer
-    EXPECT_EQ("1s\n6s\n", o_str.str());
+    EXPECT_EQ("t=1s, dt=1\nt=6s, dt=5\n", o_str.str());
 
 }
 
