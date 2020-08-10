@@ -95,17 +95,13 @@ protected:
 
 private:
 
-    bool step(double simTime) override {
-
-        auto dt = IComponent::timeStep(simTime);
+    void step(double simTime, double timeStepSize) override {
 
         // write data into variable
         time = simTime;
 
         // save time step size to state.sa
-        state.sa = dt;
-
-        return true;
+        state.sa = timeStepSize;
 
     }
 
@@ -113,8 +109,6 @@ private:
 public:
 
     void initialize(double initTime) override {
-
-        IComponent::initializeTimer(initTime);
 
         state.sa = 1.0;
         state.sb = 1.0;
@@ -183,7 +177,8 @@ TEST_F(DataTest, ReportTime) {
     loop.addComponent(&timeRep);
 
     // setup for time reporter
-    timeRep.setTimeStepSize(5.0, 1.0);
+    timeRep.setTimeStepSize(5.0);
+    timeRep.setStartTime(1.0);
     timeRep.ostream(o_str);
 
     // initialize simulation

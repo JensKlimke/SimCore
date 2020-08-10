@@ -25,15 +25,9 @@
 #ifndef SIMCORE_TIME_IS_UP_H
 #define SIMCORE_TIME_IS_UP_H
 
+#include <cmath>
 #include "../IStopCondition.h"
 #include "../IComponent.h"
-#include <cmath>
-
-
-#ifndef EPS_TIME
-#define EPS_TIME 1e-12
-#endif
-
 
 class TimeIsUp : public ::sim::IStopCondition, public ::sim::IComponent {
 
@@ -42,6 +36,7 @@ private:
 
 
     double _stopTime = INFINITY;
+    double _lastTime = INFINITY;
 
 
 public:
@@ -53,10 +48,35 @@ public:
 
 
     /**
+     * Method to set the stop time
+     * @param stopTime Stop time
+     */
+    void setStopTime(double stopTime) {
+
+        _stopTime = stopTime;
+
+    }
+
+
+    /**
+     * Returns the termination time
+     * @return
+     */
+    double getLastTime() const {
+
+        // return the termination time
+        return _lastTime;
+
+    }
+
+
+protected:
+
+    /**
      * Initialize
      * @param initTime Initialization time
      */
-    void initialize(double initTime) override {
+    void _init(double initTime) override {
 
         reset();
 
@@ -68,13 +88,11 @@ public:
      * @param simTime Simulation time
      * @return Success flag
      */
-    bool step(double simTime) override {
+    void _exec(double simTime) override {
 
         // set status to ended if time is reached
-        if(simTime >= (_stopTime - EPS_TIME))
+        if(simTime >= (_stopTime - EPS_SIM_TIME))
             end();
-
-        return true;
 
     }
 
@@ -83,18 +101,13 @@ public:
      * Termination method
      * @param simTime Simulation time
      */
-    void terminate(double simTime) override {}
+    void _term(double simTime) override {
 
-
-    /**
-     * Method to set the stop time
-     * @param stopTime Stop time
-     */
-    void setStopTime(double stopTime) {
-
-        _stopTime = stopTime;
+        // set termination time
+        _lastTime = simTime;
 
     }
+
 
 };
 

@@ -43,9 +43,6 @@ public:
 
     void initialize(double initTime) override {
 
-        // run
-        sim::ISynchronized::initialize(initTime);
-
         // take std::cout if no stream is set
         if(_stream == nullptr)
             _stream = &std::cout;
@@ -55,16 +52,10 @@ public:
     void terminate(double simTime) override {}
 
 
-    bool step(double simTime) override {
-
-        // if super doesn't perform step
-        if(!sim::ISynchronized::step(simTime))
-            return true;
+    void step(double t, double dt) override {
 
         // put sim time to stream
-        (*_stream) << simTime << "s" << std::endl;
-
-        return true;
+        (*_stream) << "t=" << t << "s, dt=" << dt << std::endl;
 
     }
 

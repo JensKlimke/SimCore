@@ -1,6 +1,5 @@
 # source files
 set(SOURCE_FILES
-        SimBasicTest.cpp
         SimTest.cpp
         SignalBasicTest.cpp
         SignalTest.cpp

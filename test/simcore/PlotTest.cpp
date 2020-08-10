@@ -70,26 +70,20 @@ public:
     }
 
 
-    bool step(double simTime) override {
+    void step(double simTime, double dt) override {
 
         // timing
-        auto dt = IComponent::timeStep(simTime);
         time = simTime;
 
         // some random values
         value1 = cos(time * 2.0);
         value2 = sin(time * 3.0);
 
-        return true;
-
     }
 
 
-    void terminate(double simTime) override {
-
-
-
-    }
+    void initialize(double simTime) override {}
+    void terminate(double simTime) override {}
 
 
 };

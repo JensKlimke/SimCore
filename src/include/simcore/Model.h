@@ -35,10 +35,22 @@ namespace sim {
 
     public:
 
+        /**
+         * Default constructor
+         */
         Model() = default;
+
+        /**
+         * Default destructor
+         */
         ~Model() override = default;
 
-        void terminate(double simTime) override {}
+
+    protected:
+
+
+
+
 
     };
 

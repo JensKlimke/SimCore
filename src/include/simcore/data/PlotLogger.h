@@ -297,9 +297,6 @@ public:
 
     void initialize(double initTime) override {
 
-        // init synchronized
-        sim::ISynchronized::initialize(initTime);
-
         // create and open file
         _file = std::fstream(_filename.c_str(), std::ios::out);
 
@@ -308,17 +305,10 @@ public:
 
     }
 
-    bool step(double simTime) override {
-
-        // only step when its time
-        if(!sim::ISynchronized::step(simTime))
-            return false;
+    void step(double t, double dt) override {
 
         // write data
         writeData();
-
-        // do nothing
-        return true;
 
     }
 

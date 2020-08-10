@@ -105,12 +105,13 @@ namespace sim {
          */
         void run() {
 
-            // check status
+            // initialize components
             initialize();
 
+            // execute main loop
             execute();
 
-            // if loop ended, terminate regularly
+            // terminate components
             terminate();
 
         }
@@ -171,7 +172,9 @@ namespace sim {
                 for (auto &m : _components) {
 
                     // ... and run component step
-                    m->step(_timer->time());
+                    double t = _timer->time();
+                    if(m->_execCondition(t))
+                        m->_exec(t);
 
                 }
 
@@ -225,7 +228,7 @@ namespace sim {
             for(auto &m : _components) {
 
                 // ... and initialize models
-                m->initialize(_timer->time());
+                m->_init(_timer->time());
 
             }
 
@@ -248,7 +251,7 @@ namespace sim {
             for (auto &m : _components) {
 
                 // ... and terminate
-                m->terminate(_timer->time());
+                m->_term(_timer->time());
 
             }
 

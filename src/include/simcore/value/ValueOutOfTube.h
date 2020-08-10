@@ -43,23 +43,21 @@ public:
 
     ValueOutOfTube() = default;
 
-    void initialize(double initTime) override {
+    void _init(double initTime) override {
 
         if(!isSet())
             throw ProcessException("Band is not initialized.");
 
     }
 
-    bool step(double simTime) override {
+    void _exec(double simTime) override {
 
         if(!in(*_x, *_y))
             failed();
 
-        return true;
-
     }
 
-    void terminate(double simTime) override {
+    void _term(double simTime) override {
 
     }
 

@@ -34,7 +34,7 @@ private:
 
     double _time{};
     double _stepSize{};
-
+    double _startTime = 0;
 
 public:
 
@@ -45,9 +45,15 @@ public:
     BasicTimer() = default;
 
 
+    /**
+     * Default destructor
+     */
     ~BasicTimer() override = default;
 
 
+    /**
+     * Performs a time step
+     */
     void step() override {
 
         _time += _stepSize;
@@ -55,21 +61,35 @@ public:
     }
 
 
+    /**
+     * Starts the timer
+     */
     void start() override {}
 
+
+    /**
+     * Stops the timer
+     */
     void stop() override {}
 
 
-    double time() const override {
+    /**
+     * Returns the actual time
+     * @return
+     */
+    [[nodiscard]] double time() const override {
 
         return _time;
 
     }
 
 
+    /**
+     * Resets the timer
+     */
     void reset() override {
 
-        _time = 0.0;
+        _time = _startTime;
 
     }
 
@@ -86,12 +106,34 @@ public:
 
 
     /**
+     * Sets the start time of the timer
+     * @param startTime Start time to be set
+     */
+    void setStartTime(double startTime) {
+
+        _startTime = startTime;
+
+    }
+
+
+    /**
      * Returns the step size of the timer
      * @return Step size of the timer
      */
-    double getTimeStepSize() const {
+    [[nodiscard]] double getTimeStepSize() const {
 
         return _stepSize;
+
+    }
+
+
+    /**
+     * Returns the start time
+     * @return Start time
+     */
+    [[nodiscard]] double getStartTime() const {
+
+        return _startTime;
 
     }
 

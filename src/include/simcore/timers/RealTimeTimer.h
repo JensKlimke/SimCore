@@ -25,7 +25,6 @@
 #ifndef SIMCORE_REALTIMETIMER_H
 #define SIMCORE_REALTIMETIMER_H
 
-#include <chrono>
 #include <ctime>
 #include <iostream>
 #include <chrono>
@@ -62,7 +61,7 @@ public:
         _steps++;
 
         // wait until elapsed time
-        auto nextTime = getTimeStepSize() * _steps;
+        auto nextTime = getTimeStepSize() * (double) _steps;
         while (currTime < nextTime / _acceleration) {
 
             // wait a thousandth of a second
@@ -75,7 +74,7 @@ public:
         }
 
         // set current time
-        setTime(nextTime);
+        setTime(nextTime + getStartTime());
 
     }
 

@@ -49,25 +49,23 @@ public:
     }
 
 
-    void initialize(double initTime) override {
+    void _init(double initTime) override {
 
         reset();
 
     }
 
 
-    bool step(double simTime) override {
+    void _exec(double simTime) override {
 
         // the limit has been reached
         if(*_value > _limit)
             stop(_mode);
 
-        return true;
-
     }
 
 
-    void terminate(double simTime) override {
+    void _term(double simTime) override {
 
     }
 

@@ -41,8 +41,13 @@ public:
     ~JsonFileReporter() override = default;
 
 
+    /**
+     * Sets the file name
+     * @param name File name
+     */
     void setFilename(const std::string &name) {
 
+        // save file name
         _filename = name;
 
     }
@@ -54,9 +59,11 @@ protected:
 
     void initialize(double initTime) override {
 
+        // create file and open
         _fstream.open(_filename, std::ios::out);
         setOutstream(_fstream);
 
+        // init json reporter
         JsonReporter::initialize(initTime);
 
     }
@@ -64,8 +71,10 @@ protected:
 
     void terminate(double simTime) override {
 
+        // terminate json reporter
         JsonReporter::terminate(simTime);
 
+        // close file
         _fstream.close();
 
     }

@@ -25,17 +25,22 @@
 #ifndef SIMCORE_I_COMPONENT_H
 #define SIMCORE_I_COMPONENT_H
 
+#ifndef EPS_SIM_TIME
+#define EPS_SIM_TIME 1e-9
+#endif
 
 namespace sim {
 
+    class Loop;
 
     class IComponent {
 
-
-        double _last_time_step{};
-
-
     public:
+
+        /**
+         * allow Loop class access to methods
+         */
+        friend class Loop;
 
 
         /**
@@ -50,74 +55,46 @@ namespace sim {
         virtual ~IComponent() = default;
 
 
+    protected:
+
         /**
          * Handles the initialization
-         * @return Success flag
          */
-        virtual void initialize(double initTime) = 0;
+        virtual void _init(double initTime) = 0;
+
+
+        /**
+         * Checks the condition to perform the execution step
+         * Default is true. Override to implement condition.
+         * @param simTime Simulation time
+         * @return Flag to indicate whether the execution shall be done in this step
+         */
+        virtual bool _execCondition(double simTime) {
+
+            // default is true
+            return true;
+
+        }
 
 
         /**
          * Handles a simulation step
          * @param simTime The current simulation time
-         * @return Success flag
          */
-        virtual bool step(double simTime) = 0;
+        virtual void _exec(double simTime) = 0;
 
 
         /**
          * Handles the termination
-         * @return Success flag
          */
-        virtual void terminate(double simTime) = 0;
-
-
-    protected:
-
-
-
-        /**
-         * Resets the model timer
-         * @param initTime Initial time
-         */
-        void initializeTimer(double initTime) {
-
-            _last_time_step = initTime;
-
-        }
-
-
-        /**
-        * Returns the time since the last time step was performed
-        * @return Time passed
-        */
-        [[nodiscard]] double sinceLastTimeStep(double simTime) const {
-
-            return simTime - _last_time_step;
-
-        }
-
-
-        /**
-         * Executes a time step and return the time step size. Attention: only run once per simulation step
-         * @param simTime Simulation time
-         * @return Time step size
-         */
-        double timeStep(double simTime) {
-
-            double dt = sinceLastTimeStep(simTime);
-            _last_time_step = simTime;
-
-            return dt;
-
-        }
+        virtual void _term(double simTime) = 0;
 
 
     };
 
 
 
-} // namespace sim::model;
+} // namespace sim
 
 
 #endif // SIMCORE_I_COMPONENT_H

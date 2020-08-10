@@ -63,24 +63,22 @@ protected:
 
 private:
 
-    bool step(double simTime) override {
+    void _exec(double simTime) override {
 
         x += 1.0;
         value = x * x;
-
-        return true;
 
     }
 
 
 public:
 
-    void initialize(double initTime) override {
+    void _init(double initTime) override {
         value = 0.0;
         x = 0.0;
     }
 
-    void terminate(double simTime) override {
+    void _term(double simTime) override {
     }
 
 };
