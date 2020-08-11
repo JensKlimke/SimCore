@@ -118,6 +118,7 @@ public:
         steps = 0;
 
         wasInitialized = true;
+        wasTerminated = false;
 
     }
 
@@ -172,6 +173,38 @@ TEST_F(SimTest, SimulationLifeCycle) {
 }
 
 
+TEST_F(SimTest, MultipleRuns) {
+
+    using namespace ::sim;
+
+    // set check during running
+    setPrePostChecks();
+
+    // create objects
+    BasicTimer timer;
+    TimeIsUp stop;
+
+    // set timer parameters
+    timer.setTimeStepSize(0.01);
+    timer.setStartTime(1.0);
+
+    // setup
+    setup(timer, stop);
+
+    // run ten times
+    for(unsigned int i = 0; i < 10; ++i) {
+
+        // run simulation
+        this->run();
+
+        // check final state
+        checkFinalState(timer, stop);
+
+    }
+
+}
+
+
 TEST_F(SimTest, RealTimeSimulation) {
 
     using namespace ::sim;
@@ -204,7 +237,7 @@ TEST_F(SimTest, NotSetProperly) {
 
     using namespace ::sim;
 
-    // erroneous calls
+    // erroneous calls before initialization
     EXPECT_THROW(this->run(), ProcessException);
     EXPECT_THROW(this->stop(), ProcessException);
     EXPECT_THROW(this->execute(), ProcessException);
@@ -219,7 +252,7 @@ TEST_F(SimTest, NotSetProperly) {
         // at t=0.1 s
         if(t > 0.099999) {
 
-            // try to initialize
+            // try to initialize during run
             EXPECT_THROW(Loop::initialize(), ProcessException);
 
             // stop
