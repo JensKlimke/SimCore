@@ -22,13 +22,9 @@
 // Created by Jens Klimke on 2019-04-16.
 //
 
-#include <simcore/IComponent.h>
 #include <simcore/Loop.h>
 #include <simcore/value/SignalCurve.h>
 #include <simcore/value/SignalTube.h>
-#include <simcore/value/ValueExceed.h>
-#include <simcore/value/ValueOutOfTube.h>
-#include <simcore/timers/BasicTimer.h>
 #include <simcore/timers/TimeIsUp.h>
 #include <gtest/gtest.h>
 
