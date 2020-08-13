@@ -1,0 +1,42 @@
+{
+  "timer": {
+    "type": "RealTimeTimer",
+    "acceleration": 1.0,
+    "timeStepSize": 0.01
+  },
+  "stopConditions": {
+    "timeIsUp": {
+      "type": "TimeIsUp",
+      "registerAsComponent": true
+    },
+    "stopValues": {
+      "values": [
+        {
+          "key": "Agent[1].velocity",
+          "limit": 10.0,
+          "result": "FAILED"
+        },
+        {
+          "key": "Agent[1].distance",
+          "limit": 1000.0,
+          "result": "SUCCESS"
+        },
+        {
+          "key": "Agent[1].distance",
+          "limit": 1000.0,
+          "result": "SUCCESS"
+        }
+      ],
+      "registerAsComponent": true
+    }
+  },
+  "components": {
+    "timeReporter": {
+      "type": "TimeReporter",
+      "timeStepSize": 1.0,
+      "parameters": {
+        "outputStream": "console"
+      }
+    }
+  }
+}
