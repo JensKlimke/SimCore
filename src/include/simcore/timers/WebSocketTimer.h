@@ -1,4 +1,5 @@
-// Copyright (c) 2020 Jens Klimke (jens.klimke@rwth-aachen.de). All rights reserved.
+//
+// Copyright (c) 2019-2020 Jens Klimke <jens.klimke@rwth-aachen.de>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,36 +19,57 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke on $YEAR-$MONTH-06.
+// Created by Jens Klimke on 2020-08-21.
 //
 
+#ifndef SIMCORE_WEBSOCKET_TIMER_H
+#define SIMCORE_WEBSOCKET_TIMER_H
 
-#ifndef SIMCORE_BLOCK_H
-#define SIMCORE_BLOCK_H
+#include "SynchronizedTimer.h"
 
-#ifndef EPS_TIME
-#define EPS_TIME 1e-3
-#endif
+class WebSocket;
 
-#ifdef DEBUG
-#define SIGNAL(owner, name) Signal<double> name{#owner, #name};
-#else
-#define SIGNAL(owner, name) double name;
-#endif
+namespace sim {
 
-typedef double sim_time_t;
+    class WebSocketTimer : public SynchronizedTimer {
 
+        WebSocket *_websocket = nullptr;
 
-namespace sim::blocks {
-
-    class Block {
 
     public:
 
+        /**
+         * Constructor
+         */
+        WebSocketTimer();
 
+
+        /**
+         * Destructor
+         */
+        ~WebSocketTimer() override;
+
+
+        /**
+         * Start the timer
+         */
+        void start() override;
+
+
+        /**
+         * Stops the timer
+         */
+        void stop() override;
+
+
+        /**
+         * Receives the time from the server
+         */
+        void receive();
 
     };
 
 }
 
-#endif //SIMCORE_BLOCK_H
+
+#endif // SIMCORE_WEBSOCKET_TIMER_H

@@ -18,36 +18,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke on $YEAR-$MONTH-06.
+// Created by Jens Klimke on $YEAR-$MONTH-21.
 //
 
 
-#ifndef SIMCORE_BLOCK_H
-#define SIMCORE_BLOCK_H
+#ifndef SIMCORE_GLOBAL_H
+#define SIMCORE_GLOBAL_H
 
-#ifndef EPS_TIME
-#define EPS_TIME 1e-3
-#endif
+static struct {
 
-#ifdef DEBUG
-#define SIGNAL(owner, name) Signal<double> name{#owner, #name};
-#else
-#define SIGNAL(owner, name) double name;
-#endif
+    double delay = 0.0;
+    struct {
+        double sum = 0.0;
+        double error = 0.0;
+    } pid;
+    double integral = 0.0;
+    double acceleration = 0.0;
+    double velocity = 0.0;
 
-typedef double sim_time_t;
+} Init;
 
-
-namespace sim::blocks {
-
-    class Block {
-
-    public:
-
-
-
-    };
-
-}
-
-#endif //SIMCORE_BLOCK_H
+#endif // SIMCORE_GLOBAL_H

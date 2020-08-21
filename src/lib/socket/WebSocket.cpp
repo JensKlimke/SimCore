@@ -22,7 +22,7 @@
 // Created by Jens Klimke on 2019-06-09.
 //
 
-#include <WebSocket.h>
+#include "WebSocket.h"
 
 
 void WebSocket::setHost(const std::string &host, const std::string &port) {
@@ -63,6 +63,20 @@ bool WebSocket::connect() {
     _connected = true;
 
     return true;
+
+}
+
+
+std::string WebSocket::read() {
+
+    // This buffer will hold the incoming message
+    boost::beast::flat_buffer buffer;
+
+    // Read a message into our buffer
+    _ws.read(buffer);
+
+    // return string
+    return boost::beast::buffers_to_string(buffer.data());
 
 }
 

@@ -18,36 +18,59 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke on $YEAR-$MONTH-06.
+// Created by Jens Klimke on 2020-08-21.
 //
 
 
-#ifndef SIMCORE_BLOCK_H
-#define SIMCORE_BLOCK_H
+#ifndef SIMCORE_PID_CONTROLLER_INTERFACE_H
+#define SIMCORE_PID_CONTROLLER_INTERFACE_H
 
-#ifndef EPS_TIME
-#define EPS_TIME 1e-3
-#endif
+#include <simcore/blocks/Block.h>
 
-#ifdef DEBUG
-#define SIGNAL(owner, name) Signal<double> name{#owner, #name};
-#else
-#define SIGNAL(owner, name) double name;
-#endif
+struct Input {
+    double targetVelocity;
+};
 
-typedef double sim_time_t;
+struct Output {
+    double velocity;
+    double acceleration;
+};
 
+struct State {
+    SIGNAL(block.test, target)
+    SIGNAL(block.test, delay)
+    SIGNAL(block.test, error)
+    SIGNAL(block.test, control)
+    SIGNAL(block.test, system)
+};
 
-namespace sim::blocks {
+struct MemoryDelay {
+    double value;
+};
 
-    class Block {
+struct MemoryIntegral {
+    double value;
+};
 
-    public:
+struct MemoryPID {
+    double sum;
+    double err;
+};
 
+struct Memory {
+    MemoryDelay delay;
+    MemoryPID pid;
+    MemoryIntegral integral;
+};
 
+struct ParamPID {
+    double kP;
+    double kI;
+    double kD;
+};
 
-    };
+struct Parameters {
+    ParamPID pid;
+};
 
-}
-
-#endif //SIMCORE_BLOCK_H
+#endif //SIMCORE_PID_CONTROLLER_INTERFACE_H

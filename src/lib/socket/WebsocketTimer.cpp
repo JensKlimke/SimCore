@@ -1,5 +1,4 @@
-//
-// Copyright (c) 2019-2020 Jens Klimke <jens.klimke@rwth-aachen.de>
+// Copyright (c) 2020 Jens Klimke (jens.klimke@rwth-aachen.de). All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,84 +18,49 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke on 2019-06-09.
+// Created by Jens Klimke on 2020-08-21.
 //
 
-#include <sstream>
-#include <iostream>
-
-#include <simcore/functions.h>
-#include <simcore/socket/DataPublisher.h>
+#include <simcore/timers/WebSocketTimer.h>
 #include "WebSocket.h"
 
 namespace sim {
-namespace data {
 
-    DataPublisher::DataPublisher() {
+    WebSocketTimer::WebSocketTimer() {
 
-        // create web socket
         _websocket = new WebSocket;
 
-    }
+    };
 
+    WebSocketTimer::~WebSocketTimer() {
 
-    DataPublisher::~DataPublisher() {
-
-        // delete websocket
         delete _websocket;
 
     }
 
-
-    void DataPublisher::setDataManager(sim::data::DataManager *dataManager) {
-
-        _dataManager = dataManager;
-
-    }
-
-
-    void DataPublisher::setHost(const std::string &host, const std::string &port) {
-
-        _websocket->setHost(host, port);
-
-    }
-
-
-    void DataPublisher::setPath(const std::string &path) {
-
-        _websocket->setPath(path);
-
-    }
-
-
-    void DataPublisher::initialize(double initTime) {
-
-        ::sim::ISynchronized::initialize(initTime);
+    void WebSocketTimer::start() {
 
         // connect and send name
         _websocket->connect();
-        _websocket->send(R"({"name":"sim"})");
 
     }
 
+    void WebSocketTimer::stop() {
 
-    void DataPublisher::step(double simTime, double deltaTime) {
-
-        // serialize data ...
-        std::stringstream ss;
-        _dataManager->streamTo(ss);
-
-        // .. and send
-        _websocket->send(ss.str());
-
-    }
-
-
-    void DataPublisher::terminate(double simTime) {
-
-        // close and delete web socket
+        // shut down connection
         _websocket->close();
 
     }
 
-}}
+    void WebSocketTimer::receive() {
+
+        // get data
+        auto str = _websocket->read();
+        auto time = std::stod(str);
+
+        // set time
+        setReferenceTime(time);
+
+    }
+
+}
