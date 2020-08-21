@@ -40,7 +40,7 @@ namespace sim {
         enum class Status { INITIALIZED, RUNNING, STOPPED };
 
 
-    private:
+    protected:
 
         Status _status = Status::STOPPED;
         bool   _stop   = true;

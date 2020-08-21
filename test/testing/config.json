@@ -1,13 +1,12 @@
 {
-  "timer": {
-    "type": "RealTimeTimer",
+  "realtime": {
     "acceleration": 1.0,
-    "timeStepSize": 0.01
+    "timeStepSize": 0.01,
+    "startTime": 1.0
   },
-  "stopConditions": {
-    "timeIsUp": {
-      "type": "TimeIsUp",
-      "registerAsComponent": true
+  "stops": {
+    "time": {
+      "stopTime": 10.0
     },
     "stopValues": {
       "values": [
@@ -30,13 +29,18 @@
       "registerAsComponent": true
     }
   },
-  "components": {
-    "timeReporter": {
-      "type": "TimeReporter",
+  "reporters": {
+    "time": {
       "timeStepSize": 1.0,
       "parameters": {
         "outputStream": "console"
       }
+    }
+  },
+  "components": {
+    "agents": {
+      "type": "traffic::Unit",
+      "collection": true
     }
   }
 }

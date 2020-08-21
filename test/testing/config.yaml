@@ -1,0 +1,15 @@
+# The timer
+time:
+#  acceleration: 1.0
+  timeStepSize: 0.01
+  startTime: 1.0
+
+stops:
+  - time:
+      stopTime: 10.0
+
+
+reporters:
+  - time:
+      interval: 1.0
+      startTime: 1.0

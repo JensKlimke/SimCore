@@ -30,7 +30,7 @@ macro(add_gtest TESTNAME)
         endif()
     else()
         add_test(NAME ${TESTNAME} COMMAND $<TARGET_FILE:${TESTNAME}>)
-        set_target_properties(${TESTNAME} PROPERTIES FOLDER "Tests")
+        set_target_properties(${TESTNAME} PROPERTIES FOLDER "test")
     endif()
 
 endmacro()
@@ -46,7 +46,7 @@ enable_testing()
 if(GTEST_BUILD_LIBRARY)
 
     # add gtest sources
-    add_subdirectory(lib/googletest)
+    add_subdirectory(${PROJECT_SOURCE_DIR}/lib/googletest)
 
     # set variables
     set(GTEST_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/lib/gtest/googletest/include)

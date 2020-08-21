@@ -1,5 +1,4 @@
-//
-// Copyright (c) 2019-2020 Jens Klimke <jens.klimke@rwth-aachen.de>
+// Copyright (c) 2020 Jens Klimke.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,34 +18,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke on 2020-08-13.
+// Created by Jens Klimke on 2020-08-16.
+// Contributors:
 //
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunknown-pragmas"
-#pragma ide diagnostic ignored "cert-err58-cpp"
 
-#include <simcore/Loop.h>
+#ifndef SIMCORE_GENERATOR_H
+#define SIMCORE_GENERATOR_H
+
 #include <gtest/gtest.h>
+#include <simcore/Loop.h>
 
-class ConfigurationTest : public ::testing::Test, protected sim::Loop {
+namespace sim::test {
 
+    class Generator : public ::testing::Test, protected sim::Loop {
 
-public:
-
-
-    ConfigurationTest() = default;
-    ~ConfigurationTest() override = default;
-
-
-};
-
-
-TEST_F(ConfigurationTest, LoadConfiguration) {
-
-
+    };
 
 }
 
-
-#pragma clang diagnostic pop
+#endif //SIMCORE_GENERATOR_H

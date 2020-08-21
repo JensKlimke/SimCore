@@ -4,9 +4,10 @@ project(SimCore CXX)
 set(CMAKE_CXX_STANDARD 17)
 
 # set options
-option(BUILD_TESTS "Sets or unsets the option to generate the test target" OFF)
+option(BUILD_TESTING "Sets or unsets the option to generate the test target" OFF)
 option(ENABLE_COVERAGE "Enables the coverage check of the module" OFF)
 option(CREATE_DOXYGEN_TARGET "Enable to create a doxygen target" OFF)
+option(BUILD_SIMTEST "Sets or unsets the option to generate the test target" OFF)
 
 # add ./cmake to CMAKE_MODULE_PATH
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
@@ -45,9 +46,15 @@ endif (ENABLE_COVERAGE)
 # ------------------------------------------------------------------------------
 # TESTING
 # ------------------------------------------------------------------------------
-if(BUILD_TESTS)
+if(BUILD_TESTING)
 
     # load module for testing
     include(ModuleGtest)
 
-endif(BUILD_TESTS)
+endif(BUILD_TESTING)
+
+# yaml library
+include(ModuleYaml)
+
+# testing
+add_subdirectory(src/lib/simcore/test)

@@ -1,5 +1,5 @@
 # message
-message("-- Generation of doxygen target enabled")
+message(STATUS "Generation of doxygen target enabled")
 
 # Require dot, treat the other components as optional
 find_package(Doxygen
