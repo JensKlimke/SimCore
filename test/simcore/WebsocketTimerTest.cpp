@@ -19,71 +19,87 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke on 2020-08-06.
+// Created by Jens Klimke on 2020-08-21.
 //
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunknown-pragmas"
 #pragma ide diagnostic ignored "cert-err58-cpp"
 
-#include <map>
+#include <simcore/ISynchronized.h>
+#include <simcore/Loop.h>
+#include <simcore/timers/TimeIsUp.h>
+#include <simcore/timers/WebSocketTimer.h>
+#include <simcore/data/TimeReporter.h>
 #include <gtest/gtest.h>
-#include <simcore/blocks/Block.h>
-#include <simcore/blocks/Signal.h>
-#include "PIDController.h"
 
 
-class BlockTest : public ::testing::Test, public PIDController {
+class WebsocketTimerTest : public ::testing::Test, public sim::ISynchronized, protected sim::Loop {
+
+
+public:
+
+    double time = 0.0;
+    double finalTime = 0.0;
+
+
+    WebsocketTimerTest() = default;
+    ~WebsocketTimerTest() override = default;
+
+
+    void initialize(double initTime) override {
+
+        // set init time
+        time = initTime;
+
+    }
+
+
+    void step(double t, double dt) override {
+
+        // main step
+        time += dt;
+
+    }
+
+
+    void terminate(double simTime) override {
+
+        // set final time
+        finalTime = simTime;
+
+    }
 
 };
 
 
-TEST_F(BlockTest, RunBlock) {
+TEST_F(WebsocketTimerTest, SyncTest) {
 
-    // model setup
-    double vTarget = 10.0;
-    double v = 0.0;
-    double a = 0.0;
+    using namespace ::sim;
 
-    // set parameters
-    parameters.pid.kP = 0.1;
-    parameters.pid.kI = 0.0;
-    parameters.pid.kD = 0.0;
+    // create timer
+    WebSocketTimer timer;
+    timer.setAcceleration(2.0);
+    timer.setTimeStepSize(0.1);
 
-    // simulation setup
-    double time = 0.0;
-    double endTime = 100.0;
-    double deltaTime = 0.1;
+    // end of loop
+    TimeIsUp stop;
+    stop.setStopTime(10.0);
 
-    // initialize model
-    initialize(0.0);
+    // set timer and add this as component
+    this->setTimer(&timer);
+    this->addComponent(this);
+    this->addStopCondition(&stop);
+    this->addComponent(&stop);
 
-    // main loop
-    while(time <= endTime + EPS_TIME) {
-
-        // set input
-        input.targetVelocity = vTarget;
-
-        // execute model
-        step(time, deltaTime);
-
-        // set output
-        v = output.velocity;
-        a = output.acceleration;
-
-        // update time
-        time += deltaTime;
-
-    }
-
-    // terminate model
-    terminate(time);
+    // run loop
+    this->run();
 
     // check
-    EXPECT_NEAR(vTarget, v, 1e-3);
-    EXPECT_NEAR(0.0, a, 1e-3);
+    EXPECT_NEAR(10.0, finalTime, 1e-3);
 
 }
+
 
 
 #pragma clang diagnostic pop

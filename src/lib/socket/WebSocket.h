@@ -22,8 +22,8 @@
 // Created by Jens Klimke on 2019-06-09
 //
 
-#ifndef BOOST_WEBSOCKET_WEBSOCKET_H
-#define BOOST_WEBSOCKET_WEBSOCKET_H
+#ifndef SIMCORE_WEBSOCKET_H
+#define SIMCORE_WEBSOCKET_H
 
 
 #include <boost/beast/core.hpp>
@@ -70,6 +70,9 @@ public:
     bool connect();
 
 
+    std::string read();
+
+
     bool send(const std::string &text);
 
 
@@ -82,4 +85,4 @@ public:
 };
 
 
-#endif //BOOST_WEBSOCKET_WEBSOCKET_H
+#endif // SIMCORE_WEBSOCKET_H

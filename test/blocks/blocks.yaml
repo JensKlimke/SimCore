@@ -1,0 +1,45 @@
+name: BlocksTest
+author: Jens Klimke
+model:
+  - name: targetVelocity
+    type: input
+    out: target
+  - name: acceleration
+    type: output
+    in: control
+  - name: velocity
+    in: system
+    type: output
+  - name: error
+    in:
+      - signal: target
+        sign: "+"
+      - signal: previous
+        sign: "-"
+    out: error
+    function: math.sum
+  - name: PID
+    in: error
+    out: control
+    state:
+      - sum
+      - err
+    parameters:
+      - kP
+      - kI
+      - kD
+    function: control.pid
+  - name: integral
+    symbol: $\\int$
+    in: control
+    out: system
+    state: value
+    init: value
+    function: math.integral
+  - name: delay
+    symbol: $z^{-1}$
+    in: system
+    out: previous
+    state: value
+    init: value
+    function: base.delay

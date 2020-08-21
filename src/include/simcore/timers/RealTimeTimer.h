@@ -22,8 +22,8 @@
 // Created by Jens Klimke on 2019-03-27.
 //
 
-#ifndef SIMCORE_REALTIMETIMER_H
-#define SIMCORE_REALTIMETIMER_H
+#ifndef SIMCORE_REAL_TIME_TIMER_H
+#define SIMCORE_REAL_TIME_TIMER_H
 
 #include <ctime>
 #include <iostream>
@@ -107,4 +107,4 @@ namespace sim {
 }
 
 
-#endif //SIMCORE_REALTIMETIMER_H
+#endif // SIMCORE_REAL_TIME_TIMER_H

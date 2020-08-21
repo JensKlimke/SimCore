@@ -86,8 +86,9 @@ namespace data {
         /**
          * Sends the data
          * @param simTime Simulation time
+         * @param deltaTime Time step size
          */
-        bool step(double simTime) override;
+        void step(double simTime, double deltaTime) override;
 
 
         /**
