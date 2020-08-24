@@ -30,6 +30,9 @@ namespace sim {
 
         _websocket = new WebSocket;
 
+        _websocket->setHost("127.0.0.1", "1880");
+        _websocket->setPath("/test");
+
     };
 
     WebSocketTimer::~WebSocketTimer() {
@@ -40,26 +43,56 @@ namespace sim {
 
     void WebSocketTimer::start() {
 
+        // set running flag
+        _running = true;
+
         // connect and send name
         _websocket->connect();
+
+        // The parameters to the function are put after the comma
+        _thread = std::thread(WebSocketTimer::receive, this);
+
+        // wait
+        std::this_thread::sleep_for (std::chrono::milliseconds (100));
+
+        // start super timer
+        SynchronizedTimer::start();
 
     }
 
     void WebSocketTimer::stop() {
+
+        // unset running flag
+        _running = false;
+
+        // join thread
+        _thread.join();
 
         // shut down connection
         _websocket->close();
 
     }
 
-    void WebSocketTimer::receive() {
 
-        // get data
-        auto str = _websocket->read();
-        auto time = std::stod(str);
+    void WebSocketTimer::receive(WebSocketTimer *timer) {
 
-        // set time
-        setReferenceTime(time);
+        while(timer->_running) {
+
+            std::cout << "Receive ... ";
+
+            // wait 10 ms
+            std::this_thread::sleep_for (std::chrono::milliseconds (10));
+
+            // get data
+            auto str = timer->_websocket->read();
+            auto time = std::stod(str);
+
+            std::cout << str << "s " << std::endl;
+
+            // set time
+            timer->setReferenceTime(time);
+
+        }
 
     }
 

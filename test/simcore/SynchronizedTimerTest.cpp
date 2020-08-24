@@ -88,15 +88,17 @@ void calcTime(sim::SynchronizedTimer *timer, bool realTime = false) {
     while(!stopSync) {
 
         // wait
-        std::this_thread::sleep_for (std::chrono::milliseconds (10));
+        std::this_thread::sleep_for (std::chrono::milliseconds (1));
 
         // calculate real time
         auto elapsed = duration_cast<milliseconds>(system_clock::now() - refTime);
         auto currTime = static_cast<double>(elapsed.count()) / 1000.0;
 
         // set reference time
-        double time = realTime ? currTime : 0.001 * (double) i;
+        double time = realTime ? currTime : 0.1 * (double) i;
         timer->setReferenceTime(time);
+
+        // std::cout << "time=" << time << std::endl;
 
         // increment i
         ++i;
@@ -187,8 +189,8 @@ TEST_F(SynchronizedTimerTest, SyncTestRT) {
     auto runTime = static_cast<double>(elapsed.count()) / 1000.0;
 
     // check
-    EXPECT_NEAR(10.0, finalTime, 1e-3);
-    EXPECT_NEAR(1.0, runTime, 1e-5);
+    EXPECT_NEAR(10.0, finalTime, 1e-2);
+    EXPECT_NEAR(1.0, runTime, 1e-2);
 
     // stop
     stopSync = true;

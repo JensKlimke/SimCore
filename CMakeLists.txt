@@ -15,6 +15,9 @@ set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 # Must use GNUInstallDirs to install libraries into correct locations on all platforms.
 include(GNUInstallDirs)
 
+# yaml library
+include(ModuleYaml)
+
 
 # ------------------------------------------------------------------------------
 # DOCUMENTATION
@@ -48,6 +51,7 @@ endif (ENABLE_COVERAGE)
 
 # build libraries
 add_subdirectory(src/lib/socket)
+add_subdirectory(src/lib/test)
 
 
 # ------------------------------------------------------------------------------
@@ -59,9 +63,3 @@ if(BUILD_TESTING)
     include(ModuleGtest)
 
 endif(BUILD_TESTING)
-
-# yaml library
-include(ModuleYaml)
-
-# testing
-add_subdirectory(src/lib/simcore/test)

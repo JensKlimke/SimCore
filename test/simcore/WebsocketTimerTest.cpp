@@ -86,11 +86,16 @@ TEST_F(WebsocketTimerTest, SyncTest) {
     TimeIsUp stop;
     stop.setStopTime(10.0);
 
+    // reporter
+    data::TimeReporter rep;
+    rep.setTimeStepSize(1.0);
+
     // set timer and add this as component
     this->setTimer(&timer);
     this->addComponent(this);
     this->addStopCondition(&stop);
     this->addComponent(&stop);
+    this->addComponent(&rep);
 
     // run loop
     this->run();

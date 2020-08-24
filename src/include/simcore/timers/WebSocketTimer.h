@@ -25,6 +25,7 @@
 #ifndef SIMCORE_WEBSOCKET_TIMER_H
 #define SIMCORE_WEBSOCKET_TIMER_H
 
+#include <thread>
 #include "SynchronizedTimer.h"
 
 class WebSocket;
@@ -34,6 +35,9 @@ namespace sim {
     class WebSocketTimer : public SynchronizedTimer {
 
         WebSocket *_websocket = nullptr;
+
+        std::thread _thread;
+        bool _running;
 
 
     public:
@@ -65,7 +69,7 @@ namespace sim {
         /**
          * Receives the time from the server
          */
-        void receive();
+        static void receive(WebSocketTimer *timer);
 
     };
 
