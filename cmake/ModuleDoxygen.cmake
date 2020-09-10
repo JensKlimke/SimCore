@@ -1,31 +1,44 @@
-# message
-message(STATUS "Generation of doxygen target enabled")
+# ------------------------------------------------------------------------------
+# DOCUMENTATION
+# usage: cmake flag CREATE_DOXYGEN_TARGET ON|OFF
+# ------------------------------------------------------------------------------
 
-# Require dot, treat the other components as optional
-find_package(Doxygen
-        REQUIRED dot
-        OPTIONAL_COMPONENTS mscgen dia)
+# option to enable or disable this feature
+option(CREATE_DOXYGEN_TARGET "Enable to create a doxygen target" OFF)
 
-if (DOXYGEN_FOUND)
+if(CREATE_DOXYGEN_TARGET)
 
-    # create doc directory
-    file(MAKE_DIRECTORY ${PROJECT_SOURCE_DIR}/docs)
+    # message
+    message("-- Generation of doxygen target enabled")
 
-    # settings
-    set(DOXYGEN_GENERATE_HTML YES)
-    set(DOXYGEN_GENERATE_MAN YES)
-    set(DOXYGEN_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/docs)
-    set(DOXYGEN_EXCLUDE_PATTERNS ${DOXYGEN_EXCLUDE_PATTERN})
-    set(DOXYGEN_USE_MDFILE_AS_MAINPAGE README.md)
+    # Require dot, treat the other components as optional
+    find_package(Doxygen
+            REQUIRED dot
+            OPTIONAL_COMPONENTS mscgen dia)
 
-    # create target
-    doxygen_add_docs(
-            doxygen
-            ${PROJECT_SOURCE_DIR}/src README.md
-            COMMENT "Generate man pages"
-    )
+    if (DOXYGEN_FOUND)
 
-endif (DOXYGEN_FOUND)
+        # create doc directory
+        file(MAKE_DIRECTORY ${PROJECT_SOURCE_DIR}/docs)
 
-# unset doxygen target
-set(CREATE_DOXYGEN_TARGET OFF CACHE BOOL "disabled doxygen target for submodules" FORCE)
+        # settings
+        set(DOXYGEN_GENERATE_HTML YES)
+        set(DOXYGEN_GENERATE_MAN YES)
+        set(DOXYGEN_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/docs)
+        set(DOXYGEN_EXCLUDE_PATTERNS ${DOXYGEN_EXCLUDE_PATTERN})
+        set(DOXYGEN_USE_MDFILE_AS_MAINPAGE README.md)
+
+        # create target
+        doxygen_add_docs(
+                doxygen
+                ${PROJECT_SOURCE_DIR}/src README.md
+                COMMENT "Generate man pages"
+        )
+
+    endif (DOXYGEN_FOUND)
+
+    # unset doxygen target
+    set(CREATE_DOXYGEN_TARGET OFF CACHE BOOL "disabled doxygen target for submodules" FORCE)
+
+endif(CREATE_DOXYGEN_TARGET)
+

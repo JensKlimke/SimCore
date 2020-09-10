@@ -1,0 +1,23 @@
+timer:
+  type: RealTimeTimer
+  acceleration: 1.0
+  timeStepSize: 0.01
+stopConditions:
+  timeIsUp:
+    registerAsComponent: true
+    type: TimeIsUp
+  stopValues:
+    registerAsComponent: true
+    values:
+      - key: testValue1
+        limit: 10.0
+        result: FAILED
+      - key: testValue2
+        limit: 1000.0
+        result: SUCCESS
+components:
+  timeReporter:
+    type: TimeReporter
+    timeStepSize: 1.0
+    parameters:
+      outputStream: console

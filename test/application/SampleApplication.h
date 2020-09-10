@@ -1,5 +1,4 @@
-//
-// Copyright (c) 2019-2020 Jens Klimke <jens.klimke@rwth-aachen.de>
+// Copyright (c) 2020 Jens Klimke (jens.klimke@rwth-aachen.de). All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,43 +18,37 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke on 2020-08-13.
+// Created by Jens Klimke on $YEAR-$MONTH-10.
 //
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunknown-pragmas"
-#pragma ide diagnostic ignored "cert-err58-cpp"
 
-#include <gtest/gtest.h>
-#include <simcore/test/Configurator.h>
+#ifndef SIMCORE_SAMPLE_APPLICATION_H
+#define SIMCORE_SAMPLE_APPLICATION_H
 
-class TestingTest : public ::testing::Test {
+#include <simcore/Model.h>
+#include <map>
+
+class SampleApplication : public sim::Model {
 
 protected:
 
-    sim::test::Configurator *conf;
+    unsigned long i = 0;
+    double initTime = 0.0;
+    std::map<unsigned long, std::pair<double, double>> simTimes{};
+    double termTime = 0.0;
 
-
-public:
-
-    void SetUp() override {
-
-        // create configuration
-        conf = new sim::test::Configurator("/Users/jens/Repositories/SimCore/test/testing/config.yaml");
-
+    void initialize(double t) override {
+        initTime = t;
     }
 
-    void TearDown() override {}
+    void step(double t, double dt) override {
+        simTimes[i++] = {t, dt};
+    }
+
+    void terminate(double t) override {
+        termTime = t;
+    }
 
 };
 
-
-TEST_F(TestingTest, LoadConfiguration) {
-
-    // run simulation
-    conf->run();
-
-}
-
-
-#pragma clang diagnostic pop
+#endif //SIMCORE_SAMPLE_APPLICATION_H

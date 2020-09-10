@@ -1,13 +1,11 @@
 # ------------------------------------------------------------------------------
-# Testing
-#
-# * set BUILD_LIB_GTEST whether to build gtest as submodule
-# * Include this file when testing is enabled
-# * Put your tests in the root/test folder
-# * add a CMakeLists.txt and use add_gtest(...) macro
+# GOOGLETEST
+# usage: cmake flag GTEST_BUILD_LIBRARY ON|OFF to build gtest manually or use
+#        installed library. If building manually, a googletest repo must be
+#        cloned to
 # ------------------------------------------------------------------------------
 
-# options
+# option to build gtest
 option(GTEST_BUILD_LIBRARY "Enables gtest to be built from the submodule" ON)
 
 # define macro
@@ -49,7 +47,7 @@ if(GTEST_BUILD_LIBRARY)
     add_subdirectory(${PROJECT_SOURCE_DIR}/lib/googletest)
 
     # set variables
-    set(GTEST_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/lib/gtest/googletest/include)
+    set(GTEST_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/lib/googletest/include)
     set(GTEST_BOTH_LIBRARIES gtest gtest_main)
 
 else()
@@ -58,6 +56,3 @@ else()
     find_package(GTest REQUIRED)
 
 endif(GTEST_BUILD_LIBRARY)
-
-# add test folder
-add_subdirectory(${PROJECT_SOURCE_DIR}/test)
