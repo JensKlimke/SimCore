@@ -22,8 +22,8 @@
 // Created by Jens Klimke on 2019-04-22
 //
 
-#ifndef SIMCORE_DATAPUBLISHER_H
-#define SIMCORE_DATAPUBLISHER_H
+#ifndef SIMCORE_WEBSOCKET_LOGGER_H
+#define SIMCORE_WEBSOCKET_LOGGER_H
 
 #include "Logger.h"
 
@@ -92,4 +92,4 @@ namespace sim::logging {
 
 }
 
-#endif //SIMCORE_DATAPUBLISHER_H
+#endif // SIMCORE_WEBSOCKET_LOGGER_H

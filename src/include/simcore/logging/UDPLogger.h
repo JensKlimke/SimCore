@@ -21,8 +21,8 @@
 // Created by Jens Klimke on 2019-03-16
 //
 
-#ifndef SIMCORE_UDP_LOGGER
-#define SIMCORE_UDP_LOGGER
+#ifndef SIMCORE_UDP_LOGGER_H
+#define SIMCORE_UDP_LOGGER_H
 
 #include <iostream>
 #include <boost/asio.hpp>
@@ -93,4 +93,4 @@ namespace sim::logging {
 
 }
 
-#endif // SIMCORE_UDP_LOGGER
+#endif // SIMCORE_UDP_LOGGER_H
