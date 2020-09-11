@@ -25,20 +25,18 @@
 #ifndef SIMCORE_DATAPUBLISHER_H
 #define SIMCORE_DATAPUBLISHER_H
 
-#include "../ISynchronized.h"
-#include "../data/DataManager.h"
+#include "Logger.h"
 
 // predefine WebSocket class
 namespace sim::socket {
     class WebSocket;
 }
 
-namespace sim::data {
+namespace sim::logging {
 
-    class DataPublisher : public ::sim::ISynchronized {
+    class WebsocketLogger : public Logger {
 
         sim::socket::WebSocket *_websocket = nullptr;
-        DataManager *_dataManager = nullptr;
 
 
     public:
@@ -47,57 +45,47 @@ namespace sim::data {
         /**
          * Constructor
          */
-        DataPublisher();
+        WebsocketLogger();
 
 
         /**
          * Destructor
          */
-        ~DataPublisher() override;
-
-
-        /**
-         * Sets the data manager to be send via web socket
-         * @param dataManager Data manager to be send
-         */
-        void setDataManager(DataManager *dataManager);
+        ~WebsocketLogger() override;
 
 
         /**
          * Sets the host name and the port
          * @param host Host name of the server
-         * @param port Port of the server
+         * @param path Path of the server
          */
-        void setHost(const std::string &host, const std::string &port);
+        void setHostAndPath(const std::string &host, const std::string &path);
 
 
         /**
-         * Sets the path of the websocket server (default is "/")
-         * @param path Path of the websocket server
+         * Opens connection
          */
-        void setPath(const std::string &path);
+        void open() override;
 
 
         /**
-         * Establishes the connection to the server
-         * @param initTime Initialize time
+         * Closes connection
          */
-        void initialize(double initTime) override;
+        void close() override;
 
 
         /**
-         * Sends the data
-         * @param simTime Simulation time
-         * @param deltaTime Time step size
+         * Sends a message
+         * @param message Message to be send
          */
-        void step(double simTime, double deltaTime) override;
+        void send(const std::string &message);
 
 
         /**
-         * Closes the connection to the server
-         * @param simTime
+         * Sends the content via udp
+         * @param time The actual time
          */
-        void terminate(double simTime) override;
+        void write(double time) override;
 
 
     };

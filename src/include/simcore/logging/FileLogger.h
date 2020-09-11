@@ -1,4 +1,3 @@
-//
 // Copyright (c) 2019-2020 Jens Klimke <jens.klimke@rwth-aachen.de>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,63 +18,79 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke on 2020-08-21.
+// Created by Jens Klimke on 2019-03-16
 //
 
-#ifndef SIMCORE_WEBSOCKET_TIMER_H
-#define SIMCORE_WEBSOCKET_TIMER_H
+#ifndef SIMCORE_FILE_LOGGER_H
+#define SIMCORE_FILE_LOGGER_H
 
-#include <thread>
-#include "SynchronizedTimer.h"
+#include <fstream>
+#include "OstreamLogger.h"
 
-namespace sim::socket {
-    class WebSocket;
-}
+namespace sim::logging {
 
-namespace sim {
+    class FileLogger : public OstreamLogger {
 
-    class WebSocketTimer : public SynchronizedTimer {
+    private:
 
-        sim::socket::WebSocket *_websocket = nullptr;
-
-        std::thread _thread;
-        bool _running{};
-
+        std::ofstream _fstream;
+        std::string _filename;
 
     public:
 
-        /**
-         * Constructor
-         */
-        WebSocketTimer();
+
+        /*!< Constructor */
+        FileLogger() = default;
+
+
+        /*!< Destructor */
+        ~FileLogger() override = default;
 
 
         /**
-         * Destructor
+         * Sets the file name
+         * @param filename File name of the log file
          */
-        ~WebSocketTimer() override;
+        void setFilename(const std::string &filename) {
+
+            _filename = filename;
+
+        }
 
 
         /**
-         * Start the timer
+         * Opens the file logger
          */
-        void start() override;
+        void open() override {
+
+            // open file stream
+            _fstream.open(_filename);
+
+            // set stream
+            setOstream(&_fstream);
+
+            // open stream
+            OstreamLogger::open();
+
+        }
 
 
         /**
-         * Stops the timer
+         * Closes the file logger
          */
-        void stop() override;
+        void close() override {
 
+            // close
+            OstreamLogger::close();
 
-        /**
-         * Receives the time from the server
-         */
-        static void receive(WebSocketTimer *timer);
+            // close file stream
+            _fstream.close();
+
+        }
+
 
     };
 
 }
 
-
-#endif // SIMCORE_WEBSOCKET_TIMER_H
+#endif // SIMCORE_FILE_LOGGER_H

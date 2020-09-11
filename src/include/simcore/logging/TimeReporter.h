@@ -23,13 +23,13 @@
 //
 
 
-#ifndef SIMCORE_TIMEREPORTER_H
-#define SIMCORE_TIMEREPORTER_H
+#ifndef SIMCORE_TIME_REPORTER_H
+#define SIMCORE_TIME_REPORTER_H
 
 #include "../ISynchronized.h"
 #include <iostream>
 
-namespace sim::data {
+namespace sim::logging {
 
     class TimeReporter : public sim::ISynchronized {
 
@@ -39,10 +39,19 @@ namespace sim::data {
 
     public:
 
+        /*!< Constructor */
         TimeReporter() = default;
 
+
+        /*!< Destructor */
         ~TimeReporter() override = default;
 
+
+        /**
+         * @brief Initializes the logger
+         * Sets std::cout as output stream, if not set
+         * @param initTime Initialization time
+         */
         void initialize(double initTime) override {
 
             // take std::cout if no stream is set
@@ -51,9 +60,19 @@ namespace sim::data {
 
         }
 
+
+        /**
+         * Terminate (does nothing)
+         * @param simTime Simulation time
+         */
         void terminate(double simTime) override {}
 
 
+        /**
+         * Logs the current simulation time and time step size
+         * @param t Simulation time
+         * @param dt Time step size
+         */
         void step(double t, double dt) override {
 
             // put sim time to stream
@@ -76,4 +95,4 @@ namespace sim::data {
 
 }
 
-#endif //SIMCORE_TIMEREPORTER_H
+#endif // SIMCORE_TIME_REPORTER_H

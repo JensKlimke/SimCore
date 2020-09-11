@@ -22,69 +22,53 @@
 // Created by Jens Klimke on 2019-06-09.
 //
 
-#include "WebSocket.h"
+#include "UDPSocket.h"
 
 namespace sim::socket {
 
-    bool WebSocket::connect() {
+    bool UDPSocket::connect() {
 
-        // Look up the domain name
-        auto const results = _resolver.resolve(_host, _port);
+        // create service
+        boost::asio::io_service io_service;
 
-        try {
+        // resolve host name
+        udp::resolver resolver(io_service);
+        udp::resolver::query query(udp::v4(), _host, _port);
+        _endpoint = *resolver.resolve(query);
 
-            // Make the connection on the IP address we get from a lookup
-            boost::asio::connect(_ws.next_layer(), results.begin(), results.end());
-
-            // Perform the websocket handshake
-            _ws.handshake(_host, _path);
-
-        } catch (...) {
-
-            return false;
-
-        }
-
-        // set connected flag
-        _connected = true;
+        // open connection
+        _socket = new udp::socket(io_service);
+        _socket->open(udp::v4());
 
         return true;
 
     }
 
 
-    std::string WebSocket::read() {
+    std::string UDPSocket::read() {
 
-        // This buffer will hold the incoming message
-        boost::beast::flat_buffer buffer;
+        // TODO: read buffer
 
-        // Read a message into our buffer
-        _ws.read(buffer);
-
-        // return string
-        return boost::beast::buffers_to_string(buffer.data());
+        return "";
 
     }
 
 
-    bool WebSocket::send(const std::string &text) {
+    bool UDPSocket::send(const std::string &message) {
 
-        if (!_connected)
-            return false;
-
-        // Send the message
-        _ws.write(boost::asio::buffer(text));
+        auto data = boost::asio::buffer(message.c_str(), message.length());
+        _socket->send_to(data, _endpoint);
 
         return true;
 
     }
 
 
-    void WebSocket::close() {
+    void UDPSocket::close() {
 
-        // Close the WebSocket connection
-        if (_connected)
-            _ws.close(websocket::close_code::normal);
+        // close and delete
+        _socket->close();
+        delete _socket;
 
     }
 

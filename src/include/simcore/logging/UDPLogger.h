@@ -1,4 +1,3 @@
-//
 // Copyright (c) 2019-2020 Jens Klimke <jens.klimke@rwth-aachen.de>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,58 +18,79 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke on 2019-06-09
+// Created by Jens Klimke on 2019-03-16
 //
 
-#ifndef SIMCORE_WEBSOCKET_H
-#define SIMCORE_WEBSOCKET_H
+#ifndef SIMCORE_UDP_LOGGER
+#define SIMCORE_UDP_LOGGER
 
-
-#include <boost/beast/core.hpp>
-#include <boost/beast/websocket.hpp>
-#include <boost/asio/connect.hpp>
-#include <boost/asio/ip/tcp.hpp>
-
-#include <cstdlib>
 #include <iostream>
-#include <string>
-#include "Socket.h"
+#include <boost/asio.hpp>
+#include <utility>
+#include "Logger.h"
 
-using tcp = boost::asio::ip::tcp;               // from <boost/asio/ip/tcp.hpp>
-namespace websocket = boost::beast::websocket;  // from <boost/beast/websocket.hpp>
-
+/*!< Pre-definition of UDPSocket */
 namespace sim::socket {
+    class UDPSocket;
+}
 
-    class WebSocket : public std::enable_shared_from_this<WebSocket>, public Socket {
+namespace sim::logging {
 
-        boost::asio::io_context ioc{};
-        tcp::resolver _resolver;
+    class UDPLogger : public Logger {
 
-        websocket::stream<tcp::socket> _ws;
+        sim::socket::UDPSocket *_socket = nullptr;
 
 
     public:
 
-        WebSocket() : _resolver(ioc), _ws(ioc) {};
+
+        /**
+         * Constructor (opens connection)
+         */
+        UDPLogger();
 
 
-        ~WebSocket() = default;
+        /**
+         * Destructor (closes connection)
+         */
+        ~UDPLogger() override;
 
 
-        bool connect() override;
+        /**
+         * Sets the host and the port
+         * @param host Host to be set
+         * @param port Port to be set
+         */
+        void setHostAndPort(const std::string& host, const std::string& port);
 
 
-        std::string read() override;
+        /**
+         * Opens connection
+         */
+        void open() override;
 
 
-        bool send(const std::string &text) override;
-
-
+        /**
+         * Closes connection
+         */
         void close() override;
 
+
+        /**
+         * Sends a message
+         * @param message Message to be send
+         */
+        void send(const std::string &message);
+
+
+        /**
+         * Sends the content via udp
+         * @param time The actual time
+         */
+        void write(double time) override;
 
     };
 
 }
 
-#endif // SIMCORE_WEBSOCKET_H
+#endif // SIMCORE_UDP_LOGGER

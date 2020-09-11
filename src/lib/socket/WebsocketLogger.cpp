@@ -22,71 +22,71 @@
 // Created by Jens Klimke on 2019-06-09.
 //
 
+#include <simcore/functions.h>
+#include <simcore/logging/WebsocketLogger.h>
 #include "WebSocket.h"
 
-namespace sim::socket {
+namespace sim::logging {
 
-    bool WebSocket::connect() {
+    WebsocketLogger::WebsocketLogger() {
 
-        // Look up the domain name
-        auto const results = _resolver.resolve(_host, _port);
-
-        try {
-
-            // Make the connection on the IP address we get from a lookup
-            boost::asio::connect(_ws.next_layer(), results.begin(), results.end());
-
-            // Perform the websocket handshake
-            _ws.handshake(_host, _path);
-
-        } catch (...) {
-
-            return false;
-
-        }
-
-        // set connected flag
-        _connected = true;
-
-        return true;
+        // create web socket
+        _websocket = new sim::socket::WebSocket;
 
     }
 
 
-    std::string WebSocket::read() {
+    WebsocketLogger::~WebsocketLogger() {
 
-        // This buffer will hold the incoming message
-        boost::beast::flat_buffer buffer;
-
-        // Read a message into our buffer
-        _ws.read(buffer);
-
-        // return string
-        return boost::beast::buffers_to_string(buffer.data());
+        // delete websocket
+        delete _websocket;
 
     }
 
 
-    bool WebSocket::send(const std::string &text) {
+    void WebsocketLogger::setHostAndPath(const std::string &host, const std::string &path) {
 
-        if (!_connected)
-            return false;
-
-        // Send the message
-        _ws.write(boost::asio::buffer(text));
-
-        return true;
+        _websocket->setHost(host);
+        _websocket->setPath(path);
+        _websocket->setPort("");
 
     }
 
 
-    void WebSocket::close() {
+    void WebsocketLogger::open() {
 
-        // Close the WebSocket connection
-        if (_connected)
-            _ws.close(websocket::close_code::normal);
+        // connect
+        _websocket->connect();
 
     }
 
+
+
+    void WebsocketLogger::close() {
+
+        // close connection
+        _websocket->close();
+
+    }
+
+
+    void WebsocketLogger::send(const std::string &message) {
+
+        // send message
+        _websocket->send(message);
+
+    }
+
+
+    void WebsocketLogger::write(double time) {
+
+        // get content
+        std::stringstream ss;
+        Logger::writeJSONData(ss);
+
+        // send
+        send(ss.str());
+
+    }
 
 }

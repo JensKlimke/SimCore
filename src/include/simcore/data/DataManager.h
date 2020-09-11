@@ -22,8 +22,8 @@
 // Created by klimke on 2019-03-22.
 //
 
-#ifndef SIMCORE_DATAMANAGER_H
-#define SIMCORE_DATAMANAGER_H
+#ifndef SIMCORE_DATA_MANAGER_H
+#define SIMCORE_DATA_MANAGER_H
 
 #include <map>
 #include <list>
@@ -163,20 +163,20 @@ namespace sim::data {
 
             // register parameters
             dn->nodeMap.emplace_back("parameter", DataNode{nullptr});
-            auto vals = store->getData(IStorable::PARAMETER);
-            for (auto &v : vals)
+            auto values = store->getData(IStorable::PARAMETER);
+            for (auto &v : values)
                 regValue(dn->nodeMap.back().second, name, "parameter", v);
 
             // register inputs
             dn->nodeMap.emplace_back("input", DataNode{nullptr});
-            vals = store->getData(IStorable::INPUT);
-            for (auto &v : vals)
+            values = store->getData(IStorable::INPUT);
+            for (auto &v : values)
                 regValue(dn->nodeMap.back().second, name, "input", v);
 
             // register states
             dn->nodeMap.emplace_back("state", DataNode{nullptr});
-            vals = store->getData(IStorable::STATE);
-            for (auto &v : vals)
+            values = store->getData(IStorable::STATE);
+            for (auto &v : values)
                 regValue(dn->nodeMap.back().second, name, "state", v);
 
         }
@@ -253,4 +253,4 @@ namespace sim::data {
 } // namespace ::sim::data
 
 
-#endif //SIMCORE_DATAMANAGER_H
+#endif //SIMCORE_DATA_MANAGER_H

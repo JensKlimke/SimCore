@@ -31,7 +31,7 @@
 #include <simcore/IStorable.h>
 #include <simcore/timers/BasicTimer.h>
 #include <simcore/timers/TimeIsUp.h>
-#include <simcore/data/TimeReporter.h>
+#include <simcore/logging/TimeReporter.h>
 #include <simcore/data/DataManager.h>
 #include <gtest/gtest.h>
 #include <map>
@@ -173,7 +173,7 @@ TEST_F(DataTest, ReportTime) {
     std::stringstream o_str;
 
     // create synchronized model (in this case time reporter)
-    ::sim::data::TimeReporter timeRep;
+    ::sim::logging::TimeReporter timeRep;
     loop.addComponent(&timeRep);
 
     // setup for time reporter

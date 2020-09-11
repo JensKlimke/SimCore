@@ -22,20 +22,16 @@
 // Created by Jens Klimke on 2019-06-09.
 //
 
-#include <sstream>
-#include <iostream>
-
 #include <simcore/functions.h>
 #include <simcore/socket/DataPublisher.h>
 #include "WebSocket.h"
 
-namespace sim {
-namespace data {
+namespace sim::data {
 
     DataPublisher::DataPublisher() {
 
         // create web socket
-        _websocket = new WebSocket;
+        _websocket = new sim::socket::WebSocket;
 
     }
 
@@ -57,7 +53,8 @@ namespace data {
 
     void DataPublisher::setHost(const std::string &host, const std::string &port) {
 
-        _websocket->setHost(host, port);
+        _websocket->setHost(host);
+        _websocket->setPort(port);
 
     }
 
@@ -99,4 +96,4 @@ namespace data {
 
     }
 
-}}
+}

@@ -3,6 +3,7 @@ option(TEST_ADVANCED_FUNCTIONALITY "Enables or disables tests for advanced funct
 
 # add sub directories
 add_subdirectory(simcore)
+add_subdirectory(server)
 add_subdirectory(application)
 add_subdirectory(traffic)
 

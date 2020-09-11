@@ -1,6 +1,9 @@
 set(SOURCE_FILES
+        UDPLogger.cpp
+        UDPSocket.cpp
         DataPublisher.cpp
         WebSocket.cpp
+        WebSocketLogger.cpp
         WebsocketTimer.cpp
         )
 

@@ -19,71 +19,50 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke.
+// Created by Jens Klimke on 2020-09-11
+//
 
-#ifndef SIMCORE_JSONFILEREPORTER_H
-#define SIMCORE_JSONFILEREPORTER_H
+#ifndef SIMCORE_UDP_SOCKET_H
+#define SIMCORE_UDP_SOCKET_H
 
-#include "JsonReporter.h"
-#include <fstream>
+#include <boost/asio.hpp>
+#include "Socket.h"
 
-
-namespace sim::data {
-
-    class JsonFileReporter : public JsonReporter {
+using boost::asio::ip::udp;
 
 
-        std::fstream _fstream;
-        std::string _filename;
+namespace sim::socket {
+
+    class UDPSocket : public Socket {
+
+        udp::socket *_socket{};
+        udp::endpoint _endpoint;
+
 
     public:
 
-        JsonFileReporter() = default;
 
-        ~JsonFileReporter() override = default;
-
-
-        /**
-         * Sets the file name
-         * @param name File name
-         */
-        void setFilename(const std::string &name) {
-
-            // save file name
-            _filename = name;
-
-        }
+        UDPSocket() = default;
 
 
-    protected:
+        ~UDPSocket() = default;
 
 
-        void initialize(double initTime) override {
-
-            // create file and open
-            _fstream.open(_filename, std::ios::out);
-            setOutstream(_fstream);
-
-            // init json reporter
-            JsonReporter::initialize(initTime);
-
-        }
+        bool connect() override;
 
 
-        void terminate(double simTime) override {
+        std::string read() override;
 
-            // terminate json reporter
-            JsonReporter::terminate(simTime);
 
-            // close file
-            _fstream.close();
+        bool send(const std::string &message) override;
 
-        }
+
+        void close() override;
+
 
 
     };
 
 }
 
-
-#endif //SIMCORE_JSONFILEREPORTER_H
+#endif // SIMCORE_UDP_SOCKET_H

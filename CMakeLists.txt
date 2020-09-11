@@ -15,5 +15,19 @@ include(ModuleDoxygen)  # doxygen
 include(ModuleCoverage) # code coverage
 include(ModuleYaml)     # yaml parser
 
+# library
+option(BUILD_SIMCORE_LIBRARIES "Creates the library (for server connections needed)" OFF)
+
+# add library code
+if(BUILD_SIMCORE_LIBRARIES)
+
+    message(STATUS "Building simcore libraries")
+
+    add_subdirectory(${PROJECT_SOURCE_DIR}/src/lib/socket)
+
+endif(BUILD_SIMCORE_LIBRARIES)
+
+
 # testing
 include(ModuleTesting)
+

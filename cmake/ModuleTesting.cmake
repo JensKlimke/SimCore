@@ -5,9 +5,9 @@
 # ------------------------------------------------------------------------------
 
 # options
-option(BUILD_TESTS "Sets or unsets the option to generate the test target" OFF)
+option(BUILD_TESTING "Sets or unsets the option to generate the test target" OFF)
 
-if(BUILD_TESTS)
+if(BUILD_TESTING)
 
     # load googletest
     include(ModuleGtest)
@@ -15,4 +15,4 @@ if(BUILD_TESTS)
     # add test folder
     add_subdirectory(${PROJECT_SOURCE_DIR}/test)
 
-endif(BUILD_TESTS)
+endif(BUILD_TESTING)
