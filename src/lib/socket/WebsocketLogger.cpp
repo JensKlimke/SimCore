@@ -19,71 +19,74 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke.
+// Created by Jens Klimke on 2019-06-09.
+//
 
-#ifndef SIMCORE_JSONFILEREPORTER_H
-#define SIMCORE_JSONFILEREPORTER_H
+#include <simcore/functions.h>
+#include <simcore/logging/WebsocketLogger.h>
+#include "WebSocket.h"
 
-#include "JsonReporter.h"
-#include <fstream>
+namespace sim::logging {
 
+    WebsocketLogger::WebsocketLogger() {
 
-namespace sim::data {
+        // create web socket
+        _websocket = new sim::socket::WebSocket;
 
-    class JsonFileReporter : public JsonReporter {
-
-
-        std::fstream _fstream;
-        std::string _filename;
-
-    public:
-
-        JsonFileReporter() = default;
-
-        ~JsonFileReporter() override = default;
+    }
 
 
-        /**
-         * Sets the file name
-         * @param name File name
-         */
-        void setFilename(const std::string &name) {
+    WebsocketLogger::~WebsocketLogger() {
 
-            // save file name
-            _filename = name;
+        // delete websocket
+        delete _websocket;
 
-        }
+    }
 
 
-    protected:
+    void WebsocketLogger::setHostPortAndPath(const std::string &host, const std::string &port, const std::string &path) {
+
+        _websocket->setHost(host);
+        _websocket->setPort(port);
+        _websocket->setPath(path);
+
+    }
 
 
-        void initialize(double initTime) override {
+    void WebsocketLogger::open() {
 
-            // create file and open
-            _fstream.open(_filename, std::ios::out);
-            setOutstream(_fstream);
+        // connect
+        _websocket->connect();
 
-            // init json reporter
-            JsonReporter::initialize(initTime);
-
-        }
+    }
 
 
-        void terminate(double simTime) override {
 
-            // terminate json reporter
-            JsonReporter::terminate(simTime);
+    void WebsocketLogger::close() {
 
-            // close file
-            _fstream.close();
+        // close connection
+        _websocket->close();
 
-        }
+    }
 
 
-    };
+    void WebsocketLogger::send(const std::string &message) {
+
+        // send message
+        _websocket->send(message);
+
+    }
+
+
+    void WebsocketLogger::write(double time) {
+
+        // get content
+        std::stringstream ss;
+        Logger::writeJSONData(ss);
+
+        // send
+        send(ss.str());
+
+    }
 
 }
-
-
-#endif //SIMCORE_JSONFILEREPORTER_H

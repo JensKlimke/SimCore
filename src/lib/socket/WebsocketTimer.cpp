@@ -28,10 +28,10 @@ namespace sim {
 
     WebSocketTimer::WebSocketTimer() {
 
-        _websocket = new WebSocket;
+        _websocket = new sim::socket::WebSocket;
 
-        _websocket->setHost("127.0.0.1", "1880");
-        _websocket->setPath("/test");
+        _websocket->setHost("127.0.0.1");
+        _websocket->setPath("/ws");
 
     };
 

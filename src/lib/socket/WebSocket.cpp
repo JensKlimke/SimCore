@@ -24,87 +24,70 @@
 
 #include "WebSocket.h"
 
+namespace sim::socket {
 
-void WebSocket::setHost(const std::string &host, const std::string &port) {
+    bool WebSocket::connect() {
 
-    _host = host;
-    _port = port;
+        // Look up the domain name
+        auto const results = _resolver.resolve(_host, _port);
 
-}
+        try {
 
+            // Make the connection on the IP address we get from a lookup
+            boost::asio::connect(_ws.next_layer(), results.begin(), results.end());
 
-void WebSocket::setPath(const std::string &path) {
+            // Perform the websocket handshake
+            _ws.handshake(_host, _path);
 
-    _path = path;
+        } catch (std::exception &e) {
 
-}
+            std::cout << e.what() << std::endl;
+            return false;
 
+        }
 
-bool WebSocket::connect() {
+        // set connected flag
+        _connected = true;
 
-    // Look up the domain name
-    auto const results = _resolver.resolve(_host, _port);
-
-    try {
-
-        // Make the connection on the IP address we get from a lookup
-        boost::asio::connect(_ws.next_layer(), results.begin(), results.end());
-
-        // Perform the websocket handshake
-        _ws.handshake(_host, _path);
-
-    } catch(...) {
-
-        return false;
+        return true;
 
     }
 
-    // set connected flag
-    _connected = true;
 
-    return true;
+    std::string WebSocket::read() {
 
-}
+        // This buffer will hold the incoming message
+        boost::beast::flat_buffer buffer;
 
+        // Read a message into our buffer
+        _ws.read(buffer);
 
-std::string WebSocket::read() {
+        // return string
+        return boost::beast::buffers_to_string(buffer.data());
 
-    // This buffer will hold the incoming message
-    boost::beast::flat_buffer buffer;
-
-    // Read a message into our buffer
-    _ws.read(buffer);
-
-    // return string
-    return boost::beast::buffers_to_string(buffer.data());
-
-}
+    }
 
 
-bool WebSocket::send(const std::string &text) {
+    bool WebSocket::send(const std::string &text) {
 
-    if(!_connected)
-        return false;
+        if (!_connected)
+            return false;
 
-    // Send the message
-    _ws.write(boost::asio::buffer(text));
+        // Send the message
+        _ws.write(boost::asio::buffer(text));
 
-    return true;
+        return true;
 
-}
-
-
-void WebSocket::close() {
-
-    // Close the WebSocket connection
-    if(_connected)
-        _ws.close(websocket::close_code::normal);
-
-}
+    }
 
 
-bool WebSocket::connected() const {
+    void WebSocket::close() {
 
-    return _connected;
+        // Close the WebSocket connection
+        if (_connected)
+            _ws.close(websocket::close_code::normal);
+
+    }
+
 
 }

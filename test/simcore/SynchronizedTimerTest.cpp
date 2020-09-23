@@ -30,7 +30,7 @@
 #include <simcore/Loop.h>
 #include <simcore/timers/TimeIsUp.h>
 #include <simcore/timers/SynchronizedTimer.h>
-#include <simcore/data/TimeReporter.h>
+#include <simcore/logging/TimeReporter.h>
 #include <gtest/gtest.h>
 
 
@@ -165,7 +165,7 @@ TEST_F(SynchronizedTimerTest, SyncTestRT) {
     stop.setStopTime(10.0);
 
     // reporter
-    data::TimeReporter rep;
+    sim::logging::TimeReporter rep;
     rep.setTimeStepSize(1.0);
 
     // set timer and add this as component

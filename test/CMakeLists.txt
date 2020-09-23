@@ -4,6 +4,7 @@ option(CUCUMBER_SCENARIO_FUNCTIONALITY "Enables or disables the cucumber functio
 
 # add sub directories
 add_subdirectory(simcore)
+add_subdirectory(server)
 add_subdirectory(application)
 add_subdirectory(traffic)
 

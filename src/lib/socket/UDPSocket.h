@@ -19,61 +19,50 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke.
+// Created by Jens Klimke on 2020-09-11
 //
 
+#ifndef SIMCORE_UDP_SOCKET_H
+#define SIMCORE_UDP_SOCKET_H
 
-#ifndef SIMCORE_TIMEREPORTER_H
-#define SIMCORE_TIMEREPORTER_H
+#include <boost/asio.hpp>
+#include "Socket.h"
 
-#include "../ISynchronized.h"
-#include <iostream>
-
-namespace sim::data {
-
-    class TimeReporter : public sim::ISynchronized {
+using boost::asio::ip::udp;
 
 
-        std::ostream *_stream = nullptr;
+namespace sim::socket {
+
+    class UDPSocket : public Socket {
+
+        udp::socket *_socket{};
+        udp::endpoint _endpoint;
 
 
     public:
 
-        TimeReporter() = default;
 
-        ~TimeReporter() override = default;
-
-        void initialize(double initTime) override {
-
-            // take std::cout if no stream is set
-            if (_stream == nullptr)
-                _stream = &std::cout;
-
-        }
-
-        void terminate(double simTime) override {}
+        UDPSocket() = default;
 
 
-        void step(double t, double dt) override {
-
-            // put sim time to stream
-            (*_stream) << "t=" << t << "s, dt=" << dt << std::endl;
-
-        }
+        ~UDPSocket() = default;
 
 
-        /**
-         * Sets the stream on which the time is logged
-         * @param str Stream the time is to be logged in
-         */
-        void ostream(std::ostream &str) {
+        bool connect() override;
 
-            _stream = &str;
 
-        }
+        std::string read() override;
+
+
+        bool send(const std::string &message) override;
+
+
+        void close() override;
+
+
 
     };
 
 }
 
-#endif //SIMCORE_TIMEREPORTER_H
+#endif // SIMCORE_UDP_SOCKET_H

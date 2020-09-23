@@ -19,58 +19,58 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke on 2019-06-09
+// Created by Jens Klimke on 2019-06-09.
 //
 
-#ifndef SIMCORE_WEBSOCKET_H
-#define SIMCORE_WEBSOCKET_H
-
-
-#include <boost/beast/core.hpp>
-#include <boost/beast/websocket.hpp>
-#include <boost/asio/connect.hpp>
-#include <boost/asio/ip/tcp.hpp>
-
-#include <cstdlib>
-#include <iostream>
-#include <string>
-#include "Socket.h"
-
-using tcp = boost::asio::ip::tcp;               // from <boost/asio/ip/tcp.hpp>
-namespace websocket = boost::beast::websocket;  // from <boost/beast/websocket.hpp>
+#include "UDPSocket.h"
 
 namespace sim::socket {
 
-    class WebSocket : public std::enable_shared_from_this<WebSocket>, public Socket {
+    bool UDPSocket::connect() {
 
-        boost::asio::io_context ioc{};
-        tcp::resolver _resolver;
+        // create service
+        boost::asio::io_service io_service;
 
-        websocket::stream<tcp::socket> _ws;
+        // resolve host name
+        udp::resolver resolver(io_service);
+        udp::resolver::query query(udp::v4(), _host, _port);
+        _endpoint = *resolver.resolve(query);
 
+        // open connection
+        _socket = new udp::socket(io_service);
+        _socket->open(udp::v4());
 
-    public:
+        return true;
 
-        WebSocket() : _resolver(ioc), _ws(ioc) {};
-
-
-        ~WebSocket() = default;
-
-
-        bool connect() override;
-
-
-        std::string read() override;
+    }
 
 
-        bool send(const std::string &text) override;
+    std::string UDPSocket::read() {
+
+        // TODO: read buffer
+
+        return "";
+
+    }
 
 
-        void close() override;
+    bool UDPSocket::send(const std::string &message) {
+
+        auto data = boost::asio::buffer(message.c_str(), message.length());
+        _socket->send_to(data, _endpoint);
+
+        return true;
+
+    }
 
 
-    };
+    void UDPSocket::close() {
+
+        // close and delete
+        _socket->close();
+        delete _socket;
+
+    }
+
 
 }
-
-#endif // SIMCORE_WEBSOCKET_H
