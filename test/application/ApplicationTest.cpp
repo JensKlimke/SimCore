@@ -24,6 +24,7 @@
 #include <gtest/gtest.h>
 #include <yaml-cpp/yaml.h>
 #include <simcore/timers/RealTimeTimer.h>
+#include <simcore/timers/TimeIsUp.h>
 #include "Simulation.h"
 #include "SampleApplication.h"
 
@@ -31,14 +32,19 @@ class ApplicationTest : public ::testing::Test, protected SampleApplication, pro
 
 protected:
 
-    sim::ITimer *_timer;
+    sim::ITimer *_timer = nullptr;
 
 
 public:
 
     void SetUp() override {
 
-        YAML::Node config = YAML::LoadFile("/mnt/c/Users/klimke/Implementierungen/SimCore/test/application/config.yaml");
+        // get config file path
+        std::string path = CONFIG_DIR;
+        path += "/config.yaml";
+
+        // load config
+        YAML::Node config = YAML::LoadFile(path);
 
         // get timer type
         auto type = config["timer"]["type"].as<std::string>();
@@ -57,13 +63,28 @@ public:
             timer->setAcceleration(acc);
             timer->setTimeStepSize(dt);
 
+            // set timer
+            this->setTimer(timer);
+
         }
 
         // has stop conditions
         auto scs = config["stopConditions"];
         for(const auto &sc : scs) {
 
+            if(sc["type"].as<std::string>() == "TimeIsUp") {
 
+                // create time is up stop condition
+                auto tiu = new sim::TimeIsUp;
+
+                // parameters
+                tiu->setStopTime(sc["endTime"].as<double>());
+
+                // register
+                this->addStopCondition(tiu);
+                this->addComponent(tiu);
+
+            }
 
         }
 
@@ -81,11 +102,12 @@ public:
 
 TEST_F(ApplicationTest, Create) {
 
+    // run simulation
+    this->run();
+
     // init and termination time
     EXPECT_DOUBLE_EQ(0.0, this->initTime);
     EXPECT_DOUBLE_EQ(10.0, this->termTime);
-
-    // TODO: check times
 
 }
 

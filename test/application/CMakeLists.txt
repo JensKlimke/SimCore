@@ -3,6 +3,10 @@ add_executable(ApplicationTestingTest
         ApplicationTest.cpp
         )
 
+# add current folder for config files
+target_compile_definitions(ApplicationTestingTest PRIVATE
+        CONFIG_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
+
 # include directories
 target_include_directories(ApplicationTestingTest PRIVATE
         ${PROJECT_SOURCE_DIR}/src/include
