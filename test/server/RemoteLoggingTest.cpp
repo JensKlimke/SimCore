@@ -118,7 +118,7 @@ TEST_F(RemoteLoggingTest, SendWebsocket) {
     // file logger
     WebsocketLogger logger{};
     logger.setTimeStepSize(1.0);
-    logger.setHostAndPath("localhost", "/ws/simcore");
+    logger.setHostPortAndPath("localhost", "1880", "/ws/simcore");
 
     // add component
     loop.addComponent(&logger);

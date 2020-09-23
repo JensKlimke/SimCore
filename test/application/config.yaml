@@ -4,9 +4,10 @@ timer:
   timeStepSize: 0.01
 stopConditions:
   timeIsUp:
-    registerAsComponent: true
     type: TimeIsUp
+    endTime: 10.0
   stopValues:
+    type: StopValues
     registerAsComponent: true
     values:
       - key: testValue1
@@ -19,5 +20,9 @@ components:
   timeReporter:
     type: TimeReporter
     timeStepSize: 1.0
-    parameters:
-      outputStream: console
+    outputStream: console
+  test:
+    type: TestApplication
+    timeStepSize: 0.1
+    message: Test application running!
+

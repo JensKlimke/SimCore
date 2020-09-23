@@ -21,8 +21,10 @@ option(BUILD_SIMCORE_LIBRARIES "Creates the library (for server connections need
 # add library code
 if(BUILD_SIMCORE_LIBRARIES)
 
+    # message
     message(STATUS "Building simcore libraries")
 
+    # add lib directories
     add_subdirectory(${PROJECT_SOURCE_DIR}/src/lib/socket)
 
 endif(BUILD_SIMCORE_LIBRARIES)

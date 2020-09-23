@@ -59,7 +59,7 @@ namespace sim::logging {
          * @param host Host name of the server
          * @param path Path of the server
          */
-        void setHostAndPath(const std::string &host, const std::string &path);
+        void setHostPortAndPath(const std::string &host, const std::string &port, const std::string &path);
 
 
         /**

@@ -44,11 +44,11 @@ namespace sim::logging {
     }
 
 
-    void WebsocketLogger::setHostAndPath(const std::string &host, const std::string &path) {
+    void WebsocketLogger::setHostPortAndPath(const std::string &host, const std::string &port, const std::string &path) {
 
         _websocket->setHost(host);
+        _websocket->setPort(port);
         _websocket->setPath(path);
-        _websocket->setPort("");
 
     }
 

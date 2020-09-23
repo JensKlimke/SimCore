@@ -39,8 +39,9 @@ namespace sim::socket {
             // Perform the websocket handshake
             _ws.handshake(_host, _path);
 
-        } catch (...) {
+        } catch (std::exception &e) {
 
+            std::cout << e.what() << std::endl;
             return false;
 
         }
