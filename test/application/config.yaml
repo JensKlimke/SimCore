@@ -1,11 +1,11 @@
 timer:
   type: RealTimeTimer
   acceleration: 1.0
-  timeStepSize: 0.01
+  stepSize: 0.01
 stopConditions:
   timeIsUp:
     type: TimeIsUp
-    endTime: 10.0
+    stopTime: 10.0
   stopValues:
     type: StopValues
     registerAsComponent: true

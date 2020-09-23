@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke on $YEAR-$MONTH-10.
+// Created by Jens Klimke on 2020-09-10.
 //
 
 
@@ -26,22 +26,34 @@
 #define SIMCORE_SAMPLE_APPLICATION_H
 
 #include <simcore/Model.h>
-#include <map>
+#include <vector>
 
 class SampleApplication : public sim::Model {
 
-protected:
+public:
 
     double initTime = 0.0;
     double termTime = 0.0;
-    std::vector<std::pair<double, double>> simTimes{};
+    std::vector<std::pair<double, double>> timeSteps{};
+
+    std::string option_name{};
+    double option_value{};
+
+    void setup(const std::string &name, double value) {
+
+        option_name = name;
+        option_value = value;
+
+    }
+
+protected:
 
     void initialize(double t) override {
         initTime = t;
     }
 
     void step(double t, double dt) override {
-        simTimes.emplace_back(t, dt);
+        timeSteps.emplace_back(t, dt);
     }
 
     void terminate(double t) override {

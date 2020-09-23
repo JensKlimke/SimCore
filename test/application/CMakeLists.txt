@@ -7,16 +7,8 @@ add_executable(ApplicationTestingTest
 target_compile_definitions(ApplicationTestingTest PRIVATE
         CONFIG_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
 
-# include directories
-target_include_directories(ApplicationTestingTest PRIVATE
-        ${yaml_INCLUDE_DIR}
-        )
-
 # link libraries
-target_link_libraries(ApplicationTestingTest PRIVATE
-        yaml-cpp
-        SimulationFramework
-        )
+target_link_libraries(ApplicationTestingTest PRIVATE SimulationFramework)
 
 # add test
 add_gtest(ApplicationTestingTest)
