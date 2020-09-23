@@ -17,3 +17,6 @@ include(ModuleYaml)     # yaml parser
 
 # testing
 include(ModuleTesting)
+
+# add source code
+add_subdirectory(src/lib/framework)

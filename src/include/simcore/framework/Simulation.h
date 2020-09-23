@@ -25,15 +25,30 @@
 #ifndef SIMCORE_SCENARIO_TEST_SIMULATION_H
 #define SIMCORE_SCENARIO_TEST_SIMULATION_H
 
+#include <memory>
+#include <simcore/Loop.h>
+#include <simcore/IStopCondition.h>
+#include <simcore/IComponent.h>
 
-class Simulation {
+class Simulation : sim::Loop {
 
 private:
+
+    std::unique_ptr<sim::ITimer> _timer;
+    std::vector<std::unique_ptr<sim::IStopCondition>> _stopConditions;
 
     double _init_speed;
     double _desired_speed;
 
 public:
+
+
+    /**
+     * Adds a component to the loop
+     * @param component Component to be added
+     */
+    void component(sim::IComponent *component);
+
 
     /**
      * Sets the initial speed of the ego vehicle
@@ -50,9 +65,23 @@ public:
 
 
     /**
+     * Sets a basic timer
+     * @param timeStepSize Time step size
+     */
+    void createTimer(double timeStepSize);
+
+
+    /**
+     * Sets the simulation time
+     * @param t Time the simulation shall be ran
+     */
+    void setSimulationTime(double t);
+
+
+    /**
      * Runs the simulation
      */
-    double run();
+    double execute();
 
 };
 

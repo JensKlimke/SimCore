@@ -33,6 +33,7 @@ struct SimCtx {
     double result;
 };
 
+
 GIVEN("^I have setup an initial speed (\\d+) for the vehicle$") {
 
     REGEX_PARAM(double, v);
@@ -40,6 +41,7 @@ GIVEN("^I have setup an initial speed (\\d+) for the vehicle$") {
 
     context->sim.setInitialSpeed(v / 3.6);
 }
+
 
 GIVEN("^I have setup a desired speed (\\d+) for the driver model$") {
 
@@ -49,11 +51,15 @@ GIVEN("^I have setup a desired speed (\\d+) for the driver model$") {
     context->sim.setDesiredSpeed(v / 3.6);
 }
 
-WHEN("^I run the simulation") {
 
+WHEN("^I run the simulation for (\\d+) seconds$") {
+
+    REGEX_PARAM(double, t);
     ScenarioScope<SimCtx> context;
 
-    context->result = context->sim.run();
+    // set simulation time and execute
+    context->sim.setSimulationTime(t);
+    context->result = context->sim.execute();
 
 }
 

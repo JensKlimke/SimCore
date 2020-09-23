@@ -5,13 +5,13 @@ add_executable(ApplicationTestingTest
 
 # include directories
 target_include_directories(ApplicationTestingTest PRIVATE
-        ${PROJECT_SOURCE_DIR}/src/include
-        ${PROJECT_SOURCE_DIR}/lib/yaml-cpp/include
+        ${yaml_INCLUDE_DIR}
         )
 
 # link libraries
 target_link_libraries(ApplicationTestingTest PRIVATE
         yaml-cpp
+        SimulationFramework
         )
 
 # add test

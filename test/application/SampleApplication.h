@@ -32,17 +32,16 @@ class SampleApplication : public sim::Model {
 
 protected:
 
-    unsigned long i = 0;
     double initTime = 0.0;
-    std::map<unsigned long, std::pair<double, double>> simTimes{};
     double termTime = 0.0;
+    std::vector<std::pair<double, double>> simTimes{};
 
     void initialize(double t) override {
         initTime = t;
     }
 
     void step(double t, double dt) override {
-        simTimes[i++] = {t, dt};
+        simTimes.emplace_back(t, dt);
     }
 
     void terminate(double t) override {
@@ -51,4 +50,4 @@ protected:
 
 };
 
-#endif //SIMCORE_SAMPLE_APPLICATION_H
+#endif // SIMCORE_SAMPLE_APPLICATION_H

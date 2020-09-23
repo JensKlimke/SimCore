@@ -22,8 +22,14 @@
 //
 
 
-#include "Simulation.h"
+#include <simcore/framework/Simulation.h>
+#include <simcore/timers/BasicTimer.h>
+#include <simcore/timers/TimeIsUp.h>
 
+
+void Simulation::component(sim::IComponent *component) {
+    this->addComponent(component);
+}
 
 void Simulation::setInitialSpeed(double v) {
     _init_speed = v;
@@ -33,6 +39,45 @@ void Simulation::setDesiredSpeed(double v) {
     _desired_speed = v;
 }
 
-double Simulation::run() {
+
+void Simulation::createTimer(double timeStepSize) {
+
+    // create and setup timer
+    auto timer = std::make_unique<sim::BasicTimer>();
+    timer->setTimeStepSize(timeStepSize);
+
+    // register
+    this->setTimer(timer.get());
+
+    // save timer
+    _timer = std::move(timer);
+
+}
+
+
+void Simulation::setSimulationTime(double t) {
+
+    // create and setup timer
+    auto tiu = std::make_unique<sim::TimeIsUp>();
+    tiu->setStopTime(t);
+
+    // register timer
+    this->addComponent(tiu.get());
+    this->addStopCondition(tiu.get());
+
+    // move to stop condition container
+    _stopConditions.push_back(std::move(tiu));
+
+}
+
+
+
+double Simulation::execute() {
+
+    // execute
+    this->run();
+
+    // return results
     return _desired_speed;
+
 }

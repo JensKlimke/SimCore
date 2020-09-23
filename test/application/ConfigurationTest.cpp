@@ -22,8 +22,9 @@
 //
 
 #include <gtest/gtest.h>
+#include <yaml-cpp/yaml.h>
 #include <simcore/timers/RealTimeTimer.h>
-#include <simcore/framework/Simulation.h>
+#include "Simulation.h"
 #include "SampleApplication.h"
 
 class ApplicationTest : public ::testing::Test, protected SampleApplication, protected Simulation {
@@ -36,6 +37,35 @@ protected:
 public:
 
     void SetUp() override {
+
+        YAML::Node config = YAML::LoadFile("/mnt/c/Users/klimke/Implementierungen/SimCore/test/application/config.yaml");
+
+        // get timer type
+        auto type = config["timer"]["type"].as<std::string>();
+
+        // timer
+        if(type == "RealTimeTimer") {
+
+            // get acceleration
+            auto acc = config["timer"]["acceleration"].as<double>();
+            auto dt = config["timer"]["timeStepSize"].as<double>();
+
+            // create timer
+            auto timer = new sim::RealTimeTimer;
+
+            // setup
+            timer->setAcceleration(acc);
+            timer->setTimeStepSize(dt);
+
+        }
+
+        // has stop conditions
+        auto scs = config["stopConditions"];
+        for(const auto &sc : scs) {
+
+
+
+        }
 
     }
 
@@ -51,25 +81,9 @@ public:
 
 TEST_F(ApplicationTest, Create) {
 
-    // reserve space for sim time container
-    this->simTimes.reserve(100);
-
-    // set timer
-    this->createTimer(0.01);
-
-    // set simulation time
-    this->setSimulationTime(10.0);
-
-    // register this application
-    this->setTimeStepSize(0.1);
-    this->component(this);
-
-    // execute
-    this->execute();
-
     // init and termination time
-    EXPECT_NEAR(0.0, this->initTime, EPS_SIM_TIME);
-    EXPECT_NEAR(10.0, this->termTime, EPS_SIM_TIME);
+    EXPECT_DOUBLE_EQ(0.0, this->initTime);
+    EXPECT_DOUBLE_EQ(10.0, this->termTime);
 
     // TODO: check times
 
