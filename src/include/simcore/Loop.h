@@ -106,13 +106,13 @@ namespace sim {
         void run() {
 
             // initialize components
-            initialize();
+            _initialize();
 
             // execute main loop
-            execute();
+            _execute();
 
             // terminate components
-            terminate();
+            _terminate();
 
         }
 
@@ -153,7 +153,7 @@ namespace sim {
         /**
          * Execute simulation
          */
-        void execute() {
+        void _execute() {
 
             // check status
             if(_status != Status::INITIALIZED)
@@ -202,7 +202,7 @@ namespace sim {
         /**
          * Initialize simulation
          */
-        void initialize() {
+        void _initialize() {
 
             // check status
             if(_status != Status::STOPPED)
@@ -244,7 +244,7 @@ namespace sim {
         /**
          * Terminate simulation
          */
-        void terminate() {
+        void _terminate() {
 
 
             // iterate over components ...

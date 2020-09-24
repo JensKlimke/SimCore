@@ -67,7 +67,7 @@ public:
      * @param x Position
      * @return The center value at x
      */
-    double center(double x) const {
+    [[nodiscard]] double center(double x) const {
 
         return 0.5 * (lower.interpolate(x) + upper.interpolate(x));
 
@@ -80,7 +80,7 @@ public:
      * @param y y-value
      * @return true when the value is within the band
      */
-    bool in(double x, double y) const {
+    [[nodiscard]] bool in(double x, double y) const {
 
         bool inLow = true;
         if(lower.isInBounds(x))
@@ -100,7 +100,7 @@ public:
      * Checks if the curve is set by at least two points
      * @return true if more tha one point is set
      */
-    bool isSet() const {
+    [[nodiscard]] bool isSet() const {
 
         return lower.isSet() && upper.isSet();
 
@@ -112,7 +112,7 @@ public:
      * @param x Position to be evaluated
      * @return pair of lower and upper value
      */
-    std::pair<double, double> getValues(double x) const {
+    [[nodiscard]] std::pair<double, double> getValues(double x) const {
 
         return {lower.interpolate(x), upper.interpolate(x)};
 

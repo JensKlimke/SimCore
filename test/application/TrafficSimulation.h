@@ -20,43 +20,43 @@
  */
 
 
-#ifndef SIMCORE_TS_BASICSIMULATION_H
-#define SIMCORE_TS_BASICSIMULATION_H
+#ifndef SIMCORE_BASIC_SIMULATION_H
+#define SIMCORE_BASIC_SIMULATION_H
 
 #include <string>
+#include <memory>
 #include <simcore/Loop.h>
-#include <simcore/data/JsonFileReporter.h>
-#include <simcore/data/TimeReporter.h>
+#include <simcore/logging/TimeReporter.h>
 #include <simcore/timers/BasicTimer.h>
 #include <simcore/timers/RealTimeTimer.h>
 #include <simcore/timers/TimeIsUp.h>
 #include <simcore/value/ValueExceed.h>
-#include "simcore/data/PlotLogger.h"
 
-class BasicSimulation : public sim::Loop {
+class TrafficSimulation {
 
-protected:
-
-    BasicTimer *timer = nullptr;
-    TimeReporter *timeReporter = nullptr;
-    TimeIsUp *stopTimer = nullptr;
-
-    std::vector<ValueExceed<double>*> stopConditions{};
+    sim::Loop _loop;
+    std::unique_ptr<sim::ITimer> _timer{};
+    std::vector<std::unique_ptr<sim::IComponent>> _components{};
 
 
 public:
+
+    /**
+     * Container to store double pointers and corresponding values
+     */
+    typedef std::vector<std::pair<double*, double>> PtrValPairVec;
 
 
     /**
      * Constructor
      */
-    BasicSimulation() = default;
+    TrafficSimulation();
 
 
     /**
      * Destructor
      */
-    ~BasicSimulation() override;
+    virtual ~TrafficSimulation();
 
 
     /**
@@ -66,15 +66,21 @@ public:
      * @param realTime Real-time flag
      * @param stopValues Values to be checked for excess (then simulation is stopped)
      */
-    void create(double endTime, double stepSize, bool realTime = false,
-            const std::vector<std::pair<double*, double>> &stopValues = {});
+    void create(double endTime, double stepSize, bool realTime = false, const PtrValPairVec &stopValues = {});
 
 
     /**
-     * Destroys the simulation (deletes all elements)
+     * Adds an unmanaged component (will not be deleted during destruction)
+     * @param comp Component to be added
      */
-    void destroy();
+    void addExternalComponent(sim::IComponent *comp);
+
+
+    /**
+     * Executes the simulation
+     */
+    void run();
 
 };
 
-#endif // SIMCORE_TS_BASICSIMULATION_H
+#endif // SIMCORE_BASIC_SIMULATION_H

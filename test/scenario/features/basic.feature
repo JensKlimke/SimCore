@@ -2,7 +2,7 @@
 Feature: Basic Driving
   In order to check the basic functionality of the driver model
   As a scenario developer
-  I want to check the driver model driving straight with constant speed
+  I want to check the driver model driving with constant speed
 
   Scenario: Driving straight with constant speed
     Given I have setup an initial speed 0 for the vehicle

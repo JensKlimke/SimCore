@@ -59,7 +59,7 @@ WHEN("^I run the simulation for (\\d+) seconds$") {
 
     // set simulation time and execute
     context->sim.setSimulationTime(t);
-    context->result = context->sim.execute();
+    context->result = context->sim._execute();
 
 }
 

@@ -28,48 +28,51 @@
 #include "../IStopCondition.h"
 #include "../IComponent.h"
 
-template<typename T>
-class ValueExceed : public ::sim::IStopCondition, public ::sim::IComponent {
+namespace sim::value {
 
-    IStopCondition::StopCode _mode = IStopCondition::StopCode::SIM_ENDED;
+    template<typename T>
+    class ValueExceed : public ::sim::IStopCondition, public ::sim::IComponent {
 
-    const T* _value = nullptr;
-    T _limit{};
+        IStopCondition::StopCode _mode = IStopCondition::StopCode::SIM_ENDED;
 
-public:
+        const T *_value = nullptr;
+        T _limit{};
 
-    typedef IStopCondition::StopCode Mode;
+    public:
 
-    void setValueAndLimit(const T* value, const T &limit, Mode mode = Mode::SIM_ENDED) {
+        typedef IStopCondition::StopCode Mode;
 
-        _value = value;
-        _limit = limit;
-        _mode  = mode;
+        void setValueAndLimit(const T *value, const T &limit, Mode mode = Mode::SIM_ENDED) {
 
-    }
+            _value = value;
+            _limit = limit;
+            _mode = mode;
 
-
-    void _init(double initTime) override {
-
-        reset();
-
-    }
+        }
 
 
-    void _exec(double simTime) override {
+        void _init(double initTime) override {
 
-        // the limit has been reached
-        if(*_value > _limit)
-            stop(_mode);
+            reset();
 
-    }
+        }
 
 
-    void _term(double simTime) override {
+        void _exec(double simTime) override {
 
-    }
+            // the limit has been reached
+            if (*_value > _limit)
+                stop(_mode);
 
-};
+        }
 
+
+        void _term(double simTime) override {
+
+        }
+
+    };
+
+}
 
 #endif //SIMCORE_VALUEEXCEED_H

@@ -240,7 +240,7 @@ TEST_F(SimTest, NotSetProperly) {
     // erroneous calls before initialization
     EXPECT_THROW(this->run(), ProcessException);
     EXPECT_THROW(this->stop(), ProcessException);
-    EXPECT_THROW(this->execute(), ProcessException);
+    EXPECT_THROW(this->_execute(), ProcessException);
 
     // create objects
     BasicTimer timer;
@@ -253,7 +253,7 @@ TEST_F(SimTest, NotSetProperly) {
         if(t > 0.099999) {
 
             // try to initialize during run
-            EXPECT_THROW(Loop::initialize(), ProcessException);
+            EXPECT_THROW(Loop::_initialize(), ProcessException);
 
             // stop
             stop();

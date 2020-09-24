@@ -22,60 +22,64 @@
 // Created by Jens Klimke on 2019-04-01
 //
 
-#ifndef SIMCORE_VALUEOUTOFTUBE_H
-#define SIMCORE_VALUEOUTOFTUBE_H
+#ifndef SIMCORE_VALUE_OUT_OF_TUBE_H
+#define SIMCORE_VALUE_OUT_OF_TUBE_H
 
 #include "../IStopCondition.h"
 #include "../IComponent.h"
 #include "../exceptions.h"
 #include "SignalTube.h"
 
-class ValueOutOfTube : public SignalTube, public sim::IStopCondition, public sim::IComponent {
+namespace sim::value {
 
-    IStopCondition::StopCode _mode = IStopCondition::StopCode::OBJECTIVES_MISSED;
+    class ValueOutOfTube : public SignalTube, public sim::IStopCondition, public sim::IComponent {
 
-    const double *_x = nullptr;
-    const double *_y = nullptr;
+        IStopCondition::StopCode _mode = IStopCondition::StopCode::OBJECTIVES_MISSED;
 
-public:
+        const double *_x = nullptr;
+        const double *_y = nullptr;
 
-    typedef IStopCondition::StopCode Mode;
+    public:
 
-    ValueOutOfTube() = default;
+        typedef IStopCondition::StopCode Mode;
 
-    void _init(double initTime) override {
+        ValueOutOfTube() = default;
 
-        if(!isSet())
-            throw ProcessException("Band is not initialized.");
+        void _init(double initTime) override {
 
-    }
+            if (!isSet())
+                throw ProcessException("Band is not initialized.");
 
-    void _exec(double simTime) override {
+        }
 
-        if(!in(*_x, *_y))
-            failed();
+        void _exec(double simTime) override {
 
-    }
+            if (!in(*_x, *_y))
+                failed();
 
-    void _term(double simTime) override {
+        }
 
-    }
+        void _term(double simTime) override {
 
-
-    /**
-     * Sets the values to be checked
-     * @param x x-value
-     * @param y y-value
-     */
-    void setValues(const double *x, const double *y, Mode mode = Mode::OBJECTIVES_MISSED) {
-
-        _x = x;
-        _y = y;
-        _mode  = mode;
-
-    }
+        }
 
 
-};
+        /**
+         * Sets the values to be checked
+         * @param x x-value
+         * @param y y-value
+         */
+        void setValues(const double *x, const double *y, Mode mode = Mode::OBJECTIVES_MISSED) {
 
-#endif //SIMCORE_VALUEOUTOFTUBE_H
+            _x = x;
+            _y = y;
+            _mode = mode;
+
+        }
+
+
+    };
+
+}
+
+#endif // SIMCORE_VALUE_OUT_OF_TUBE_H

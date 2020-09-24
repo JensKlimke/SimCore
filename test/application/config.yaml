@@ -8,7 +8,6 @@ stopConditions:
     stopTime: 10.0
   stopValues:
     type: StopValues
-    registerAsComponent: true
     values:
       - key: testValue1
         limit: 10.0

@@ -22,41 +22,15 @@
 //
 
 #include <gtest/gtest.h>
-#include <yaml-cpp/yaml.h>
-#include <simcore/timers/RealTimeTimer.h>
-#include <simcore/framework/Simulation.h>
-#include <simcore/framework/ModelManager.h>
+#include "TrafficSimulation.h"
 #include "SampleApplication.h"
 
-SampleApplication *create_new_sample_application(std::string &&name, double value, unsigned long n) {
 
-    auto ptr = new SampleApplication();
-
-    ptr->timeSteps.reserve(n);
-    ptr->setup(name, value);
-
-    return ptr;
-
-}
-
-sim::Model *create_new_sample_application_from_conf(const sim::framework::Config &conf) {
-
-    return create_new_sample_application(
-            conf["name"].as<std::string>(),
-            conf["value"].as<double>(),
-            conf["size"].as<unsigned long>()
-    );
-
-}
-
-class ApplicationTest : public ::testing::Test, protected Simulation {
+class ApplicationTest : public ::testing::Test, protected TrafficSimulation {
 
 public:
 
     void SetUp() override {
-
-        // register creator function
-        sim::framework::ModelManager::registerModelType("SampleApplication", create_new_sample_application_from_conf);
 
     }
 
@@ -69,48 +43,27 @@ public:
 
 TEST_F(ApplicationTest, Create) {
 
-    typedef YAML::Node Config;
+    // create simulation
+    create(10.0, 0.01);
 
-    // create configuration
-    YAML::Node node{};
-    node["test"]["name"] = "TestModel";
-    node["test"]["value"] = 123.45;
-    node["test"]["size"] = 101;
-    node["timer"]["stopTime"] = 10.0;
+    // create sample application
+    SampleApplication model{};
+    model.setTimeStepSize(0.1);
+    addExternalComponent(&model);
 
-    // create model
-    sim::framework::ModelManager manager{};
-    auto model = dynamic_cast<SampleApplication*>(manager.create("SampleApplication", node["test"]));
-    auto timer = dynamic_cast<SampleApplication*>(manager.create("SampleApplication", node["test"]));
-
-    // check configuration
-    EXPECT_EQ("TestModel", model->option_name);
-    EXPECT_EQ(123.45, model->option_value);
-
-
-    // set timer
-    this->createTimer(0.01);
-
-    // set simulation time
-    this->setSimulationTime(10.0);
-
-    // register this application
-    model->setTimeStepSize(0.1);
-    this->component(model);
-
-    // execute
-    this->execute();
+    // run the simulation
+    run();
 
     // init and termination time
-    EXPECT_NEAR(0.0, model->initTime, EPS_SIM_TIME);
-    EXPECT_NEAR(10.0, model->termTime, EPS_SIM_TIME);
+    EXPECT_NEAR(0.0, model.initTime, EPS_SIM_TIME);
+    EXPECT_NEAR(10.0, model.termTime, EPS_SIM_TIME);
 
     // check no of saved time steps
-    EXPECT_EQ(101, model->timeSteps.size());
+    EXPECT_EQ(101, model.timeSteps.size());
 
     // check time steps
     unsigned long i = 0;
-    for(auto &step : model->timeSteps) {
+    for(auto &step : model.timeSteps) {
 
         // check time and time step size
         EXPECT_NEAR(0.1 * i, step.first, EPS_SIM_TIME);

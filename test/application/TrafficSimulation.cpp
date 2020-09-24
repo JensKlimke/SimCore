@@ -18,73 +18,80 @@
  * date: 2020-03-07
  */
 
-#include <simcore/traffic/BasicSimulation.h>
+#include "TrafficSimulation.h"
 
+TrafficSimulation::TrafficSimulation() = default;
 
-BasicSimulation::~BasicSimulation() {
+TrafficSimulation::~TrafficSimulation() = default;
 
-    destroy();
-
-}
-
-
-void BasicSimulation::destroy() {
-
-    // timers
-    delete timer;
-    delete stopTimer;
-    delete timeReporter;
-
-    // delete stop conditions
-    for(auto e : stopConditions)
-        delete e;
-
-}
-
-
-void BasicSimulation::create(double endTime, double stepSize, bool realTime,
-        const std::vector<std::pair<double*, double>> &stopValues) {
+void TrafficSimulation::create(double endTime, double stepSize, bool realTime,
+                               const std::vector<std::pair<double*, double>> &stopValues) {
 
     // create timer
-    timer = realTime ? new RealTimeTimer : new BasicTimer;
+    sim::BasicTimer *timer = realTime ? new sim::RealTimeTimer : new sim::BasicTimer;
+    _timer.reset(timer);
 
     // set timer
     timer->setTimeStepSize(stepSize);
-    setTimer(timer);
+    _loop.setTimer(timer);
 
     // stop condition (time)
-    stopTimer = new TimeIsUp();
+    auto stopTimer = new sim::TimeIsUp();
     stopTimer->setStopTime(endTime);
+
+    // add component and stop condition
+    _loop.addComponent(stopTimer);
+    _loop.addStopCondition(stopTimer);
+
+    // add to list
+    _components.emplace_back(stopTimer);
 
     // stop condition (distance) TODO: test
     for(auto e : stopValues) {
 
         // create stop condition
-        auto b = new ValueExceed<double>();
+        auto b = new sim::value::ValueExceed<double>();
         b->setValueAndLimit(e.first, e.second);
 
         // add stop condition
-        stopConditions.push_back(b);
-        addComponent(b);
-        addStopCondition(b);
+        _loop.addComponent(b);
+        _loop.addStopCondition(b);
+
+        // add to component list
+        _components.emplace_back(b);
 
     }
-
-    // add component and stop condition
-    addComponent(stopTimer);
-    addStopCondition(stopTimer);
 
     // only when real time, set time reporter
     if(realTime) {
 
         // set time reporter
-        timeReporter = new TimeReporter();
+        auto timeReporter = new sim::logging::TimeReporter();
         timeReporter->setTimeStepSize(1.0);
 
         // add component
-        addComponent(timeReporter);
+        _loop.addComponent(timeReporter);
+
+        // add to component list
+        _components.emplace_back(timeReporter);
 
     }
 
+
+}
+
+
+void TrafficSimulation::addExternalComponent(sim::IComponent *comp) {
+
+    // add the component to the loop
+    _loop.addComponent(comp);
+
+}
+
+
+void TrafficSimulation::run() {
+
+    // run the simulation
+    _loop.run();
 
 }

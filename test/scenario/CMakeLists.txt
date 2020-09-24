@@ -2,8 +2,10 @@
 find_package(GTest REQUIRED)
 find_package(Boost 1.45.0 COMPONENTS program_options filesystem regex)
 
-# Test executable
+# executable
 add_executable(ScenarioSteps features/step_definitions/GTestScenarioSteps)
+
+# link libraries
 target_link_libraries(ScenarioSteps PRIVATE
         SimulationFramework
         cucumber-cpp
