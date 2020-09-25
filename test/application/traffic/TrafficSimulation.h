@@ -31,6 +31,8 @@
 #include <simcore/timers/RealTimeTimer.h>
 #include <simcore/timers/TimeIsUp.h>
 #include <simcore/value/ValueExceed.h>
+#include "VehicleModel.h"
+
 
 class TrafficSimulation {
 
@@ -64,9 +66,15 @@ public:
      * @param endTime End time of the simulation
      * @param stepSize Time step size of the simulation
      * @param realTime Real-time flag
+     */
+    void create(double endTime, double stepSize, bool realTime = false);
+
+
+    /**
+     * Add stop conditions
      * @param stopValues Values to be checked for excess (then simulation is stopped)
      */
-    void create(double endTime, double stepSize, bool realTime = false, const PtrValPairVec &stopValues = {});
+    void stopExceed(const PtrValPairVec &stopValues = {});
 
 
     /**

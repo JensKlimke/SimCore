@@ -27,6 +27,19 @@
 
 #include <cmath>
 #include "Unit.h"
+#include "sim_functions.h"
+
+#ifndef EPS_SIM_TIME
+#define EPS_SIM_TIME 1e-9
+#endif
+
+#ifndef EPS_VELOCITY
+#define EPS_VELOCITY 1e-6
+#endif
+
+#ifndef ZERO_VELOCITY
+#define ZERO_VELOCITY 1e-3
+#endif
 
 #ifndef M_PI_4
 #define M_PI_4 0.78539816339
@@ -50,36 +63,149 @@ namespace sim::traffic {
 
         /** A struct to store the vehicle parameters */
         struct Parameters {
-            double wheelBase = 3.0;             //!< Wheel base (distance of axles, in *m*)
-            double dynWheelRadius = 0.6;        //!< Dynamic wheel radius (in *m*)
-            double maxSteerAngle = M_PI_4;      //!< Maximum absolute wheel steer angle (in *rad*)
-            double maxDrivePower = 4.13e5;      //!< Maximum drive power (in *W*)
-            double maxDriveTorque = 775.0;      //!< Maximum drive torque (in *Nm*)
-            double maxBrakeTorque = 1000.0;     //!< Maximum brake torque (in *Nm*)
-            double maxAcceleration = 9.81;      //!< Maximum absolute effective acceleration (in *m/s^2*)
-            double maxVelocity = 69.444;        //!< Maximum forward velocity (default: 250 kph, in *m/s*)
-            double maxReverseVelocity = 10.0;   //!< Maximum reverse velocity (in *m/s*)
-            double selfSteeringGradient = 0.08; //!< Self-steering gradient of the vehicle
+            double maxCurvature;            //!< Maximum possible curvature with full steering (max. steering angle / wheel base, in *1/m*)
+            double maxRelDrivePower;        //!< Maximum relative drive power (max. power / mass, in *W/kg*)
+            double maxRelDriveTorque;       //!< Maximum relative drive torque (max. torque * wheel radius / mass, in *Nm/kg* = *m/s^2*)
+            double maxRelBrakeTorque;       //!< Maximum relative brake torque (max. torque * wheel radius / mass in *Nm/kg* = *m/s^2*)
+            double externalRelForce;        //!< External longitudinal relative force (force / mass in *N/kg* = *m/s^2*)
+            double resistanceParameters[3]; //!< Resistance parameters to calculate the rel. resistance force f = a0 + a1 * v + a2 * v^2 (force / mass in *N/kg* = *m/s^2*)
+            double maxReverseVelocity;      //!< Maximum reverse velocity (in *m/s*)
         };
 
         /** A struct to store the vehicle state */
         struct State {
-            IndicatorState indicatorState = IndicatorState::OFF;     //!< The actual indicator state
-            ShifterPosition shifterPosition = ShifterPosition::PARK; //!< The actual shifter position
+            double distance;                                                   //!< The driven distance since the last reset
+            IndicatorState indicatorState = IndicatorState::OFF;        //!< The actual indicator state
+            ShifterPosition shifterPosition = ShifterPosition::PARK;    //!< The actual shifter position
+            double indicatorTimer = INFINITY;                           //!< The indicator time until switch off
+            double resistanceAcceleration = 0.0;                        //!< The acceleration by resistances
+            double externalAcceleration = 0.0;                          //!< The acceleration by external forces
+            double driveAcceleration = 0.0;                             //!< The acceleration by motors
+            double brakeAcceleration = 0.0;                             //!< The acceleration by braking
         };
+
+
+        /**
+         * Sets the shifter position
+         * @param shifterPosition Shifter position
+         */
+        void setShifter(ShifterPosition shifterPosition) {
+
+            using namespace std;
+
+            // avoid switching to P when rolling
+            if(shifterPosition == ShifterPosition::PARK && abs(Unit::state.velocity) > ZERO_VELOCITY)
+                return;
+
+            // avoid switching to R when moving forwards
+            if(shifterPosition == ShifterPosition::REVERSE && Unit::state.velocity > ZERO_VELOCITY)
+                return;
+
+            // avoid switching to D when moving backwards
+            if(shifterPosition == ShifterPosition::DRIVE && Unit::state.velocity < -ZERO_VELOCITY)
+                return;
+
+            // set shifter
+            state.shifterPosition = shifterPosition;
+
+        }
+
+
+        /**
+         * Switches the indicator on to the right
+         * @param timeInterval The timer interval, the indicator shall be switched on
+         */
+        void indicateRight(double timeInterval = INFINITY) {
+            state.indicatorState = IndicatorState::RIGHT;
+            state.indicatorTimer = timeInterval;
+        }
+
+
+        /**
+         * Switches the indicator on to the left
+         * @param timeInterval The timer interval, the indicator shall be switched on
+         */
+        void indicateLeft(double timeInterval = INFINITY) {
+            state.indicatorState = IndicatorState::LEFT;
+            state.indicatorTimer = timeInterval;
+        }
+
+
+        /**
+         * Switches the hazard indicator on
+         * @param timeInterval The timer interval, the indicator shall be switched on
+         */
+        void hazard(double timeInterval = INFINITY) {
+            state.indicatorState = IndicatorState::HAZARD;
+            state.indicatorTimer = timeInterval;
+        }
+
+
+        /**
+         * Switches the indicators off
+         */
+        void indicatorOff() {
+            state.indicatorState = IndicatorState::OFF;
+            state.indicatorTimer = INFINITY;
+        }
+
+
+        /**
+         * Resets the vehicle model
+         */
+        void reset() {
+
+            state.distance = 0.0;
+            state.indicatorTimer = INFINITY;
+
+        }
 
 
         void step(double dt) {
 
+            using namespace std;
+
+            // abort
+            if(dt == 0)
+                return;
+
             // get state
-            auto v = Unit::state.velocity;
+            auto s0 = state.distance;
+            auto v0 = Unit::state.velocity;
+            auto a0 = Unit::state.acceleration;
             auto dPsi = Unit::state.yawRate;
             auto psi = Unit::state.yawAngle;
             auto pos = Unit::state.position;
-            auto a = Unit::state.acceleration;
+
+            // calculate drive acceleration
+            auto aDrive  = range(input.drive, 0.0, 1.0) * min(parameters.maxRelDrivePower / v0, parameters.maxRelDriveTorque);
+            auto aBrake  = range(input.brake, 0.0, 1.0) * parameters.maxRelBrakeTorque;
+            auto aResist = parameters.resistanceParameters[0] + parameters.resistanceParameters[1] * v0 + parameters.resistanceParameters[2] * v0 * v0;
+            auto aExtern = parameters.externalRelForce;
+
+            // change sign dependent of moving direction
+            aDrive = state.shifterPosition == ShifterPosition::REVERSE ? -aDrive : aDrive;
+            aDrive = state.shifterPosition == ShifterPosition::NEUTRAL ? 0.0 : aDrive;
+            aBrake = v0 > 0 ? -aBrake : aBrake;
+            aResist = v0 > 0 ? -aResist : aResist;
 
             // calculate longitudinal motion
-            auto ds = 0.5 * a * dt * dt + v * dt;
+            auto a = aDrive + aBrake + aResist + aExtern;
+            auto m = (a - a0) / dt;
+
+            // calculate until intermediate time point
+            auto v = 0.5 * m * dt * dt + a0 * dt + v0;
+            auto ds = m * dt * dt * dt / 6.0 + 0.5 * a0 * dt * dt + v0 * dt;
+
+            // speed cannot cross zero
+            v = v > 0.0 && v0 < 0.0 || v < 0.0 && v0 > 0.0 ? 0.0 : v;
+
+            // avoid motion when park brake is engaged
+            if(state.shifterPosition == ShifterPosition::PARK) {
+                a  = 0.0;
+                v  = 0.0;
+                ds = 0.0;
+            }
 
             // calculate 2D motion
             auto dx = sin(psi) * v + cos(psi) * dPsi * ds;
@@ -91,50 +217,44 @@ namespace sim::traffic {
             psi += dPsi * dt;
 
             // steering model (linear bicycle model)
-            auto delta = range(input.steering, -1.0, 1.0) * parameters.maxSteerAngle;
-            dPsi = v * delta / parameters.wheelBase;
+            dPsi = v * range(input.steering, -1.0, 1.0) * parameters.maxCurvature;
 
-            // drive train model
-            double power = parameters.maxDrivePower * range(input.drive, 0.0, 1.0);
-            double torque = min(parameters.maxDriveTorque, power / v);
-            auto force = 0.0;
-            v += a * dt;
-
-            // update state
+            // update states
+            state.distance += ds;
             Unit::state.acceleration = a;
             Unit::state.velocity = v;
             Unit::state.yawRate = dPsi;
             Unit::state.yawAngle = psi;
             Unit::state.position = pos;
 
+            // indicator timer
+            _indicatorTimer(dt);
+
         }
 
 
     protected:
 
+        void _indicatorTimer(double dt) {
+
+            // indicator timer
+            if(!std::isinf(state.indicatorTimer)) {
+
+                // step down
+                state.indicatorTimer -= dt;
+
+                // switch off, when time interval has passed
+                if(state.indicatorTimer <= EPS_SIM_TIME)
+                    indicatorOff();
+
+            }
+
+        }
+
+
         Parameters parameters;
         ContinuousInput input;
         State state;
-
-
-        /**
-         * Limits the given value to a minumum and maximum value
-         * @param x Value to be limited
-         * @param xMin Minimum value
-         * @param xMax Maximum value
-         * @return The limited value
-         */
-        double range(double x, double xMin, double xMax) {
-            return min(max(x, xMin), xMax);
-        }
-
-		double min(double x, double y) {
-			return x > y ? y : x;
-		}
-
-		double max(double x, double y) {
-			return x >= y ? x : y;
-		}
 
     };
 

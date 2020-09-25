@@ -1,7 +1,7 @@
 # create executable
 add_executable(ApplicationTestingTest
         ApplicationTest.cpp
-        TrafficSimulation.cpp
+        traffic/TrafficSimulation.cpp
         )
 
 # add current folder for config files

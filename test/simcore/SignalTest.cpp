@@ -27,6 +27,7 @@
 #include <simcore/value/SignalCurve.h>
 #include <simcore/value/SignalTube.h>
 #include <simcore/value/ValueExceed.h>
+#include <simcore/value/StopIf.h>
 #include <simcore/value/ValueOutOfTube.h>
 #include <simcore/timers/BasicTimer.h>
 #include <simcore/timers/TimeIsUp.h>
@@ -44,6 +45,8 @@ protected:
 
     double x     = 0.0;
     double value = 0.0;
+    bool flag    = false;
+
 
     void SetUp() override {
 
@@ -67,6 +70,7 @@ private:
 
         x += 1.0;
         value = x * x;
+        flag = x >= 10.0;
 
     }
 
@@ -76,6 +80,7 @@ public:
     void _init(double initTime) override {
         value = 0.0;
         x = 0.0;
+        flag = false;
     }
 
     void _term(double simTime) override {
@@ -87,8 +92,8 @@ public:
 TEST_F(SignalTest, ValueExceed) {
 
     // check value to exceed
-    ValueExceed<double> ex;
-    ex.setValueAndLimit(&value, 25.1, ValueExceed<double>::Mode::OBJECTIVES_MISSED);
+    sim::value::ValueExceed<double> ex;
+    ex.setPointerAndLimit(&value, 25.1, sim::value::ValueExceed<double>::Mode::OBJECTIVES_MISSED);
 
     // add to sim
     sim.addComponent(&ex);
@@ -105,7 +110,7 @@ TEST_F(SignalTest, ValueExceed) {
 
 
     // change mode
-    ex.setValueAndLimit(&value, 25.1);
+    ex.setPointerAndLimit(&value, 25.1);
 
     // run sim again
     sim.run();
@@ -115,7 +120,7 @@ TEST_F(SignalTest, ValueExceed) {
 
 
     // change limit
-    ex.setValueAndLimit(&value, 100.1);
+    ex.setPointerAndLimit(&value, 100.1);
 
     // run sim again
     sim.run();
@@ -126,10 +131,42 @@ TEST_F(SignalTest, ValueExceed) {
 }
 
 
+TEST_F(SignalTest, StopIf) {
+
+    // check value to exceed
+    sim::value::StopIf ex;
+    ex.setPointer(&flag);
+
+    // add to sim
+    sim.addComponent(&ex);
+    sim.addStopCondition(&ex);
+
+    // add value limiter
+    sim.addComponent(this);
+
+    // run sim
+    sim.run();
+    EXPECT_EQ(ex.getCode(), ::sim::IStopCondition::StopCode::SIM_ENDED);
+    EXPECT_DOUBLE_EQ(10.0, timer.time());
+    EXPECT_TRUE(flag);
+
+
+    // change mode
+    ex.setStopMode(::sim::IStopCondition::StopCode::OBJECTIVES_REACHED);
+
+    // run sim again
+    sim.run();
+    EXPECT_EQ(ex.getCode(), ::sim::IStopCondition::StopCode::OBJECTIVES_REACHED);
+    EXPECT_EQ(10.0, timer.time());
+    EXPECT_TRUE(flag);
+
+}
+
+
 TEST_F(SignalTest, OutOfTube) {
 
     // check value to exceed
-    ValueOutOfTube tube;
+    sim::value::ValueOutOfTube tube;
     tube.defineLower({0.0, 10.0}, {-0.1, -0.1});
     tube.defineUpper({0.0, 10.0}, { 1.1,  1.1});
 

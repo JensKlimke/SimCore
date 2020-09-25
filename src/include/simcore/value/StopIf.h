@@ -1,4 +1,5 @@
-// Copyright (c) 2020 Jens Klimke (jens.klimke@rwth-aachen.de). All rights reserved.
+//
+// Copyright (c) 2019-2020 Jens Klimke <jens.klimke@rwth-aachen.de>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,50 +19,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke on 2020-09-10.
+// Created by Jens Klimke on 2020-09-25
 //
 
+#ifndef SIMCORE_STOP_IF_H
+#define SIMCORE_STOP_IF_H
 
-#ifndef SIMCORE_SAMPLE_APPLICATION_H
-#define SIMCORE_SAMPLE_APPLICATION_H
+#include "ValueExceed.h"
 
-#include <simcore/Model.h>
-#include <vector>
+namespace sim::value {
 
-class SampleApplication : public sim::Model {
 
-public:
+    class StopIf : public ValueExceed<bool> {
 
-    double initTime = 0.0;
-    double termTime = 0.0;
-    double actualTime = 0.0;
-    std::vector<std::pair<double, double>> timeSteps{};
+    public:
 
-    std::string option_name{};
-    double option_value{};
+        /**
+         * The the pointer to the value to be checked to be true
+         * @param ptr Pointer to be checked
+         */
+        void setPointer(const bool *ptr) {
 
-    void setup(const std::string &name, double value) {
+            // set value, mode and limit to false
+            setPointerAndLimit(ptr, false);
 
-        option_name = name;
-        option_value = value;
+        }
 
-    }
+    };
 
-protected:
+}
 
-    void initialize(double t) override {
-        initTime = t;
-    }
-
-    void step(double t, double dt) override {
-        timeSteps.emplace_back(t, dt);
-        actualTime = t;
-    }
-
-    void terminate(double t) override {
-        termTime = t;
-    }
-
-};
-
-#endif // SIMCORE_SAMPLE_APPLICATION_H
+#endif //SIMCORE_STOP_IF_H

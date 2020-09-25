@@ -35,22 +35,45 @@ namespace sim::value {
 
         IStopCondition::StopCode _mode = IStopCondition::StopCode::SIM_ENDED;
 
-        const T *_value = nullptr;
+        const T *_pointer = nullptr;
         T _limit{};
 
     public:
 
         typedef IStopCondition::StopCode Mode;
 
-        void setValueAndLimit(const T *value, const T &limit, Mode mode = Mode::SIM_ENDED) {
+        /**
+         * Sets the pointer to the value to be checked, the limit of this value and optionally the stop mode
+         * @param ptr The pointer to the value
+         * @param limit The limit of the value
+         * @param mode The mode to be set when limit is reached
+         */
+        void setPointerAndLimit(const T *ptr, const T &limit, Mode mode = Mode::SIM_ENDED) {
 
-            _value = value;
+            _pointer = ptr;
             _limit = limit;
+
+            // set mode
+            setStopMode(mode);
+
+        }
+
+
+        /**
+         * Sets the stop mode, to be set, when limit is reached
+         * @param mode Stop mode
+         */
+        void setStopMode(Mode mode) {
+
             _mode = mode;
 
         }
 
 
+        /**
+         * Initialize: Resets the stop code
+         * @param initTime Initialization time
+         */
         void _init(double initTime) override {
 
             reset();
@@ -58,18 +81,24 @@ namespace sim::value {
         }
 
 
+        /**
+         * Execution: Checks the value against the limit
+         * @param simTime Simulation time
+         */
         void _exec(double simTime) override {
 
             // the limit has been reached
-            if (*_value > _limit)
+            if (*_pointer > _limit)
                 stop(_mode);
 
         }
 
 
-        void _term(double simTime) override {
-
-        }
+        /**
+         * Termination: does nothing
+         * @param termTime Termination time
+         */
+        void _term(double termTime) override {}
 
     };
 

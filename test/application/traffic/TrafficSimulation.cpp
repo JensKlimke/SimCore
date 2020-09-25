@@ -24,8 +24,7 @@ TrafficSimulation::TrafficSimulation() = default;
 
 TrafficSimulation::~TrafficSimulation() = default;
 
-void TrafficSimulation::create(double endTime, double stepSize, bool realTime,
-                               const std::vector<std::pair<double*, double>> &stopValues) {
+void TrafficSimulation::create(double endTime, double stepSize, bool realTime) {
 
     // create timer
     sim::BasicTimer *timer = realTime ? new sim::RealTimeTimer : new sim::BasicTimer;
@@ -46,22 +45,6 @@ void TrafficSimulation::create(double endTime, double stepSize, bool realTime,
     // add to list
     _components.emplace_back(stopTimer);
 
-    // stop condition (distance) TODO: test
-    for(auto e : stopValues) {
-
-        // create stop condition
-        auto b = new sim::value::ValueExceed<double>();
-        b->setValueAndLimit(e.first, e.second);
-
-        // add stop condition
-        _loop.addComponent(b);
-        _loop.addStopCondition(b);
-
-        // add to component list
-        _components.emplace_back(b);
-
-    }
-
     // only when real time, set time reporter
     if(realTime) {
 
@@ -77,6 +60,27 @@ void TrafficSimulation::create(double endTime, double stepSize, bool realTime,
 
     }
 
+
+}
+
+
+void TrafficSimulation::stopExceed(const PtrValPairVec &stopValues) {
+
+    // stop conditions
+    for(auto e : stopValues) {
+
+        // create stop condition
+        auto b = new sim::value::ValueExceed<double>();
+        b->setPointerAndLimit(e.first, e.second);
+
+        // add stop condition
+        _loop.addComponent(b);
+        _loop.addStopCondition(b);
+
+        // add to component list
+        _components.emplace_back(b);
+
+    }
 
 }
 

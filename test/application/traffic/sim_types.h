@@ -25,7 +25,7 @@
 #ifndef SIMCORE_SIM_TYPES_H
 #define SIMCORE_SIM_TYPES_H
 
-namespace sim::traffic {
+namespace sim {
 
     typedef unsigned int id_type; //!< ID type definition for simulation objects
 

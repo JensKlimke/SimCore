@@ -157,7 +157,7 @@ TEST_F(SynchronizedTimerTest, SyncTestRT) {
 
     // create timer
     SynchronizedTimer timer;
-    timer.setAcceleration(10.0);
+    timer.setAcceleration(100.0);
     timer.setTimeStepSize(0.1);
 
     // end of loop
@@ -190,7 +190,7 @@ TEST_F(SynchronizedTimerTest, SyncTestRT) {
 
     // check
     EXPECT_NEAR(10.0, finalTime, 1e-2);
-    EXPECT_NEAR(1.0, runTime, 1e-2);
+    EXPECT_NEAR(0.1, runTime, 1e-2);
 
     // stop
     stopSync = true;

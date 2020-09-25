@@ -30,9 +30,7 @@ class ApplicationTest : public ::testing::Test, protected TrafficSimulation {
 
 public:
 
-    void SetUp() override {
-
-    }
+    void SetUp() override {}
 
 
     void TearDown() override {}
@@ -44,12 +42,15 @@ public:
 TEST_F(ApplicationTest, Create) {
 
     // create simulation
-    create(10.0, 0.01);
+    create(20.0, 0.01);
 
     // create sample application
     SampleApplication model{};
     model.setTimeStepSize(0.1);
     addExternalComponent(&model);
+
+    // create stop condition
+    stopExceed({{&model.actualTime, 9.9999}});
 
     // run the simulation
     run();

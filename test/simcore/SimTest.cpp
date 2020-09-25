@@ -217,7 +217,7 @@ TEST_F(SimTest, RealTimeSimulation) {
     TimeIsUp stop;
 
     // set timer parameters
-    timer.setAcceleration(10.0);
+    timer.setAcceleration(100.0);
     timer.setTimeStepSize(0.01);
     timer.setStartTime(1.0);
 

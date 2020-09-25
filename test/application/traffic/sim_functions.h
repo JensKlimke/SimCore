@@ -18,50 +18,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke on 2020-09-10.
+// Created by Jens Klimke on $YEAR-$MONTH-25.
 //
 
 
-#ifndef SIMCORE_SAMPLE_APPLICATION_H
-#define SIMCORE_SAMPLE_APPLICATION_H
+#ifndef SIMCORE_SIM_FUNCTIONS_H
+#define SIMCORE_SIM_FUNCTIONS_H
 
-#include <simcore/Model.h>
-#include <vector>
+#include "sim_types.h"
 
-class SampleApplication : public sim::Model {
+namespace sim {
 
-public:
 
-    double initTime = 0.0;
-    double termTime = 0.0;
-    double actualTime = 0.0;
-    std::vector<std::pair<double, double>> timeSteps{};
-
-    std::string option_name{};
-    double option_value{};
-
-    void setup(const std::string &name, double value) {
-
-        option_name = name;
-        option_value = value;
-
+    template<typename T>
+    inline T range(T value, T min, T max) {
+        return max(min(value, max), min);
     }
 
-protected:
 
-    void initialize(double t) override {
-        initTime = t;
-    }
+}
 
-    void step(double t, double dt) override {
-        timeSteps.emplace_back(t, dt);
-        actualTime = t;
-    }
-
-    void terminate(double t) override {
-        termTime = t;
-    }
-
-};
-
-#endif // SIMCORE_SAMPLE_APPLICATION_H
+#endif //SIMCORE_SIM_FUNCTIONS_H
