@@ -198,7 +198,7 @@ namespace sim::traffic {
             auto ds = m * dt * dt * dt / 6.0 + 0.5 * a0 * dt * dt + v0 * dt;
 
             // speed cannot cross zero
-            v = v > 0.0 && v0 < 0.0 || v < 0.0 && v0 > 0.0 ? 0.0 : v;
+            v = (v > 0.0 && v0 < 0.0) || (v < 0.0 && v0 > 0.0 ? 0.0 : v);
 
             // avoid motion when park brake is engaged
             if(state.shifterPosition == ShifterPosition::PARK) {

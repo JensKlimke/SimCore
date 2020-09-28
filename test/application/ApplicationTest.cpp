@@ -22,7 +22,7 @@
 //
 
 #include <gtest/gtest.h>
-#include "TrafficSimulation.h"
+#include "traffic/TrafficSimulation.h"
 #include "SampleApplication.h"
 
 

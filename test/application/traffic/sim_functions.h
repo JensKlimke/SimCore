@@ -32,7 +32,7 @@ namespace sim {
 
     template<typename T>
     inline T range(T value, T min, T max) {
-        return max(min(value, max), min);
+        return std::max(std::min(value, max), min);
     }
 
 
