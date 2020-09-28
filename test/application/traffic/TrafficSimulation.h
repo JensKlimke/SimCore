@@ -31,7 +31,7 @@
 #include <simcore/timers/RealTimeTimer.h>
 #include <simcore/timers/TimeIsUp.h>
 #include <simcore/value/ValueExceed.h>
-#include "VehicleModel.h"
+#include <simcore/traffic/VehicleModel.h>
 
 
 class TrafficSimulation {

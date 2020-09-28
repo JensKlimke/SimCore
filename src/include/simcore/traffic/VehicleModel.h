@@ -27,7 +27,7 @@
 
 #include <cmath>
 #include "Unit.h"
-#include "sim_functions.h"
+#include "../sim_functions.h"
 
 #ifndef EPS_SIM_TIME
 #define EPS_SIM_TIME 1e-9
@@ -65,23 +65,19 @@ namespace sim::traffic {
         struct Parameters {
             double maxCurvature;            //!< Maximum possible curvature with full steering (max. steering angle / wheel base, in *1/m*)
             double maxRelDrivePower;        //!< Maximum relative drive power (max. power / mass, in *W/kg*)
+            double maxRelReverseDrivePower; //!< Maximum relative drive power when reversing (max. power / mass, in *W/kg*)
             double maxRelDriveTorque;       //!< Maximum relative drive torque (max. torque * wheel radius / mass, in *Nm/kg* = *m/s^2*)
             double maxRelBrakeTorque;       //!< Maximum relative brake torque (max. torque * wheel radius / mass in *Nm/kg* = *m/s^2*)
             double externalRelForce;        //!< External longitudinal relative force (force / mass in *N/kg* = *m/s^2*)
             double resistanceParameters[3]; //!< Resistance parameters to calculate the rel. resistance force f = a0 + a1 * v + a2 * v^2 (force / mass in *N/kg* = *m/s^2*)
-            double maxReverseVelocity;      //!< Maximum reverse velocity (in *m/s*)
         };
 
         /** A struct to store the vehicle state */
         struct State {
-            double distance;                                                   //!< The driven distance since the last reset
+            double distance;                                            //!< The driven distance since the last reset
             IndicatorState indicatorState = IndicatorState::OFF;        //!< The actual indicator state
             ShifterPosition shifterPosition = ShifterPosition::PARK;    //!< The actual shifter position
             double indicatorTimer = INFINITY;                           //!< The indicator time until switch off
-            double resistanceAcceleration = 0.0;                        //!< The acceleration by resistances
-            double externalAcceleration = 0.0;                          //!< The acceleration by external forces
-            double driveAcceleration = 0.0;                             //!< The acceleration by motors
-            double brakeAcceleration = 0.0;                             //!< The acceleration by braking
         };
 
 
@@ -92,6 +88,14 @@ namespace sim::traffic {
         void setShifter(ShifterPosition shifterPosition) {
 
             using namespace std;
+
+            // when reset flag is active allow everything
+            if(_reset) {
+
+                state.shifterPosition = shifterPosition;
+                return;
+
+            }
 
             // avoid switching to P when rolling
             if(shifterPosition == ShifterPosition::PARK && abs(Unit::state.velocity) > ZERO_VELOCITY)
@@ -133,11 +137,10 @@ namespace sim::traffic {
 
         /**
          * Switches the hazard indicator on
-         * @param timeInterval The timer interval, the indicator shall be switched on
          */
-        void hazard(double timeInterval = INFINITY) {
+        void hazard() {
             state.indicatorState = IndicatorState::HAZARD;
-            state.indicatorTimer = timeInterval;
+            state.indicatorTimer = INFINITY;
         }
 
 
@@ -158,6 +161,8 @@ namespace sim::traffic {
             state.distance = 0.0;
             state.indicatorTimer = INFINITY;
 
+            _reset = true;
+
         }
 
 
@@ -165,40 +170,40 @@ namespace sim::traffic {
 
             using namespace std;
 
-            // abort
-            if(dt == 0)
-                return;
+            // undo reset
+            _reset = false;
 
             // get state
-            auto s0 = state.distance;
             auto v0 = Unit::state.velocity;
             auto a0 = Unit::state.acceleration;
-            auto dPsi = Unit::state.yawRate;
             auto psi = Unit::state.yawAngle;
             auto pos = Unit::state.position;
 
+            // drive parameters
+            auto power   = state.shifterPosition == ShifterPosition::REVERSE ? parameters.maxRelReverseDrivePower : parameters.maxRelDrivePower;
+            auto torque  = parameters.maxRelDriveTorque;
+
+            // inputs
+            auto drive = state.shifterPosition == ShifterPosition::NEUTRAL ? 0.0 : range(input.drive, 0.0, 1.0);
+            auto brake = range(input.brake, 0.0, 1.0);
+
             // calculate drive acceleration
-            auto aDrive  = range(input.drive, 0.0, 1.0) * min(parameters.maxRelDrivePower / v0, parameters.maxRelDriveTorque);
-            auto aBrake  = range(input.brake, 0.0, 1.0) * parameters.maxRelBrakeTorque;
+            auto aDrive  = drive * range(power / abs(v0), -torque, torque);
+            auto aBrake  = brake * parameters.maxRelBrakeTorque;
             auto aResist = parameters.resistanceParameters[0] + parameters.resistanceParameters[1] * v0 + parameters.resistanceParameters[2] * v0 * v0;
             auto aExtern = parameters.externalRelForce;
 
-            // change sign dependent of moving direction
-            aDrive = state.shifterPosition == ShifterPosition::REVERSE ? -aDrive : aDrive;
-            aDrive = state.shifterPosition == ShifterPosition::NEUTRAL ? 0.0 : aDrive;
-            aBrake = v0 > 0 ? -aBrake : aBrake;
-            aResist = v0 > 0 ? -aResist : aResist;
-
             // calculate longitudinal motion
             auto a = aDrive + aBrake + aResist + aExtern;
-            auto m = (a - a0) / dt;
+            auto m = std::abs(dt) < EPS_SIM_TIME ? 0.0 : (a - a0) / dt;
 
             // calculate until intermediate time point
             auto v = 0.5 * m * dt * dt + a0 * dt + v0;
             auto ds = m * dt * dt * dt / 6.0 + 0.5 * a0 * dt * dt + v0 * dt;
 
             // speed cannot cross zero
-            v = (v > 0.0 && v0 < 0.0) || (v < 0.0 && v0 > 0.0 ? 0.0 : v);
+            if((v > 0.0 && v0 < 0.0) || (v < 0.0 && v0 > 0.0))
+                v = 0.0;
 
             // avoid motion when park brake is engaged
             if(state.shifterPosition == ShifterPosition::PARK) {
@@ -207,17 +212,17 @@ namespace sim::traffic {
                 ds = 0.0;
             }
 
+            // steering model (linear bicycle model)
+            auto dPsi = v * range(input.steering, -1.0, 1.0) * parameters.maxCurvature;
+
             // calculate 2D motion
-            auto dx = sin(psi) * v + cos(psi) * dPsi * ds;
-            auto dy = cos(psi) * v - sin(psi) * dPsi * ds;
+            auto dx = cos(psi) * v - sin(psi) * dPsi * ds;
+            auto dy = sin(psi) * v + cos(psi) * dPsi * ds;
 
             // update position and yaw angle
             pos.x += dx * dt;
             pos.y += dy * dt;
             psi += dPsi * dt;
-
-            // steering model (linear bicycle model)
-            dPsi = v * range(input.steering, -1.0, 1.0) * parameters.maxCurvature;
 
             // update states
             state.distance += ds;
@@ -240,12 +245,12 @@ namespace sim::traffic {
             // indicator timer
             if(!std::isinf(state.indicatorTimer)) {
 
-                // step down
-                state.indicatorTimer -= dt;
-
                 // switch off, when time interval has passed
                 if(state.indicatorTimer <= EPS_SIM_TIME)
                     indicatorOff();
+
+                // step down
+                state.indicatorTimer -= dt;
 
             }
 
@@ -255,6 +260,8 @@ namespace sim::traffic {
         Parameters parameters;
         ContinuousInput input;
         State state;
+
+        bool _reset;
 
     };
 

@@ -18,24 +18,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke on $YEAR-$MONTH-25.
+// Created by Jens Klimke on 2020-08-04
 //
 
 
-#ifndef SIMCORE_SIM_FUNCTIONS_H
-#define SIMCORE_SIM_FUNCTIONS_H
-
-#include "sim_types.h"
+#ifndef SIMCORE_SIM_TYPES_H
+#define SIMCORE_SIM_TYPES_H
 
 namespace sim {
 
+    typedef std::string id_type; //!< ID type definition for simulation objects
 
-    template<typename T>
-    inline T range(T value, T min, T max) {
-        return std::max(std::min(value, max), min);
-    }
-
+    /** A class to store a three dimensional value. */
+    struct Vector3 {
+        double x; // The x element (in *m*)
+        double y; // The y element (in *m*)
+        double z; // The z element (in *m*)
+    };
 
 }
 
-#endif //SIMCORE_SIM_FUNCTIONS_H
+#endif //SIMCORE_SIM_TYPES_H

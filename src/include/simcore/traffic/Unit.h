@@ -26,7 +26,8 @@
 #define SIMCORE_UNIT_H
 
 #include <map>
-#include "sim_types.h"
+#include <utility>
+#include "../sim_types.h"
 
 namespace sim::traffic {
 
@@ -57,7 +58,7 @@ namespace sim::traffic {
          * Construct unit with given ID
          * @param id ID to be set
          */
-        explicit Unit(id_type id) : _id(id) {}
+        explicit Unit(id_type id) : _id(std::move(id)) {}
 
 
         /**
@@ -74,50 +75,10 @@ namespace sim::traffic {
         virtual ~Unit() = default;
 
 
-        /**
-         * Returns the ID of the unit
-         * @return ID of the unit
-         */
-        id_type getID() const {
-            return _id;
-        }
-
-
-        /**
-         * Returns the parameters of the unit
-         * @return Parameters of the unit
-         */
-        const Parameters &getParameters() const {
-            return parameters;
-        }
-
-        /**
-         * Returns a reference to the parameters of the unit
-         * @return Parameters of the unit
-         */
-        Parameters &getParameters() {
-            return parameters;
-        }
-
-        /**
-         * Returns the state of the unit
-         * @return State of the unit
-         */
-        const State &getState() const {
-            return state;
-        }
-
-        /**
-         * Returns a reference to the state of the unit
-         * @return State of the unit
-         */
-        State &getState() {
-            return state;
-        }
 
     protected:
 
-        id_type _id = 0;
+        id_type _id{};
 
         Parameters parameters{};
         State state{};

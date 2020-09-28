@@ -185,7 +185,7 @@ public:
      */
     bool hit(double x, double y, double eps = EPS_DISTANCE) const {
 
-        return fabs(interpolate(x) - y) < eps;
+        return abs(interpolate(x) - y) < eps;
 
     }
 

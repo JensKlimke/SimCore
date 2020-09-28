@@ -24,30 +24,61 @@
 #include <gtest/gtest.h>
 #include <simcore/traffic/Unit.h>
 
+class TrafficUnit : protected sim::traffic::Unit {
 
-TEST(UnitTest, CreateUnit) {
+public:
+
+    TrafficUnit() = default;
+
+    explicit TrafficUnit(sim::id_type &&id) : Unit(id) {}
+
+    [[nodiscard]] const sim::id_type &getID() const {
+        return this->_id;
+    }
+
+    [[nodiscard]] const sim::traffic::Unit::Parameters &getParameters() const {
+        return this->parameters;
+    }
+
+    [[nodiscard]] const sim::traffic::Unit::State &getState() const {
+        return this->state;
+    }
+
+    [[nodiscard]] sim::traffic::Unit::Parameters &getParameters() {
+        return this->parameters;
+    }
+
+    [[nodiscard]] sim::traffic::Unit::State &getState() {
+        return this->state;
+    }
+
+
+};
+
+
+TEST(TrafficUnitTest, CreateUnit) {
 
     using namespace sim::traffic;
 
-    Unit unit1;
-    Unit unit2;
-    Unit unit3(3);
+    TrafficUnit unit1;
+    TrafficUnit unit2;
+    TrafficUnit unit3("3");
 
-    EXPECT_EQ(0, unit1.getID());
-    EXPECT_EQ(0, unit2.getID());
-    EXPECT_EQ(3, unit3.getID());
+    EXPECT_EQ("", unit1.getID());
+    EXPECT_EQ("", unit2.getID());
+    EXPECT_EQ("3", unit3.getID());
 
 }
 
-TEST(UnitTest, SetData) {
+TEST(TrafficUnitTest, SetData) {
 
     using namespace sim::traffic;
 
     // create unit
-    Unit unit(1);
+    TrafficUnit unit;
 
     // get a const pointer
-    const Unit* ptr = &unit;
+    const TrafficUnit* ptr = &unit;
 
     // check default parameters
     EXPECT_DOUBLE_EQ(5.0, ptr->getParameters().size.x);
