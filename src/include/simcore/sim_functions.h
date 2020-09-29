@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke on $YEAR-$MONTH-25.
+// Created by Jens Klimke on 2020-09-25.
 //
 
 

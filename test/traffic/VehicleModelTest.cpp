@@ -83,13 +83,12 @@ protected:
         reset();
 
         // set initial state
-        this->Unit::state.position.x = 0.0;
-        this->Unit::state.position.y = 0.0;
-        this->Unit::state.position.z = 0.0;
-        this->Unit::state.velocity = 0.0;
-        this->Unit::state.acceleration = 0.0;
-        this->Unit::state.yawAngle = 0.0;
-        this->Unit::state.yawAngle = 0.0;
+        this->state.xPosition = 0.0;
+        this->state.yPosition = 0.0;
+        this->state.velocity = 0.0;
+        this->state.acceleration = 0.0;
+        this->state.yawAngle = 0.0;
+        this->state.yawAngle = 0.0;
 
         // reset inputs
         this->input.drive = 0.0;
@@ -120,9 +119,10 @@ protected:
         this->resetParameters();
 
         // set parameters
-        this->parameters.maxRelDrivePower  = 258.0;
-        this->parameters.maxRelDriveTorque =  10.0;
-        this->parameters.maxRelBrakeTorque =  10.0;
+        this->parameters.maxRelReverseDrivePower =  25.8;
+        this->parameters.maxRelDrivePower        = 258.0;
+        this->parameters.maxRelDriveTorque       =  10.0;
+        this->parameters.maxRelBrakeTorque       =  10.0;
 
     }
 
@@ -163,25 +163,26 @@ TEST_F(VehicleModelTest, MotionConstant) {
     checkStep = [this]() {
 
         // check state
-        EXPECT_NEAR(10.0, this->Unit::state.velocity, 1e-3);
+        EXPECT_NEAR(10.0, this->state.velocity, 1e-3);
         EXPECT_NEAR(10.0 * time, this->state.distance, 1e-3);
 
     };
 
     // set dynamic state
-    this->Unit::state.position.x = 100.0;
-    this->Unit::state.position.y = 200.0;
-    this->Unit::state.position.z = 300.0;
-    this->Unit::state.yawAngle = M_PI / 8;
-    this->Unit::state.velocity = 10.0;
+    this->state.xPosition = 100.0;
+    this->state.yPosition = 200.0;
+    this->state.yawAngle = M_PI / 8;
+    this->state.velocity = 10.0;
 
     // run
     this->run(10.0);
 
     // check position
-    EXPECT_NEAR(192.387953251, this->Unit::state.position.x, 1e-9);
-    EXPECT_NEAR(238.268343236, this->Unit::state.position.y, 1e-9);
-    EXPECT_DOUBLE_EQ(300.0, this->Unit::state.position.z);
+    EXPECT_NEAR(192.387953251, this->state.xPosition, 1e-9);
+    EXPECT_NEAR(238.268343236, this->state.yPosition, 1e-9);
+
+    // check yaw rate
+    EXPECT_NEAR(0.0, this->state.yawRate, 1e-9);
 
 }
 
@@ -198,15 +199,15 @@ TEST_F(VehicleModelTest, MotionAccelerated) {
         double v = 10.0 + 0.1 * time;
 
         // check
-        EXPECT_NEAR(0.1, this->Unit::state.acceleration, 1e-6);
-        EXPECT_NEAR(v, this->Unit::state.velocity, 1e-6);
+        EXPECT_NEAR(0.1, this->state.acceleration, 1e-6);
+        EXPECT_NEAR(v, this->state.velocity, 1e-6);
         EXPECT_NEAR(s, this->state.distance, 1e-3);
 
     };
 
     // set external force and init state
     resetFull();
-    this->Unit::state.velocity = 10.0;
+    this->state.velocity = 10.0;
     this->parameters.externalRelForce = 0.1;
 
     // run
@@ -227,31 +228,38 @@ TEST_F(VehicleModelTest, Resistances) {
     this->parameters.resistanceParameters[2] = 0.0;
 
     // set dynamic state
-    this->Unit::state.velocity = 10.0;
+    this->state.velocity = 9.999999;
 
     // set checker
     checkStep = [this]() {
 
         // check until 10 s
-        if(time >= 10.0 + EPS_SIM_TIME)
+        if(time >= 10.0 + EPS_SIM_TIME) {
+
+            EXPECT_NEAR( 0.0, this->state.acceleration, 1e-9);
+            EXPECT_NEAR( 0.0, this->state.velocity, 1e-6);
+            EXPECT_NEAR(50.0, this->state.distance, 1e-3);
+
             return;
+
+        }
 
         // calculate s and v
         double s = -0.5 * time * time + 10.0 * time;
         double v = 10.0 - time;
 
         // check
-        EXPECT_NEAR(-1.0, this->Unit::state.acceleration, 1e-6);
-        EXPECT_NEAR(v, this->Unit::state.velocity, 1e-6);
+        EXPECT_NEAR(-1.0, this->state.acceleration, 1e-9);
+        EXPECT_NEAR(v, this->state.velocity, 1e-6);
         EXPECT_NEAR(s, this->state.distance, 1e-3);
 
     };
 
     // run, one more step than 10 s
-    this->run(10.01);
+    this->run(11.0);
 
     // check
-    EXPECT_EQ(0.0, this->Unit::state.velocity);
+    EXPECT_NEAR(0.0, this->state.velocity, EPS_VELOCITY);
     EXPECT_NEAR(50.0, this->state.distance, 1e-3);
 
 }
@@ -269,31 +277,38 @@ TEST_F(VehicleModelTest, ResistancesBackwards) {
     this->parameters.resistanceParameters[2] = 0.0;
 
     // set dynamic state
-    this->Unit::state.velocity = -10.0;
+    this->state.velocity = -9.999999;
 
     // set checker
     checkStep = [this]() {
 
         // check until 10 s
-        if(time >= 10.0 + EPS_SIM_TIME)
+        if(time >= 10.0 + EPS_SIM_TIME) {
+
+            EXPECT_NEAR(  0.0, this->state.acceleration, 1e-9);
+            EXPECT_NEAR(  0.0, this->state.velocity, 1e-6);
+            EXPECT_NEAR(-50.0, this->state.distance, 1e-3);
+
             return;
+
+        }
 
         // calculate s and v
         double s = -0.5 * time * time + 10.0 * time;
         double v = 10.0 - time;
 
         // check
-        EXPECT_NEAR(1.0, this->Unit::state.acceleration, 1e-6);
-        EXPECT_NEAR(-v, this->Unit::state.velocity, 1e-6);
+        EXPECT_NEAR(1.0, this->state.acceleration, 1e-9);
+        EXPECT_NEAR(-v, this->state.velocity, 1e-6);
         EXPECT_NEAR(-s, this->state.distance, 1e-3);
 
     };
 
     // run, one more step than 10 s
-    this->run(10.01);
+    this->run(11.0);
 
     // check
-    EXPECT_EQ(0.0, this->Unit::state.velocity);
+    EXPECT_EQ(0.0, this->state.velocity);
     EXPECT_NEAR(-50.0, this->state.distance, 1e-3);
 
 }
@@ -312,8 +327,8 @@ TEST_F(VehicleModelTest, StartFromStandstill) {
     this->run(1000.0);
 
     // check
-    EXPECT_NEAR( 0.0, this->Unit::state.acceleration, 1e-6);
-    EXPECT_NEAR(60.0, this->Unit::state.velocity, 1e-3);
+    EXPECT_NEAR( 0.0, this->state.acceleration, 1e-6);
+    EXPECT_NEAR(60.0, this->state.velocity, 1e-3);
 
 
     // run with 10% drive power
@@ -322,8 +337,8 @@ TEST_F(VehicleModelTest, StartFromStandstill) {
     this->run(1000.0);
 
     // check
-    EXPECT_NEAR( 0.0,   this->Unit::state.acceleration, 1e-6);
-    EXPECT_NEAR(25.413, this->Unit::state.velocity, 1e-3);
+    EXPECT_NEAR( 0.0,   this->state.acceleration, 1e-6);
+    EXPECT_NEAR(25.413, this->state.velocity, 1e-3);
 
 
     // run with 0% drive power
@@ -332,37 +347,8 @@ TEST_F(VehicleModelTest, StartFromStandstill) {
     this->run(1000.0);
 
     // check
-    EXPECT_NEAR(0.0, this->Unit::state.acceleration, 1e-6);
-    EXPECT_NEAR(0.0, this->Unit::state.velocity, 1e-3);
-
-}
-
-
-TEST_F(VehicleModelTest, SlowDownToStop) {
-
-    // set resistance
-    this->parameters.resistanceParameters[0] = 1.0;   // general resistance
-    this->parameters.resistanceParameters[1] = 0.01;  // rolling resistance
-    this->parameters.resistanceParameters[2] = 0.001; // air drag
-
-    // reset
-    resetFull();
-
-    // set initial conditions
-    this->Unit::state.velocity = 5.0;
-    this->input.drive = 0.01;
-
-    // checker
-    checkStep = [this]() {
-        std::cout << this->Unit::state.velocity << std::endl;
-    };
-
-    // run
-    this->run(10.0);
-
-    // check
-    EXPECT_NEAR(0.0, this->Unit::state.acceleration, 1e-6);
-    EXPECT_NEAR(0.0, this->Unit::state.velocity, 1e-3);
+    EXPECT_NEAR(0.0, this->state.acceleration, 1e-6);
+    EXPECT_NEAR(0.0, this->state.velocity, 1e-3);
 
 }
 
@@ -473,6 +459,34 @@ TEST_F(VehicleModelTest, Shifter) {
     // switch to park
     setShifter(ShifterPosition::PARK);
     EXPECT_EQ(ShifterPosition::PARK, this->state.shifterPosition);
+
+}
+
+
+TEST_F(VehicleModelTest, ShiftingProcess) {
+
+    // reset
+    resetFull();
+
+    // set to park
+    this->setShifter(ShifterPosition::PARK);
+
+    // set step
+    setStep = [this]() {
+
+    };
+
+    // check checker
+    checkStep = [this]() {
+
+    };
+
+    // run, one more step than 10 s
+    this->run(11.0);
+
+    // check
+    EXPECT_EQ(0.0, this->state.velocity);
+    EXPECT_NEAR(-50.0, this->state.distance, 1e-3);
 
 }
 

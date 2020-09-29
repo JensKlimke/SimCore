@@ -25,6 +25,9 @@
 #ifndef SIMCORE_SIGNAL_H
 #define SIMCORE_SIGNAL_H
 
+#include <string>
+#include <functional>
+
 #define UPDATE(N) {     \
     auto old = _value;  \
     N;                  \
