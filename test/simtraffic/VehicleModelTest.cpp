@@ -27,15 +27,15 @@
 
 #include <functional>
 #include <gtest/gtest.h>
-#include <virtual_vehicle/VehicleModel.h>
+#include <simtraffic/VehicleModel.h>
 
-class VehicleModelTest : public testing::Test, protected virtual_vehicle::VehicleModel {
+class VehicleModelTest : public testing::Test, protected sim::traffic::VehicleModel {
 
 protected:
 
-    double preTime;
-    double time;
-    double counter;
+    double preTime{};
+    double time{};
+    double counter{};
     double dt = 0.01;
 
     std::function<void()> init{};
@@ -70,6 +70,8 @@ protected:
             // update time
             preTime = time;
             time += dt;
+
+            // increment counter
             counter++;
 
         }
@@ -88,7 +90,7 @@ protected:
         state.velocity = 0.0;
         state.acceleration = 0.0;
         state.yawAngle = 0.0;
-        state.yawAngle = 0.0;
+        state.yawRate = 0.0;
 
         // reset inputs
         input.drive = 0.0;
@@ -140,7 +142,7 @@ protected:
 };
 
 
-TEST_F(VehicleModelTest, Process) {
+TEST_F(VehicleModelTest, SimProcess) {
 
     checkStep = [this]() {
          EXPECT_FALSE(_reset);
@@ -157,7 +159,7 @@ TEST_F(VehicleModelTest, Process) {
 }
 
 
-TEST_F(VehicleModelTest, MotionConstant) {
+TEST_F(VehicleModelTest, ConstantLongMotion) {
 
 
     // set checker
@@ -181,9 +183,6 @@ TEST_F(VehicleModelTest, MotionConstant) {
     // check position
     EXPECT_NEAR(192.387953251, state.xPosition, 1e-9);
     EXPECT_NEAR(238.268343236, state.yPosition, 1e-9);
-
-    // check yaw rate
-    EXPECT_NEAR(0.0, state.yawRate, 1e-9);
 
 }
 

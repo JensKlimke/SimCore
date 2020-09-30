@@ -5,19 +5,15 @@ option(REMOTE_FUNCTIONALITY "Enables or disables the remote functionalities" ON)
 
 # add sub directories
 add_subdirectory(simcore)
+add_subdirectory(simtraffic)
+add_subdirectory(scenario)
 add_subdirectory(application)
 add_subdirectory(traffic)
-add_subdirectory(virtual_vehicle)
 
 # server functionality
 if(REMOTE_FUNCTIONALITY)
     add_subdirectory(server)
 endif(REMOTE_FUNCTIONALITY)
-
-# cucumber
-if(CUCUMBER_SCENARIO_FUNCTIONALITY)
-    add_subdirectory(scenario)
-endif(CUCUMBER_SCENARIO_FUNCTIONALITY)
 
 # advanced functionality
 if(TEST_ADVANCED_FUNCTIONALITY)

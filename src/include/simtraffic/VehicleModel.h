@@ -22,29 +22,13 @@
 //
 
 
-#ifndef SIMCORE_VEHICLE_MODEL_H
-#define SIMCORE_VEHICLE_MODEL_H
+#ifndef SIMTRAFFIC_VEHICLE_MODEL_H
+#define SIMTRAFFIC_VEHICLE_MODEL_H
 
 #include <cmath>
+#include "definitions.h"
 
-#ifndef EPS_SIM_TIME
-#define EPS_SIM_TIME 1e-9
-#endif
-
-#ifndef EPS_VELOCITY
-#define EPS_VELOCITY 1e-6
-#endif
-
-#ifndef ZERO_VELOCITY
-#define ZERO_VELOCITY 1e-3
-#endif
-
-#ifndef range
-#define range(X, MIN, MAX) (X < MIN ? MIN : (X < MAX ? X : MAX))
-#endif
-
-
-namespace virtual_vehicle {
+namespace sim::traffic {
 
     class VehicleModel {
 
@@ -54,7 +38,7 @@ namespace virtual_vehicle {
         enum class ShifterPosition {PARK, NEUTRAL, DRIVE, REVERSE}; //!< Enumeration to store the shifter position
 
         /** A struct to store the continuous inputs to the vehicle (primary inputs) */
-        struct ContinuousInput {
+        struct Input {
             double drive = 0.0;    //!< Drive power request by the driver or driving system [0..1] (0: zero drive power, 1: full drive power, no unit)
             double brake = 0.0;    //!< Brake torque request by the driver or driving system [0..1] (0: zero brake torque, 1: full brake torque, no unit)
             double steering = 0.0; //!< Steering request by the driver or driving system [-1..1] (0: straight, -1/1: full steering to left/right, no unit)
@@ -190,7 +174,7 @@ namespace virtual_vehicle {
         }
 
 
-        /**
+        virtual /**
          * Resets the vehicle model
          */
         void reset() {
@@ -305,7 +289,7 @@ namespace virtual_vehicle {
 
 
         Parameters parameters{};
-        ContinuousInput input;
+        Input input;
         State state;
 
         bool _reset{};
@@ -314,4 +298,4 @@ namespace virtual_vehicle {
 
 }
 
-#endif //SIMCORE_VEHICLE_MODEL_H
+#endif // SIMTRAFFIC_VEHICLE_MODEL_H

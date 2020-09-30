@@ -20,8 +20,8 @@
  */
 
 
-#ifndef SIMCORE_BASIC_SIMULATION_H
-#define SIMCORE_BASIC_SIMULATION_H
+#ifndef SIMTRAFFIC_SIMULATION_H
+#define SIMTRAFFIC_SIMULATION_H
 
 #include <string>
 #include <memory>
@@ -31,64 +31,67 @@
 #include <simcore/timers/RealTimeTimer.h>
 #include <simcore/timers/TimeIsUp.h>
 #include <simcore/value/ValueExceed.h>
-#include <simcore/traffic/VehicleModel.h>
+
+namespace sim::traffic {
 
 
-class TrafficSimulation {
+    class TrafficSimulation {
 
-    sim::Loop _loop;
-    std::unique_ptr<sim::ITimer> _timer{};
-    std::vector<std::unique_ptr<sim::IComponent>> _components{};
-
-
-public:
-
-    /**
-     * Container to store double pointers and corresponding values
-     */
-    typedef std::vector<std::pair<double*, double>> PtrValPairVec;
+        sim::Loop _loop;
+        std::unique_ptr<sim::ITimer> _timer{};
+        std::vector<std::unique_ptr<sim::IComponent>> _components{};
 
 
-    /**
-     * Constructor
-     */
-    TrafficSimulation();
+    public:
+
+        /**
+         * Container to store double pointers and corresponding values
+         */
+        typedef std::vector<std::pair<double *, double>> PtrValPairVec;
 
 
-    /**
-     * Destructor
-     */
-    virtual ~TrafficSimulation();
+        /**
+         * Constructor
+         */
+        TrafficSimulation();
 
 
-    /**
-     * Creates a simulation
-     * @param endTime End time of the simulation
-     * @param stepSize Time step size of the simulation
-     * @param realTime Real-time flag
-     */
-    void create(double endTime, double stepSize, bool realTime = false);
+        /**
+         * Destructor
+         */
+        virtual ~TrafficSimulation();
 
 
-    /**
-     * Add stop conditions
-     * @param stopValues Values to be checked for excess (then simulation is stopped)
-     */
-    void stopExceed(const PtrValPairVec &stopValues = {});
+        /**
+         * Creates a simulation
+         * @param endTime End time of the simulation
+         * @param stepSize Time step size of the simulation
+         * @param realTime Real-time flag
+         */
+        void create(double endTime, double stepSize, bool realTime = false);
 
 
-    /**
-     * Adds an unmanaged component (will not be deleted during destruction)
-     * @param comp Component to be added
-     */
-    void addExternalComponent(sim::IComponent *comp);
+        /**
+         * Add stop conditions
+         * @param stopValues Values to be checked for excess (then simulation is stopped)
+         */
+        void stopExceed(const PtrValPairVec &stopValues = {});
 
 
-    /**
-     * Executes the simulation
-     */
-    void run();
+        /**
+         * Adds an unmanaged component (will not be deleted during destruction)
+         * @param comp Component to be added
+         */
+        void addExternalComponent(sim::IComponent *comp);
 
-};
 
-#endif // SIMCORE_BASIC_SIMULATION_H
+        /**
+         * Executes the simulation
+         */
+        void run();
+
+    };
+
+}
+
+#endif // SIMTRAFFIC_SIMULATION_H
