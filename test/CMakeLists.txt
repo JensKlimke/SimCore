@@ -7,6 +7,7 @@ option(REMOTE_FUNCTIONALITY "Enables or disables the remote functionalities" ON)
 add_subdirectory(simcore)
 add_subdirectory(application)
 add_subdirectory(traffic)
+add_subdirectory(virtual_vehicle)
 
 # server functionality
 if(REMOTE_FUNCTIONALITY)

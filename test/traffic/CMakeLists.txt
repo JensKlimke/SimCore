@@ -1,9 +1,8 @@
 # create executable
 add_executable(TrafficSimulationTest
-        #TrafficSimulationTest.cpp
-        #UnitInterfaceTest.cpp
+        TrafficSimulationTest.cpp
+        UnitInterfaceTest.cpp
         TrafficUnitTest.cpp
-        VehicleModelTest.cpp
         )
 
 # include directories

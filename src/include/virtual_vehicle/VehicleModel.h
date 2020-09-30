@@ -44,7 +44,7 @@
 #endif
 
 
-namespace sim::traffic {
+namespace virtual_vehicle {
 
     class VehicleModel {
 
@@ -79,11 +79,43 @@ namespace sim::traffic {
             double acceleration{};                                      //!< The actual acceleration
             double yawAngle{};                                          //!< The actual yaw angle
             double yawRate{};                                           //!< The actual yaw rate
+            double curvature{};                                         //!< The actual curvature
             double distance{};                                          //!< The driven distance since the last reset
             IndicatorState indicatorState = IndicatorState::OFF;        //!< The actual indicator state
             ShifterPosition shifterPosition = ShifterPosition::PARK;    //!< The actual shifter position
             double indicatorTimer = INFINITY;                           //!< The indicator time until switch off
         };
+
+
+        /**
+         * @brief Sets the pedal value
+         * Pedal value should be between -1 and 1
+         * Zero means no pedal
+         * Negative values lead to braking
+         * Positive values lead to acceleration
+         * @param pedal Pedal value
+         */
+        void setPedal(double pedal) {
+
+            this->input.drive = range(pedal, 0.0, 1.0);
+            this->input.brake = -range(pedal, -1.0, 0.0);
+
+        }
+
+
+        /**
+         * @brief Sets the steering value
+         * The value should be between -1 and 1.
+         * Zero means not steering angle, straight, wheels centered
+         * Negative values mean steering to the right
+         * Positive values mean steering to the left
+         * @param steering Steering value
+         */
+        void setSteering(double steering) {
+
+            this->input.steering = steering;
+
+        }
 
 
         /**
@@ -180,10 +212,11 @@ namespace sim::traffic {
 
             // get state
             auto v0 = state.velocity;
-            auto psi = state.yawAngle;
 
             // drive parameters
-            auto power   = state.shifterPosition == ShifterPosition::REVERSE ? parameters.maxRelReverseDrivePower : parameters.maxRelDrivePower;
+            auto power   = state.shifterPosition == ShifterPosition::REVERSE
+                    ? -parameters.maxRelReverseDrivePower
+                    : parameters.maxRelDrivePower;
             auto torque  = parameters.maxRelDriveTorque;
 
             // inputs
@@ -194,7 +227,9 @@ namespace sim::traffic {
             auto aDrive  = drive * range(power / abs(v0), -torque, torque);
             auto aExtern = parameters.externalRelForce;
             auto aBrake  = brake * parameters.maxRelBrakeTorque;
-            auto aResist = parameters.resistanceParameters[0] + parameters.resistanceParameters[1] * v0 + parameters.resistanceParameters[2] * v0 * v0;
+            auto aResist = parameters.resistanceParameters[0]
+                    + parameters.resistanceParameters[1] * abs(v0)
+                    + parameters.resistanceParameters[2] * v0 * v0;
 
             // calculate longitudinal motion
             auto aAc = aDrive + aExtern;
@@ -225,22 +260,24 @@ namespace sim::traffic {
             }
 
             // steering model (linear bicycle model)
-            auto dPsi = v * range(input.steering, -1.0, 1.0) * parameters.maxCurvature;
+            auto curvature = range(input.steering, -1.0, 1.0) * parameters.maxCurvature;
+            auto dPsi = v * curvature;
 
-            // calculate 2D motion
-            auto dx = cos(psi) * v - sin(psi) * dPsi * ds;
-            auto dy = sin(psi) * v + cos(psi) * dPsi * ds;
+            // calculate mean yaw angle
+            auto deltaPsi = dPsi * dt;
+            auto psi = state.yawAngle + deltaPsi * 0.5;
 
             // update position and yaw angle
-            state.xPosition += dx * dt;
-            state.yPosition += dy * dt;
-            state.yawAngle += dPsi * dt;
+            state.xPosition += cos(psi) * ds;
+            state.yPosition += sin(psi) * ds;
+            state.yawAngle += deltaPsi;
 
             // update other states
             state.distance += ds;
             state.acceleration = a;
             state.velocity = v;
             state.yawRate = dPsi;
+            state.curvature = curvature;
 
             // indicator timer
             _indicatorTimer(dt);
