@@ -76,7 +76,7 @@ namespace sim::logging {
         void step(double t, double dt) override {
 
             // put sim time to stream
-            (*_stream) << "t=" << t << "s, dt=" << dt << std::endl;
+            (*_stream) << "t=" << t << "s, dt=" << dt << "s" << std::endl;
 
         }
 

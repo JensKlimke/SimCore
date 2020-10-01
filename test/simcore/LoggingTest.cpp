@@ -154,11 +154,11 @@ TEST_F(LoggingTest, TimeReporter) {
 
     // check first line
     getline(ss, line);
-    EXPECT_EQ("t=0s, dt=0", line);
+    EXPECT_EQ("t=0s, dt=0s", line);
 
     // check second line
     getline(ss, line);
-    EXPECT_EQ("t=1s, dt=1", line);
+    EXPECT_EQ("t=1s, dt=1s", line);
 
 }
 
