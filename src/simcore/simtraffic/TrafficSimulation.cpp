@@ -34,15 +34,15 @@ namespace sim::traffic {
 
         // set timer
         timer->setTimeStepSize(stepSize);
-        _loop.setTimer(timer);
+        setTimer(timer);
 
         // stop condition (time)
         auto stopTimer = new sim::TimeIsUp();
         stopTimer->setStopTime(endTime);
 
         // add component and stop condition
-        _loop.addComponent(stopTimer);
-        _loop.addStopCondition(stopTimer);
+        addComponent(stopTimer);
+        addStopCondition(stopTimer);
 
         // add to list
         _components.emplace_back(stopTimer);
@@ -55,7 +55,7 @@ namespace sim::traffic {
             timeReporter->setTimeStepSize(1.0);
 
             // add component
-            _loop.addComponent(timeReporter);
+            addComponent(timeReporter);
 
             // add to component list
             _components.emplace_back(timeReporter);
@@ -76,8 +76,8 @@ namespace sim::traffic {
             b->setPointerAndLimit(e.first, e.second);
 
             // add stop condition
-            _loop.addComponent(b);
-            _loop.addStopCondition(b);
+            addComponent(b);
+            addStopCondition(b);
 
             // add to component list
             _components.emplace_back(b);
@@ -90,16 +90,9 @@ namespace sim::traffic {
     void TrafficSimulation::addExternalComponent(sim::IComponent *comp) {
 
         // add the component to the loop
-        _loop.addComponent(comp);
+        addComponent(comp);
 
     }
 
-
-    void TrafficSimulation::run() {
-
-        // run the simulation
-        _loop.run();
-
-    }
 
 }

@@ -1,8 +1,17 @@
 if (ENABLE_CUCUMBER)
 
+    # target to execute the cucumber framework
+    add_custom_target(RunScenarioSteps ALL
+            ${CMAKE_CURRENT_BINARY_DIR}/ScenarioSteps &
+            COMMAND cucumber features/VehicleModelLongitudinalMotion.feature
+            DEPENDS ScenarioSteps
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+            COMMENT "Run the cucumber test framework"
+            )
+
     # executable
     add_executable(ScenarioSteps
-            step_definitions/VirtualVehicleSteps.cpp
+            features/step_definitions/VirtualVehicleSteps.cpp
             )
 
     # include library

@@ -38,14 +38,25 @@ auto const P = sim::traffic::VehicleModel::ShifterPosition::PARK;
 auto const N = sim::traffic::VehicleModel::ShifterPosition::NEUTRAL;
 auto const R = sim::traffic::VehicleModel::ShifterPosition::REVERSE;
 
+struct LambdaExecuter : public sim::Model {
+
+    double time = 0.0;
+    double timeStepSize = 0.0;
+
+    std::function<void()> lambda{};
+
+
+};
+
+
 struct SimTest : public sim::traffic::VehicleModelAdapter {
 
 
     sim::traffic::TrafficSimulation sim{};
+
     sim::traffic::VehicleModel::State *_state{};
     sim::traffic::VehicleModel::Input *_input{};
     sim::traffic::VehicleModel::Parameters *_params{};
-
 
     SimTest() {
 

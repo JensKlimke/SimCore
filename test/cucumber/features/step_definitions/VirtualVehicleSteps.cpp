@@ -33,6 +33,37 @@
 
 using cucumber::ScenarioScope;
 
+template<class T>
+inline std::vector<T> getParameters(std::string str) {
+
+    // pattern
+    boost::regex regex("([\\.0-9]+)");
+
+    // create iterators
+    boost::sregex_token_iterator iter(str.begin(), str.end(), regex, 0);
+    boost::sregex_token_iterator end;
+
+    // get results
+    std::vector<T> results{};
+    for (; iter != end; ++iter) {
+
+        // put result into stream
+        std::stringstream ss;
+        ss << *iter;
+
+        // get result from stream
+        T a;
+        ss >> a;
+
+        // put to vector
+        results.emplace_back(std::move(a));
+
+    }
+
+    return results;
+
+}
+
 
 BEFORE() {
 
@@ -41,7 +72,7 @@ BEFORE() {
 }
 
 
-GIVEN ("^the vehicle model with time step size (.*) s$") {
+GIVEN ("^the vehicle model with time step size ([\\.0-9]*) s$") {
 
     // get parameter
     REGEX_PARAM(double, tss);
@@ -72,7 +103,7 @@ GIVEN("^(the vehicle has )?a speed of (.*) m/s$") {
 }
 
 
-GIVEN("^(the vehicle has )?a speed of (.*) mph$") {
+GIVEN ("^(the vehicle has )?a speed of ([\\.0-9]*) mph$") {
 
     // get parameter
     REGEX_PARAM(std::string, d); // dummy
@@ -88,7 +119,7 @@ GIVEN("^(the vehicle has )?a speed of (.*) mph$") {
 }
 
 
-GIVEN("^the vehicle's shifter is set to (.*)$") {
+GIVEN ("^the vehicle's shifter is set to (\\w)$") {
 
     // get parameter
     REGEX_PARAM(std::string, pos);
@@ -97,16 +128,16 @@ GIVEN("^the vehicle's shifter is set to (.*)$") {
     ScenarioScope<SimTest> context;
 
     // set speed
-    if(pos == "D") {
+    if (pos == "D") {
         context->setShifter(D);
         EXPECT_EQ(D, context->_state->shifterPosition);
-    } else if(pos == "R") {
+    } else if (pos == "R") {
         context->setShifter(R);
         EXPECT_EQ(R, context->_state->shifterPosition);
-    } else if(pos == "N") {
+    } else if (pos == "N") {
         context->setShifter(N);
         EXPECT_EQ(N, context->_state->shifterPosition);
-    } else if(pos == "P") {
+    } else if (pos == "P") {
         context->setShifter(P);
         EXPECT_EQ(P, context->_state->shifterPosition);
     } else {
@@ -116,7 +147,7 @@ GIVEN("^the vehicle's shifter is set to (.*)$") {
 }
 
 
-GIVEN("^the vehicle at position \\((.*) m, (.*) m\\)$") {
+GIVEN ("^the vehicle at position \\(([\\.0-9]*) m, ([\\.0-9]*) m\\)$") {
 
     // get parameters
     REGEX_PARAM(double, x);
@@ -132,7 +163,7 @@ GIVEN("^the vehicle at position \\((.*) m, (.*) m\\)$") {
 }
 
 
-GIVEN("^(the vehicle has )?a yaw angle of (.*) rad$") {
+GIVEN ("^(the vehicle has )?a yaw angle of ([\\.0-9]*) rad$") {
 
     // get parameter
     REGEX_PARAM(std::string, d);
@@ -147,7 +178,7 @@ GIVEN("^(the vehicle has )?a yaw angle of (.*) rad$") {
 }
 
 
-GIVEN("^(the vehicle has )?a yaw angle of (.*) degrees") {
+GIVEN ("^(the vehicle has )?a yaw angle of ([\\.0-9]*) degrees") {
 
     // get parameter
     REGEX_PARAM(std::string, d);
@@ -162,7 +193,7 @@ GIVEN("^(the vehicle has )?a yaw angle of (.*) degrees") {
 }
 
 
-GIVEN("^the vehicle's external relative force is (.*) N/kg") {
+GIVEN ("^the vehicle's external relative force is ([\\.0-9]*) N/kg") {
 
     // get parameter
     REGEX_PARAM(double, ext);
@@ -176,7 +207,7 @@ GIVEN("^the vehicle's external relative force is (.*) N/kg") {
 }
 
 
-WHEN("^the simulation has been ran for (.*) seconds$") {
+WHEN ("^the simulation has been ran for ([\\.0-9]*) seconds$") {
 
     // get parameter
     REGEX_PARAM(double, t);
@@ -190,7 +221,7 @@ WHEN("^the simulation has been ran for (.*) seconds$") {
 }
 
 
-WHEN ("^the simulation is executed for (.*) seconds$") {
+WHEN ("^the simulation is executed for ([\\.0-9]*) seconds$") {
 
     // get parameter
     REGEX_PARAM(double, t);
@@ -204,7 +235,7 @@ WHEN ("^the simulation is executed for (.*) seconds$") {
 }
 
 
-THEN ("^the position of the vehicle shall be x=(.*) m and y=(.*) m$") {
+THEN ("^the position of the vehicle shall be x=([\\.0-9]*) m and y=([\\.0-9]*) m$") {
 
     // get parameters
     REGEX_PARAM(double, x);
@@ -220,21 +251,20 @@ THEN ("^the position of the vehicle shall be x=(.*) m and y=(.*) m$") {
 }
 
 
-THEN ("^the vehicle's (.*) profile shall be (.*)\\((.*)\\)$") {
-
-    // (\d+)(,\s*\d+)*
+THEN ("^the vehicle's (\\w+) profile shall be shaped as (\\w+)\\((.*)\\)$") {
 
     // get parameters
     REGEX_PARAM(std::string, signal);
     REGEX_PARAM(std::string, fnc);
-    REGEX_PARAM(std::string, parameters);
+    REGEX_PARAM(std::string, paramStr);
 
-    // TODO: parameters
+    // get all doubles from string
+    auto parameters = getParameters<double>(paramStr);
 
     // get context
     ScenarioScope<SimTest> context;
 
-    // check signal
+    // create check function
 
 
 }

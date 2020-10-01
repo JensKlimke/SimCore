@@ -25,7 +25,7 @@
 
 #include <string>
 #include <memory>
-#include <simcore/Loop.h>
+#include <simcore/Simulation.h>
 #include <simcore/logging/TimeReporter.h>
 #include <simcore/timers/BasicTimer.h>
 #include <simcore/timers/RealTimeTimer.h>
@@ -35,9 +35,8 @@
 namespace sim::traffic {
 
 
-    class TrafficSimulation {
+    class TrafficSimulation : public sim::Simulation {
 
-        sim::Loop _loop;
         std::unique_ptr<sim::ITimer> _timer{};
         std::vector<std::unique_ptr<sim::IComponent>> _components{};
 
@@ -83,12 +82,7 @@ namespace sim::traffic {
          * @param comp Component to be added
          */
         void addExternalComponent(sim::IComponent *comp);
-
-
-        /**
-         * Executes the simulation
-         */
-        void run();
+        
 
     };
 
