@@ -18,6 +18,3 @@ include(ModuleCucumber) # cucumber framework
 
 # testing
 include(ModuleTesting)
-
-# sub directories
-add_subdirectory(src/simcore/simtraffic)
