@@ -6,7 +6,7 @@ option(REMOTE_FUNCTIONALITY "Enables or disables the remote functionalities" ON)
 # add sub directories
 add_subdirectory(simcore)
 add_subdirectory(simtraffic)
-add_subdirectory(scenario)
+add_subdirectory(cucumber)
 add_subdirectory(application)
 add_subdirectory(traffic)
 

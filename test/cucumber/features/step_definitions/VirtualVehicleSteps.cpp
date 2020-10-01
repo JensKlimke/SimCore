@@ -34,7 +34,14 @@
 using cucumber::ScenarioScope;
 
 
-GIVEN("^the vehicle model with time step size (.*) s$") {
+BEFORE() {
+
+    std::cout << "Hello World" << std::endl;
+
+}
+
+
+GIVEN ("^the vehicle model with time step size (.*) s$") {
 
     // get parameter
     REGEX_PARAM(double, tss);
@@ -183,7 +190,21 @@ WHEN("^the simulation has been ran for (.*) seconds$") {
 }
 
 
-THEN("^the position of the vehicle shall be x=(.*) m and y=(.*) m$") {
+WHEN ("^the simulation is executed for (.*) seconds$") {
+
+    // get parameter
+    REGEX_PARAM(double, t);
+
+    // get context
+    ScenarioScope<SimTest> context;
+
+    // execute simulation for t seconds
+    context->execute(t);
+
+}
+
+
+THEN ("^the position of the vehicle shall be x=(.*) m and y=(.*) m$") {
 
     // get parameters
     REGEX_PARAM(double, x);
@@ -195,6 +216,26 @@ THEN("^the position of the vehicle shall be x=(.*) m and y=(.*) m$") {
     // check position
     EXPECT_NEAR(x, context->_state->xPosition, EPS_DISTANCE);
     EXPECT_NEAR(y, context->_state->yPosition, EPS_DISTANCE);
+
+}
+
+
+THEN ("^the vehicle's (.*) profile shall be (.*)\\((.*)\\)$") {
+
+    // (\d+)(,\s*\d+)*
+
+    // get parameters
+    REGEX_PARAM(std::string, signal);
+    REGEX_PARAM(std::string, fnc);
+    REGEX_PARAM(std::string, parameters);
+
+    // TODO: parameters
+
+    // get context
+    ScenarioScope<SimTest> context;
+
+    // check signal
+
 
 }
 
