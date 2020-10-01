@@ -14,16 +14,10 @@ include(GNUInstallDirs)
 include(ModuleDoxygen)  # doxygen
 include(ModuleCoverage) # code coverage
 include(ModuleYaml)     # yaml parser
+include(ModuleCucumber) # cucumber framework
 
 # testing
 include(ModuleTesting)
 
-
 # sub directories
-set(CUKE_ENABLE_BOOST_TEST OFF)
-set(CUKE_ENABLE_QT OFF)
-set(CUKE_TESTS_E2E OFF)
-set(CUKE_TESTS_UNIT OFF)
-set(CUKE_USE_STATIC_GTEST OFF)
-add_subdirectory(lib/cucumber-cpp)
 add_subdirectory(src/simcore/simtraffic)
