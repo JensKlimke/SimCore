@@ -1,6 +1,6 @@
 # source files
 set(SOURCE_FILES
-        SimTest.cpp
+        SimulationTestTest.cpp
         SynchronizedTimerTest.cpp
         StopConditionTest.cpp
         SignalBasicTest.cpp
