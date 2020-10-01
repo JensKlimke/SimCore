@@ -21,8 +21,8 @@ if (ENABLE_CUCUMBER)
 
     # link libraries
     target_link_libraries(ScenarioSteps PRIVATE
-            simtraffic
             cucumber-cpp
-            ${GTEST_BOTH_LIBRARIES})
+            ${GTEST_BOTH_LIBRARIES}
+            )
 
 endif (ENABLE_CUCUMBER)
