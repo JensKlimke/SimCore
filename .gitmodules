@@ -7,3 +7,6 @@
 [submodule "lib/yaml-cpp"]
 	path = lib/yaml-cpp
 	url = https://github.com/jbeder/yaml-cpp.git
+[submodule "lib/cucumber-cpp"]
+	path = lib/cucumber-cpp
+	url = https://github.com/cucumber/cucumber-cpp.git
