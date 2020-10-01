@@ -1,3 +1,5 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "cert-err58-cpp"
 //
 // Copyright (c) 2019-2020 Jens Klimke <jens.klimke@rwth-aachen.de>
 //
@@ -22,12 +24,13 @@
 // Created by Jens Klimke on 2019-04-16.
 //
 
-#include <simcore/Loop.h>
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-pragmas"
+#pragma clang diagnostic ignored "-Wunused-result"
+
+#include <gtest/gtest.h>
 #include <simcore/value/SignalCurve.h>
 #include <simcore/value/SignalTube.h>
-#include <simcore/timers/TimeIsUp.h>
-#include <gtest/gtest.h>
-
 
 TEST(SignalBasicTest, SignalCurve) {
 
@@ -165,3 +168,6 @@ TEST(SignalBasicTest, SignalTube) {
     EXPECT_TRUE(sc.in(30.0 + 1e-10, 1.0));
 
 }
+
+#pragma clang diagnostic pop
+#pragma clang diagnostic pop

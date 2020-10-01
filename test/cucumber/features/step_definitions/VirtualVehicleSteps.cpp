@@ -29,7 +29,7 @@
 #include <gtest/gtest.h>
 #include <cucumber-cpp/autodetect.hpp>
 #include <string>
-#include "SimTest.h"
+#include "VehicleSimulation.h"
 
 using cucumber::ScenarioScope;
 
@@ -78,7 +78,7 @@ GIVEN ("^the vehicle model with time step size ([\\.0-9]*) s$") {
     REGEX_PARAM(double, tss);
 
     // get context
-    ScenarioScope<SimTest> context;
+    ScenarioScope<VehicleSimulation> context;
 
     // set speed
     context->setTimeStepSize(tss);
@@ -94,7 +94,7 @@ GIVEN("^(the vehicle has )?a speed of (.*) m/s$") {
     REGEX_PARAM(double, v);
 
     // get context
-    ScenarioScope<SimTest> context;
+    ScenarioScope<VehicleSimulation> context;
 
     // set speed
     context->_state->velocity = v;
@@ -110,7 +110,7 @@ GIVEN ("^(the vehicle has )?a speed of ([\\.0-9]*) mph$") {
     REGEX_PARAM(double, v);
 
     // get context
-    ScenarioScope<SimTest> context;
+    ScenarioScope<VehicleSimulation> context;
 
     // set speed
     context->_state->velocity = v;
@@ -125,7 +125,7 @@ GIVEN ("^the vehicle's shifter is set to (\\w)$") {
     REGEX_PARAM(std::string, pos);
 
     // get context
-    ScenarioScope<SimTest> context;
+    ScenarioScope<VehicleSimulation> context;
 
     // set speed
     if (pos == "D") {
@@ -154,7 +154,7 @@ GIVEN ("^the vehicle at position \\(([\\.0-9]*) m, ([\\.0-9]*) m\\)$") {
     REGEX_PARAM(double, y);
 
     // get context
-    ScenarioScope<SimTest> context;
+    ScenarioScope<VehicleSimulation> context;
 
     // set position
     context->_state->xPosition = x;
@@ -170,7 +170,7 @@ GIVEN ("^(the vehicle has )?a yaw angle of ([\\.0-9]*) rad$") {
     REGEX_PARAM(double, yaw);
 
     // get context
-    ScenarioScope<SimTest> context;
+    ScenarioScope<VehicleSimulation> context;
 
     // set yaw angle
     context->_state->yawAngle = yaw;
@@ -185,7 +185,7 @@ GIVEN ("^(the vehicle has )?a yaw angle of ([\\.0-9]*) degrees") {
     REGEX_PARAM(double, yaw);
 
     // get context
-    ScenarioScope<SimTest> context;
+    ScenarioScope<VehicleSimulation> context;
 
     // set yaw angle
     context->_state->yawAngle = yaw * M_PI / 180.0;
@@ -199,7 +199,7 @@ GIVEN ("^the vehicle's external relative force is ([\\.0-9]*) N/kg") {
     REGEX_PARAM(double, ext);
 
     // get context
-    ScenarioScope<SimTest> context;
+    ScenarioScope<VehicleSimulation> context;
 
     // set external relative force
     context->_params->externalRelForce = ext;
@@ -213,7 +213,7 @@ WHEN ("^the simulation has been ran for ([\\.0-9]*) seconds$") {
     REGEX_PARAM(double, t);
 
     // get context
-    ScenarioScope<SimTest> context;
+    ScenarioScope<VehicleSimulation> context;
 
     // execute simulation for t seconds
     context->execute(t);
@@ -227,7 +227,7 @@ WHEN ("^the simulation is executed for ([\\.0-9]*) seconds$") {
     REGEX_PARAM(double, t);
 
     // get context
-    ScenarioScope<SimTest> context;
+    ScenarioScope<VehicleSimulation> context;
 
     // execute simulation for t seconds
     context->execute(t);
@@ -242,7 +242,7 @@ THEN ("^the position of the vehicle shall be x=([\\.0-9]*) m and y=([\\.0-9]*) m
     REGEX_PARAM(double, y);
 
     // get context
-    ScenarioScope<SimTest> context;
+    ScenarioScope<VehicleSimulation> context;
 
     // check position
     EXPECT_NEAR(x, context->_state->xPosition, EPS_DISTANCE);
@@ -262,7 +262,7 @@ THEN ("^the vehicle's (\\w+) profile shall be shaped as (\\w+)\\((.*)\\)$") {
     auto parameters = getParameters<double>(paramStr);
 
     // get context
-    ScenarioScope<SimTest> context;
+    ScenarioScope<VehicleSimulation> context;
 
     // create check function
 
