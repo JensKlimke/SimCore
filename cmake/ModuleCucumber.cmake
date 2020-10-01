@@ -11,12 +11,12 @@ if (ENABLE_CUCUMBER)
     message(STATUS "Cucumber framework enabled")
 
     # set YAML_BUILD_SHARED_LIBS
-    set(CUKE_ENABLE_BOOST_TEST OFF CACHE BOOL "Set option for submodule")
-    set(CUKE_USE_STATIC_BOOST OFF CACHE BOOL "Set option for submodule")
-    set(CUKE_ENABLE_QT OFF CACHE BOOL "Set option for submodule")
-    set(CUKE_TESTS_E2E OFF CACHE BOOL "Set option for submodule")
-    set(CUKE_TESTS_UNIT OFF CACHE BOOL "Set option for submodule")
-    set(CUKE_USE_STATIC_GTEST ON CACHE BOOL "Set option for submodule")
+    set(CUKE_ENABLE_BOOST_TEST OFF)
+    set(CUKE_USE_STATIC_BOOST OFF)
+    set(CUKE_ENABLE_QT OFF)
+    set(CUKE_TESTS_E2E OFF)
+    set(CUKE_TESTS_UNIT OFF)
+    set(CUKE_ENABLE_GTEST OFF)
 
     # set lib variables
     set(cucumber_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/lib/cucumber-cpp/include)
