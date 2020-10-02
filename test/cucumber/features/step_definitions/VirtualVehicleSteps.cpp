@@ -30,47 +30,15 @@
 #include <cucumber-cpp/autodetect.hpp>
 #include <string>
 #include "VehicleSimulation.h"
+#include "helper.h"
+
 
 using cucumber::ScenarioScope;
 
-template<class T>
-inline std::vector<T> getParameters(std::string str) {
 
-    // pattern
-    boost::regex regex("([\\.0-9]+)");
+BEFORE() {}
 
-    // create iterators
-    boost::sregex_token_iterator iter(str.begin(), str.end(), regex, 0);
-    boost::sregex_token_iterator end;
-
-    // get results
-    std::vector<T> results{};
-    for (; iter != end; ++iter) {
-
-        // put result into stream
-        std::stringstream ss;
-        ss << *iter;
-
-        // get result from stream
-        T a;
-        ss >> a;
-
-        // put to vector
-        results.emplace_back(std::move(a));
-
-    }
-
-    return results;
-
-}
-
-
-BEFORE() {
-
-    std::cout << "Hello World" << std::endl;
-
-}
-
+AFTER() {}
 
 GIVEN ("^the vehicle model with time step size ([\\.0-9]*) s$") {
 
