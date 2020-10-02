@@ -35,13 +35,13 @@
 #include <simcore/testing/SimulationTest.h>
 
 
-class SimTest : public ::testing::Test, public sim::testing::SimulationTest<sim::logging::TimeReporter> {
+class SimulationTestTest : public ::testing::Test, public sim::testing::SimulationTest<sim::logging::TimeReporter> {
 
 
 public:
 
-    SimTest() = default;
-    ~SimTest() override = default;
+    SimulationTestTest() = default;
+    ~SimulationTestTest() override = default;
 
 
     void checkStepState() {
@@ -84,7 +84,7 @@ public:
 };
 
 
-TEST_F(SimTest, SimulationLifeCycle) {
+TEST_F(SimulationTestTest, SimulationLifeCycle) {
 
     using namespace ::sim;
 
