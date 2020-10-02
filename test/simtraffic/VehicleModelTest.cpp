@@ -521,45 +521,45 @@ TEST_F(VehicleModelTest, IndicatorStates) {
 
     indicateRight();
     EXPECT_EQ(IndicatorState::RIGHT, state.indicatorState);
-    EXPECT_EQ(INFINITY, state.indicatorTimer);
+    EXPECT_EQ(INFINITY, _indicatorTime);
 
     indicateLeft();
     EXPECT_EQ(IndicatorState::LEFT, state.indicatorState);
-    EXPECT_EQ(INFINITY, state.indicatorTimer);
+    EXPECT_EQ(INFINITY, _indicatorTime);
 
     hazard();
     EXPECT_EQ(IndicatorState::HAZARD, state.indicatorState);
-    EXPECT_EQ(INFINITY, state.indicatorTimer);
+    EXPECT_EQ(INFINITY, _indicatorTime);
 
     indicatorOff();
     EXPECT_EQ(IndicatorState::OFF, state.indicatorState);
-    EXPECT_EQ(INFINITY, state.indicatorTimer);
+    EXPECT_EQ(INFINITY, _indicatorTime);
 
     indicateRight(1.0);
     EXPECT_EQ(IndicatorState::RIGHT, state.indicatorState);
-    EXPECT_EQ(1.0, state.indicatorTimer);
+    EXPECT_EQ(1.0, _indicatorTime);
 
     indicateLeft(2.0);
     EXPECT_EQ(IndicatorState::LEFT, state.indicatorState);
-    EXPECT_EQ(2.0, state.indicatorTimer);
+    EXPECT_EQ(2.0, _indicatorTime);
 
     hazard();
     EXPECT_EQ(IndicatorState::HAZARD, state.indicatorState);
-    EXPECT_EQ(INFINITY, state.indicatorTimer);
+    EXPECT_EQ(INFINITY, _indicatorTime);
 
     indicateRight(3.0);
     EXPECT_EQ(IndicatorState::RIGHT, state.indicatorState);
-    EXPECT_EQ(3.0, state.indicatorTimer);
+    EXPECT_EQ(3.0, _indicatorTime);
 
     indicatorOff();
     EXPECT_EQ(IndicatorState::OFF, state.indicatorState);
-    EXPECT_EQ(INFINITY, state.indicatorTimer);
+    EXPECT_EQ(INFINITY, _indicatorTime);
 
     indicateRight(3.0);
-    EXPECT_EQ(3.0, state.indicatorTimer);
+    EXPECT_EQ(3.0, _indicatorTime);
 
     reset();
-    EXPECT_EQ(INFINITY, state.indicatorTimer);
+    EXPECT_EQ(INFINITY, _indicatorTime);
 
 }
 
