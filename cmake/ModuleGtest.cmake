@@ -54,5 +54,6 @@ else()
 
     # find gtest
     find_package(GTest REQUIRED)
+    set(GTEST_BOTH_LIBRARIES GTest::GTest GTest::Main)
 
 endif(GTEST_BUILD_LIBRARY)
