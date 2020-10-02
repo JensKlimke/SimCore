@@ -11,8 +11,8 @@ add_executable(ServerTest ${SOURCE_FILES})
 
 # include directories
 target_include_directories(ServerTest PRIVATE
-        ${PROJECT_SOURCE_DIR}/src/simcore
-        ${PROJECT_SOURCE_DIR}/src/include
+        ${PROJECT_SOURCE_DIR}/src
+        ${PROJECT_SOURCE_DIR}/include
         ${Boost_INCLUDE_DIRS}
         )
 

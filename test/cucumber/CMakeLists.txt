@@ -16,7 +16,7 @@ if (ENABLE_CUCUMBER)
 
     # include library
     target_include_directories(ScenarioSteps PRIVATE
-            ${PROJECT_SOURCE_DIR}/src/include
+            ${PROJECT_SOURCE_DIR}/include
             )
 
     # link libraries

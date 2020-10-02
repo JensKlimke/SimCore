@@ -48,7 +48,7 @@
 #endif
 
 #ifndef range
-#define range(X, MIN, MAX) (X < MIN ? MIN : (X < MAX ? X : MAX))
+#define range(X, MIN, MAX) ((X) < (MIN) ? (MIN) : ((X) < (MAX) ? (X) : (MAX)))
 #endif
 
 #endif //SIMTRAFFIC_VIRTUAL_VEHICLE_DEFINITIONS_H

@@ -65,7 +65,7 @@ namespace sim {
          * Returns the current simulation time
          * @return
          */
-        virtual double time() const = 0;
+        [[nodiscard]] virtual double time() const = 0;
 
 
         /**

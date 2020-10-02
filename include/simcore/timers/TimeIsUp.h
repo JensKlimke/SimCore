@@ -63,9 +63,9 @@ namespace sim {
 
         /**
          * Returns the termination time
-         * @return
+         * @return The termination time
          */
-        double getLastTime() const {
+        [[nodiscard]] double getLastTime() const {
 
             // return the termination time
             return _lastTime;

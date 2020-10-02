@@ -5,7 +5,7 @@ add_executable(VirtualVehicleTest
 
 # include directories
 target_include_directories(VirtualVehicleTest PRIVATE
-        ${PROJECT_SOURCE_DIR}/src/include) # library include directory
+        ${PROJECT_SOURCE_DIR}/include) # library include directory
 
 # add test
 add_gtest(VirtualVehicleTest)

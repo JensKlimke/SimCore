@@ -74,7 +74,7 @@ public:
      * @param x Value to be checked
      * @return Flag if the value is in bounds
      */
-    bool isInBounds(double x) const {
+    [[nodiscard]] bool isInBounds(double x) const {
 
         return x >= _x.front() && x <= _x.back();
 
@@ -86,10 +86,10 @@ public:
      * @param x x-value
      * @return y-value
      */
-    double interpolate(double x) const {
+    [[nodiscard]] double interpolate(double x) const {
 
         // check if x is out of bounds
-        if(x < _x.front() - EPS_DISTANCE || x > _x.back() + EPS_DISTANCE)
+        if (x < _x.front() - EPS_DISTANCE || x > _x.back() + EPS_DISTANCE)
             throw std::invalid_argument("x out of bounds");
 
         auto w = where(x);
@@ -103,15 +103,15 @@ public:
      * @param x x-value
      * @return y-value
      */
-    double previous(double x) const {
+    [[nodiscard]] double previous(double x) const {
 
         // check if x is out of bounds
-        if(x < _x.front() - EPS_DISTANCE)
+        if (x < _x.front() - EPS_DISTANCE)
             throw std::invalid_argument("x out of bounds");
 
         auto w = where(x);
 
-        if(w.ds1 <= 0.0)
+        if (w.ds1 <= 0.0)
             return w.v1;
         else
             return w.v0;
@@ -124,15 +124,15 @@ public:
      * @param x x-value
      * @return y-value
      */
-    double next(double x) const {
+    [[nodiscard]] double next(double x) const {
 
         // check if x is out of bounds
-        if(x > _x.back() + EPS_DISTANCE)
+        if (x > _x.back() + EPS_DISTANCE)
             throw std::invalid_argument("x out of bounds");
 
         auto w = where(x);
 
-        if(w.ds0 > 0.0)
+        if (w.ds0 > 0.0)
             return w.v0;
         else
             return w.v1;
@@ -146,15 +146,15 @@ public:
      * @param x x-Position
      * @return Structure of positions and values
      */
-    Position where(double x) const {
+    [[nodiscard]] Position where(double x) const {
 
         auto n = _x.size();
 
         // check boundaries
-        if(x <= _x[0])
+        if (x <= _x[0])
             return {_x[0] - x, _y[0], _x[1] - x, _y[1]};
 
-        else if(x >= _x[n - 1])
+        else if (x >= _x[n - 1])
             return {_x[n - 2] - x, _y[n - 2], _x[n - 1] - x, _y[n - 1]};
 
 
@@ -183,7 +183,7 @@ public:
      * @param eps Tolerance (in y-direction, half band width)
      * @return Flag
      */
-    bool hit(double x, double y, double eps = EPS_DISTANCE) const {
+    [[nodiscard]] bool hit(double x, double y, double eps = EPS_DISTANCE) const {
 
         return abs(interpolate(x) - y) < eps;
 
@@ -194,7 +194,7 @@ public:
      * Checks if the curve is set by at least two points
      * @return true if more tha one point is set
      */
-    bool isSet() const {
+    [[nodiscard]] bool isSet() const {
 
         return _x.size() > 1;
 
