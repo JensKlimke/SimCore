@@ -93,36 +93,36 @@ namespace sim::traffic {
         void fromNode(const sim::storage::DataNode &node) override {
 
             // internal attributes
-            WRITE_ALIAS(_indicatorTime, indicatorTime);
-            WRITE_ALIAS(_reset, reset);
+            WRITE_SIGNAL_ALIAS(_indicatorTime, indicatorTime);
+            WRITE_SIGNAL_ALIAS(_reset, reset);
 
             // states
-            WRITE_CONTEXT(velocity, state);
-            WRITE_CONTEXT(acceleration, state);
-            WRITE_CONTEXT(yawAngle, state);
-            WRITE_CONTEXT(yawRate, state);
-            WRITE_CONTEXT(curvature, state);
-            WRITE_CONTEXT(distance, state);
-            WRITE_CONTEXT(xPosition, state);
-            WRITE_CONTEXT(yPosition, state);
-            WRITE_CONTEXT(indicatorState, state);
-            WRITE_CONTEXT(shifterPosition, state);
+            WRITE_SIGNAL_CONTEXT(velocity, state);
+            WRITE_SIGNAL_CONTEXT(acceleration, state);
+            WRITE_SIGNAL_CONTEXT(yawAngle, state);
+            WRITE_SIGNAL_CONTEXT(yawRate, state);
+            WRITE_SIGNAL_CONTEXT(curvature, state);
+            WRITE_SIGNAL_CONTEXT(distance, state);
+            WRITE_SIGNAL_CONTEXT(xPosition, state);
+            WRITE_SIGNAL_CONTEXT(yPosition, state);
+            WRITE_SIGNAL_CONTEXT(indicatorState, state);
+            WRITE_SIGNAL_CONTEXT(shifterPosition, state);
 
             // inputs
-            WRITE_CONTEXT(drive, input);
-            WRITE_CONTEXT(brake, input);
-            WRITE_CONTEXT(steering, input);
+            WRITE_SIGNAL_CONTEXT(drive, input);
+            WRITE_SIGNAL_CONTEXT(brake, input);
+            WRITE_SIGNAL_CONTEXT(steering, input);
 
             // parameters
-            WRITE_CONTEXT(maxCurvature, parameters);
-            WRITE_CONTEXT(maxRelDrivePower, parameters);
-            WRITE_CONTEXT(maxRelReverseDrivePower, parameters);
-            WRITE_CONTEXT(maxRelDriveTorque, parameters);
-            WRITE_CONTEXT(maxRelBrakeTorque, parameters);
-            WRITE_CONTEXT(externalRelForce, parameters);
-            WRITE_CONTEXT(resistanceParameters[0], parameters);
-            WRITE_CONTEXT(resistanceParameters[1], parameters);
-            WRITE_CONTEXT(resistanceParameters[2], parameters);
+            WRITE_SIGNAL_CONTEXT(maxCurvature, parameters);
+            WRITE_SIGNAL_CONTEXT(maxRelDrivePower, parameters);
+            WRITE_SIGNAL_CONTEXT(maxRelReverseDrivePower, parameters);
+            WRITE_SIGNAL_CONTEXT(maxRelDriveTorque, parameters);
+            WRITE_SIGNAL_CONTEXT(maxRelBrakeTorque, parameters);
+            WRITE_SIGNAL_CONTEXT(externalRelForce, parameters);
+            WRITE_SIGNAL_CONTEXT(resistanceParameters[0], parameters);
+            WRITE_SIGNAL_CONTEXT(resistanceParameters[1], parameters);
+            WRITE_SIGNAL_CONTEXT(resistanceParameters[2], parameters);
 
         }
 

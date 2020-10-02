@@ -31,11 +31,8 @@
 namespace sim::storage {
 
     struct DataSignal {
-
-        std::string context{};
         bool isNode = false;
         void *pointer = nullptr;
-
     };
 
     struct DataNode {
@@ -45,21 +42,33 @@ namespace sim::storage {
 
         template<typename T>
         T *get(const std::string &key) {
+            // TODO: check to be not a node
             return (T *) signals.at(key).pointer;
         }
 
         template<typename T>
         const T *get_const(const std::string &key) const {
+            // TODO: check to be not a node
             return (const T *) signals.at(key).pointer;
         }
 
         template<typename T>
         void write(T &target, const std::string &key) const {
+            // TODO: recursion for nodes
             target = *get_const<T>(key);
         }
 
         void create(const std::string &key, void *ptr) {
-            signals.emplace(key, DataSignal{"", false, ptr});
+            signals.emplace(key, DataSignal{false, ptr});
+        }
+
+        void addNode(const std::string &key, DataNode *node) {
+            signals.emplace(key, DataSignal{true, (void *) node});
+        }
+
+        DataNode *getNode(const std::string &key) {
+            // TODO: check to be node
+            return (DataNode*) signals.at(key).pointer;
         }
 
     };
@@ -67,24 +76,27 @@ namespace sim::storage {
 }
 
 #define REGISTER_SIGNAL(_name) \
-node.signals.emplace(#_name, &(_name))
+node.create(#_name, &(_name))
 
 #define REGISTER_SIGNAL_ALIAS(_name, _alias) \
-node.create(#_alias, (void*) &(_name))
+node.create(_alias, (void*) &(_name))
 
 #define REGISTER_SIGNAL_CONTEXT(_name, _context) \
 node.create(#_name, (void*) &(_context._name))
 
 #define REGISTER_SIGNAL_CONTEXT_ALIAS(_name, _context, _alias) \
-node.create(#_alias, (void*) &(_context._name))
+node.create(_alias, (void*) &(_context._name))
 
-#define WRITE_ALIAS(_name, _alias) \
-node.write((_name), #_alias);
+#define WRITE_SIGNAL(_name) \
+node.write((_name), #_name)
 
-#define WRITE_CONTEXT(_name, _context) \
-node.write((_context._name), #_name);
+#define WRITE_SIGNAL_ALIAS(_name, _alias) \
+node.write((_name), _alias)
 
-#define WRITE_CONTEXT_ALIAS(_name, _context, _alias) \
-node.write((_context._name), #_alias);
+#define WRITE_SIGNAL_CONTEXT(_name, _context) \
+node.write((_context._name), #_name)
+
+#define WRITE_SIGNAL_CONTEXT_ALIAS(_name, _context, _alias) \
+node.write((_context._name), _alias)
 
 #endif // SIMCORE_STORAGE_H

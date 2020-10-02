@@ -7,7 +7,7 @@ set(SOURCE_FILES
         SignalTest.cpp
         DataTest.cpp
         LoggingTest.cpp
-        # PlotTest.cpp
+        StorageTest.cpp
     )
 
 # executable
