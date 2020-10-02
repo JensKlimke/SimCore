@@ -46,6 +46,12 @@ struct VehicleSimulation : public sim::testing::SimulationTest<sim::traffic::Veh
     sim::traffic::VehicleModel::Input *_input{};
     sim::traffic::VehicleModel::Parameters *_params{};
 
+
+    /**
+     * Constructs the simulation wrapper and setups the basic configuration for the vehicle model
+     * - All states (position, velocity, ...) are set to zero
+     * -
+     */
     VehicleSimulation() {
 
         using namespace sim::traffic;
@@ -70,11 +76,11 @@ struct VehicleSimulation : public sim::testing::SimulationTest<sim::traffic::Veh
         parameters.resistanceParameters[2] = 0.0;
 
         // set parameters parameters
-        parameters.maxRelReverseDrivePower =  10.0;
-        parameters.maxRelDrivePower        = 100.0;
-        parameters.maxRelDriveTorque       =  10.0;
-        parameters.maxRelBrakeTorque       =  10.0;
-        parameters.maxCurvature            =   0.1;
+        parameters.maxRelReverseDrivePower = 10.0;
+        parameters.maxRelDrivePower = 100.0;
+        parameters.maxRelDriveTorque = 10.0;
+        parameters.maxRelBrakeTorque = 10.0;
+        parameters.maxCurvature = 0.1;
 
         // reset inputs
         input.drive = 0.0;
@@ -83,22 +89,30 @@ struct VehicleSimulation : public sim::testing::SimulationTest<sim::traffic::Veh
 
     }
 
+
+    /**
+     * Creates and executes the simulation for the given time
+     * @param time End time of the simulation
+     */
     void execute(double time) {
 
         // create simulation
         create(time, TIME_STEP_SIZE, false);
 
-        // set time step size
-        setTimeStepSize(TIME_STEP_SIZE);
-
-        // add
-        addPreCallback([this]() {
-            
-        });
-
         // run simulation
         run();
 
+    }
+
+
+    /**
+     * Sets the vehicle positions
+     * @param x X-Position
+     * @param y Y-Position
+     */
+    void setPosition(double x, double y) {
+        state.xPosition = x;
+        state.yPosition = y;
     }
 
 };

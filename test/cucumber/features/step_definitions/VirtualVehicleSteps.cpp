@@ -66,7 +66,6 @@ GIVEN("^(the vehicle has )?a speed of (.*) m/s$") {
 
     // set speed
     context->_state->velocity = v;
-    context->setShifter(D);
 
 }
 
@@ -82,7 +81,6 @@ GIVEN ("^(the vehicle has )?a speed of ([\\.0-9]*) mph$") {
 
     // set speed
     context->_state->velocity = v;
-    context->setShifter(D);
 
 }
 
@@ -121,12 +119,9 @@ GIVEN ("^the vehicle at position \\(([\\.0-9]*) m, ([\\.0-9]*) m\\)$") {
     REGEX_PARAM(double, x);
     REGEX_PARAM(double, y);
 
-    // get context
+    // get context and set position
     ScenarioScope<VehicleSimulation> context;
-
-    // set position
-    context->_state->xPosition = x;
-    context->_state->yPosition = y;
+    context->setPosition(x, y);
 
 }
 
@@ -137,10 +132,8 @@ GIVEN ("^(the vehicle has )?a yaw angle of ([\\.0-9]*) rad$") {
     REGEX_PARAM(std::string, d);
     REGEX_PARAM(double, yaw);
 
-    // get context
+    // get context and set yaw angle
     ScenarioScope<VehicleSimulation> context;
-
-    // set yaw angle
     context->_state->yawAngle = yaw;
 
 }
@@ -152,10 +145,8 @@ GIVEN ("^(the vehicle has )?a yaw angle of ([\\.0-9]*) degrees") {
     REGEX_PARAM(std::string, d);
     REGEX_PARAM(double, yaw);
 
-    // get context
+    // get context and set yaw angle
     ScenarioScope<VehicleSimulation> context;
-
-    // set yaw angle
     context->_state->yawAngle = yaw * M_PI / 180.0;
 
 }
@@ -166,10 +157,8 @@ GIVEN ("^the vehicle's external relative force is ([\\.0-9]*) N/kg") {
     // get parameter
     REGEX_PARAM(double, ext);
 
-    // get context
+    // get context and set external force
     ScenarioScope<VehicleSimulation> context;
-
-    // set external relative force
     context->_params->externalRelForce = ext;
 
 }
@@ -222,7 +211,7 @@ THEN ("^the position of the vehicle shall be x=([\\.0-9]*) m and y=([\\.0-9]*) m
 THEN ("^the vehicle's (\\w+) profile shall be shaped as (\\w+)\\((.*)\\)$") {
 
     // get parameters
-    REGEX_PARAM(std::string, signal);
+    REGEX_PARAM(std::string, sig);
     REGEX_PARAM(std::string, fnc);
     REGEX_PARAM(std::string, paramStr);
 
@@ -231,9 +220,34 @@ THEN ("^the vehicle's (\\w+) profile shall be shaped as (\\w+)\\((.*)\\)$") {
 
     // get context
     ScenarioScope<VehicleSimulation> context;
+    const VehicleSimulation *sim = context.get();
 
-    // create check function
+    // get signal
+    sim::storage::DataNode node;
+    context->registerSignals(node);
 
+    // signal
+    double *d = node.get<double>(sig);
+
+    if (fnc == "poly") {
+
+        context->addPostCallback([sim, d, parameters]() {
+
+            std::cout << "Checking..." << std::endl;
+
+            // get time
+            auto time = sim->time().time;
+
+            // calculate polynomial
+            double sum = 0.0;
+            for (const auto &p : parameters)
+                sum = sum * time + p;
+
+            EXPECT_NEAR(*d, sum, 1e-3);
+
+        });
+
+    }
 
 }
 

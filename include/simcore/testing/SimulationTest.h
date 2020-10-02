@@ -32,6 +32,7 @@
 #include "../Model.h"
 #include "../timers/RealTimeTimer.h"
 #include "../timers/TimeIsUp.h"
+#include "../storage/Storage.h"
 #include "../logging/TimeReporter.h"
 #include "../value/ValueExceed.h"
 
@@ -43,9 +44,11 @@ namespace sim::testing {
         std::unique_ptr<sim::BasicTimer> _timer{};
         std::vector<std::unique_ptr<sim::IComponent>> _components{};
 
+        sim::storage::DataNode _data{};
+
     public:
 
-        struct Time{
+        struct Time {
             double time;
             double deltaTime;
             double initTime;
@@ -130,7 +133,7 @@ namespace sim::testing {
          * Returns the time structure
          * @return Time structure
          */
-        const Time &time() {
+        const Time &time() const {
 
             return _time;
 
