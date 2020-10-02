@@ -67,7 +67,6 @@ namespace sim::traffic {
             double distance{};                                          //!< The driven distance since the last reset
             IndicatorState indicatorState = IndicatorState::OFF;        //!< The actual indicator state
             ShifterPosition shifterPosition = ShifterPosition::PARK;    //!< The actual shifter position
-            double indicatorTimer = INFINITY;                           //!< The indicator time until switch off
         };
 
 
@@ -142,7 +141,7 @@ namespace sim::traffic {
          */
         void indicateRight(double timeInterval = INFINITY) {
             state.indicatorState = IndicatorState::RIGHT;
-            state.indicatorTimer = timeInterval;
+            _indicatorTime = timeInterval;
         }
 
 
@@ -152,7 +151,7 @@ namespace sim::traffic {
          */
         void indicateLeft(double timeInterval = INFINITY) {
             state.indicatorState = IndicatorState::LEFT;
-            state.indicatorTimer = timeInterval;
+            _indicatorTime = timeInterval;
         }
 
 
@@ -161,7 +160,7 @@ namespace sim::traffic {
          */
         void hazard() {
             state.indicatorState = IndicatorState::HAZARD;
-            state.indicatorTimer = INFINITY;
+            _indicatorTime = INFINITY;
         }
 
 
@@ -170,7 +169,7 @@ namespace sim::traffic {
          */
         void indicatorOff() {
             state.indicatorState = IndicatorState::OFF;
-            state.indicatorTimer = INFINITY;
+            _indicatorTime = INFINITY;
         }
 
 
@@ -180,7 +179,7 @@ namespace sim::traffic {
         void reset() {
 
             state.distance = 0.0;
-            state.indicatorTimer = INFINITY;
+            _indicatorTime = INFINITY;
 
             _reset = true;
 
@@ -264,35 +263,36 @@ namespace sim::traffic {
             state.curvature = curvature;
 
             // indicator timer
-            _indicatorTimer(dt);
+            _timer(dt);
 
         }
 
 
     protected:
 
-        void _indicatorTimer(double dt) {
+        void _timer(double dt) {
 
             // indicator timer
-            if(!std::isinf(state.indicatorTimer)) {
+            if (!std::isinf(_indicatorTime)) {
 
                 // switch off, when time interval has passed
-                if(state.indicatorTimer <= EPS_SIM_TIME)
+                if (_indicatorTime <= EPS_SIM_TIME)
                     indicatorOff();
 
                 // step down
-                state.indicatorTimer -= dt;
+                _indicatorTime -= dt;
 
             }
 
         }
 
 
-        Parameters parameters{};
-        Input input;
-        State state;
+        Parameters parameters{};    //!< Parameters
+        Input input;                //!< Inputs
+        State state;                //!< States
 
-        bool _reset{};
+        double _indicatorTime = INFINITY;  //!< The indicator time until switch off
+        bool _reset{};                     //!< The reset flag
 
     };
 
