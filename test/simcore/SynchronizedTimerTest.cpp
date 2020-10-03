@@ -30,6 +30,7 @@
 #include <simcore/Loop.h>
 #include <simcore/timers/TimeIsUp.h>
 #include <simcore/timers/SynchronizedTimer.h>
+#include <simcore/timers/RealTimeTimer.h>
 #include <simcore/logging/TimeReporter.h>
 #include <gtest/gtest.h>
 
@@ -98,8 +99,6 @@ void calcTime(sim::SynchronizedTimer *timer, bool realTime = false) {
         double time = realTime ? currTime : 0.1 * (double) i;
         timer->setReferenceTime(time);
 
-        // std::cout << "time=" << time << std::endl;
-
         // increment i
         ++i;
 
@@ -157,6 +156,56 @@ TEST_F(SynchronizedTimerTest, SyncTestRT) {
 
     // create timer
     SynchronizedTimer timer;
+    timer.setAcceleration(100.0);
+    timer.setTimeStepSize(0.1);
+
+    // end of loop
+    TimeIsUp stop;
+    stop.setStopTime(10.0);
+
+    // reporter
+    sim::logging::TimeReporter rep;
+    rep.setTimeStepSize(1.0);
+
+    // set timer and add this as component
+    this->setTimer(&timer);
+    this->addComponent(this);
+    this->addStopCondition(&stop);
+    this->addComponent(&stop);
+    this->addComponent(&rep);
+
+    // run synchronizer
+    std::thread timeThread(calcTime, &timer, true);
+
+    // start real time
+    auto start = std::chrono::system_clock::now();
+
+    // run loop
+    this->run();
+
+    // create elapsed time
+    auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start);
+    auto runTime = static_cast<double>(elapsed.count()) / 1000.0;
+
+    // check
+    EXPECT_NEAR(10.0, finalTime, 1e-2);
+    EXPECT_NEAR(0.1, runTime, 1e-2);
+
+    // stop
+    stopSync = true;
+
+    // join thread
+    timeThread.join();
+
+}
+
+
+TEST_F(SynchronizedTimerTest, RealTimeTimerTest) {
+
+    using namespace ::sim;
+
+    // create timer
+    RealTimeTimer timer;
     timer.setAcceleration(100.0);
     timer.setTimeStepSize(0.1);
 

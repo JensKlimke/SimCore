@@ -30,79 +30,96 @@
 #include <chrono>
 #include <thread>
 #include "BasicTimer.h"
+#include "SynchronizedTimer.h"
 
 namespace sim {
 
-    class RealTimeTimer : public BasicTimer {
+    // predefine class
+    class RealTimeTimer;
+
+
+    class RealTimeTimer : public SynchronizedTimer {
 
     private:
 
-        double _acceleration = 1.0;
-
-        std::chrono::system_clock::time_point _refTime;
-        unsigned long _steps = 0;
+        std::thread timeThread{};
+        bool stopSync{};
 
 
     public:
 
+
+        /*!< Constructor */
         RealTimeTimer() = default;
 
+        /*!< Destructor */
         ~RealTimeTimer() override = default;
 
 
-        void step() override {
-
-            using namespace std::chrono;
-
-            // create elapsed time
-            auto elapsed = duration_cast<milliseconds>(system_clock::now() - _refTime);
-            auto currTime = static_cast<double>(elapsed.count()) / 1000.0;
-
-            // step increment
-            _steps++;
-
-            // wait until elapsed time
-            auto nextTime = getTimeStepSize() * (double) _steps;
-            while (currTime < nextTime / _acceleration) {
-
-                // wait a thousandth of a second
-                std::this_thread::sleep_for(std::chrono::microseconds(100));
-
-                // recalculate
-                elapsed = duration_cast<milliseconds>(system_clock::now() - _refTime);
-                currTime = static_cast<double>(elapsed.count()) / 1000.0;
-
-            }
-
-            // set current time
-            setTime(nextTime + getStartTime());
-
-        }
-
-
+        /**
+         * @brief Starts the timer
+         * Starts a thread counting the time from now
+         */
         void start() override {
 
-            BasicTimer::start();
-            _refTime = std::chrono::system_clock::now();
+            // set flag
+            stopSync = false;
+
+            // reset reference time
+            this->setReferenceTime(0.0);
+
+            // run timing thread
+            timeThread = std::thread([this]() {
+                this->realtimeStep();
+            });
+
+            // run super method
+            SynchronizedTimer::start();
 
         }
 
 
-        void reset() override {
+        void stop() override {
 
-            BasicTimer::reset();
-            _steps = 0;
+            // set flag
+            stopSync = true;
+
+            // wait for time thread to finish
+            timeThread.join();
+
+            // run super method
+            SynchronizedTimer::stop();
 
         }
 
 
-        void setAcceleration(double acc) {
+    protected:
 
-            _acceleration = acc;
+        void realtimeStep() {
+
+            // chrono namespace
+            using namespace std::chrono;
+
+            // loop until
+            auto refTime = system_clock::now();
+            while (!this->stopSync) {
+
+                // calculate real time
+                auto elapsed = duration_cast<microseconds>(system_clock::now() - refTime);
+                auto currTime = static_cast<double>(elapsed.count()) / 1e6;
+
+                // set reference time
+                this->setReferenceTime(currTime);
+
+                // sleep
+                std::this_thread::sleep_for(std::chrono::microseconds(10));
+
+            }
 
         }
 
     };
+
 
 }
 

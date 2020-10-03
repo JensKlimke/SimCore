@@ -27,6 +27,7 @@
 
 #include <thread>
 #include <chrono>
+#include <iostream>
 #include "BasicTimer.h"
 
 namespace sim {
@@ -36,10 +37,9 @@ namespace sim {
     private:
 
         double _acceleration = 1.0; //!< Acceleration factor of the timer
-        double _startTime = 0.0; //!< Start point in reference time
-        double _refTime = 0.0; //!< Actual reference time of the synchronization system
-
-        unsigned long _steps = 0; //!< Steps performed
+        double _startRefTime = 0.0; //!< Start point in reference time
+        double _refTime = 0.0;      //!< Actual reference time of the synchronization system
+        unsigned long _steps = 0;   //!< Steps performed
 
 
     public:
@@ -65,19 +65,12 @@ namespace sim {
             auto nextTime = getTimeStepSize() * (double) (++_steps);
 
             // wait until time has been elapsed
-            double elapsed = getElapsedTime();
-            while (elapsed < nextTime) {
-
-                // wait
+            double elapsed;
+            while ((elapsed = getElapsedTime()) < nextTime)
                 std::this_thread::sleep_for(std::chrono::microseconds(10));
 
-                // recalculate
-                elapsed = getElapsedTime();
-
-            }
-
             // set current time
-            setTime(elapsed + _startTime);
+            setTime(elapsed + getStartTime());
 
         }
 
@@ -89,7 +82,7 @@ namespace sim {
         [[nodiscard]] double getElapsedTime() const {
 
             // calculate accelerated elapsed time
-            return (_refTime - _startTime) * _acceleration;
+            return (_refTime - _startRefTime) * _acceleration;
 
         }
 
@@ -112,7 +105,10 @@ namespace sim {
         void start() override {
 
             // set the start time
-            _startTime = _refTime;
+            _startRefTime = _refTime;
+
+            // reset super
+            BasicTimer::start();
 
         }
 
@@ -124,6 +120,9 @@ namespace sim {
 
             // reset steps
             _steps = 0;
+
+            // reset super
+            BasicTimer::reset();
 
         }
 
