@@ -7,6 +7,7 @@ option(REMOTE_FUNCTIONALITY "Enables or disables the remote functionalities" ON)
 add_subdirectory(simcore)
 add_subdirectory(simtraffic)
 add_subdirectory(cucumber)
+add_subdirectory(protobuf)
 
 # server functionality
 if(REMOTE_FUNCTIONALITY)

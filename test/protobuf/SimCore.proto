@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+message Synchronized {
+
+    uint64 componentID = 1;
+    double timeStepSize = 2;
+    double deltaStartTime = 3;
+    double nextExecTime = 4;
+    double lastTimeStep = 5;
+
+}
+
+
+message StopCondition {
+
+    enum StopCode {
+        NONE = 0;
+        OBJECTIVES_MISSED = 1;
+        OBJECTIVES_REACHED = 2;
+        SIM_ENDED = 3;
+    };
+
+    uint64 StopConditionID = 1;
+    StopCode code = 2;
+
+}
+
+
+message Loop {
+
+    enum Status {
+        INITIALIZED = 0;
+        RUNNING = 1;
+        STOPPED = 2;
+    }
+
+    Status status = 1;
+    bool stop = 2;
+    repeated uint64 components = 3;
+    repeated uint64 stopConditions = 4;
+    uint64 timer = 5;
+
+}
