@@ -33,6 +33,7 @@
 #include <simcore/timers/TimeIsUp.h>
 #include <simcore/logging/TimeReporter.h>
 #include <simcore/data/DataManager.h>
+#include <simcore/data/data_access_macros.h>
 #include <gtest/gtest.h>
 #include <map>
 

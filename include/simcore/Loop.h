@@ -26,7 +26,7 @@
 #define SIMCORE_LOOP_H
 
 #include <vector>
-#include "exceptions.h"
+#include "utils/exceptions.h"
 #include "ITimer.h"
 #include "IStopCondition.h"
 #include "IComponent.h"

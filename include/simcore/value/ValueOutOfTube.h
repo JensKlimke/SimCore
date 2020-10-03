@@ -27,7 +27,7 @@
 
 #include "../IStopCondition.h"
 #include "../IComponent.h"
-#include "../exceptions.h"
+#include "../utils/exceptions.h"
 #include "SignalTube.h"
 
 namespace sim::value {
