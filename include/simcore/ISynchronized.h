@@ -35,7 +35,7 @@ namespace sim {
         double _timeStepSize;
         double _deltaStartTime;
         double _nextExecTime;
-        double _last_time_step{};
+        double _lastTimeStep{};
 
 
     public:
@@ -76,7 +76,7 @@ namespace sim {
 
             // get time step size
             double dt = sinceLastTimeStep(simTime);
-            _last_time_step = simTime;
+            _lastTimeStep = simTime;
 
             // update time
             _nextExecTime += _timeStepSize;
@@ -92,7 +92,7 @@ namespace sim {
          */
         void initializeTimer(double initTime) {
 
-            _last_time_step = initTime;
+            _lastTimeStep = initTime;
 
         }
 
@@ -103,7 +103,7 @@ namespace sim {
         */
         [[nodiscard]] double sinceLastTimeStep(double simTime) const {
 
-            return simTime - _last_time_step;
+            return simTime - _lastTimeStep;
 
         }
 
