@@ -33,7 +33,7 @@
 #include <simcore/timers/TimeIsUp.h>
 #include <simcore/logging/FileLogger.h>
 #include <simcore/logging/TimeReporter.h>
-#include <simcore/functions.h>
+#include <simcore/sim_functions.h>
 #include <gtest/gtest.h>
 
 

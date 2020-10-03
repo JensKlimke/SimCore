@@ -25,6 +25,8 @@
 #ifndef SIMCORE_SIM_TYPES_H
 #define SIMCORE_SIM_TYPES_H
 
+#include <string>
+
 namespace sim {
 
     typedef std::string id_type; //!< ID type definition for simulation objects

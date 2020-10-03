@@ -29,8 +29,8 @@
 #include <list>
 #include <iostream>
 #include <sstream>
-#include "../functions.h"
-#include "../IStorable.h"
+#include "IStorable.h"
+#include "../sim_functions.h"
 
 namespace sim::data {
 
@@ -120,7 +120,7 @@ namespace sim::data {
         const void* getValue(const std::string &name) {
 
             if(_index.find(name) == _index.end())
-                throw std::invalid_argument(sim::fnc::string_format("No value \"%s\" defined", name.c_str()));
+                throw std::invalid_argument(sim::string_format("No value \"%s\" defined", name.c_str()));
 
             return _index[name]->value->v();
 
@@ -195,7 +195,7 @@ namespace sim::data {
             dn.nodeMap.emplace_back(v.name, DataNode{v.data});
 
             // save to index
-            _index[sim::fnc::string_format("%s.%s.%s", name.c_str(), context.c_str(), v.name.c_str())]
+            _index[sim::string_format("%s.%s.%s", name.c_str(), context.c_str(), v.name.c_str())]
                 = &dn.nodeMap.back().second;
 
         }
