@@ -32,8 +32,8 @@
 #include <simcore/timers/BasicTimer.h>
 #include <simcore/timers/TimeIsUp.h>
 #include <simcore/logging/FileLogger.h>
-#include <simcore/logging/TimeReporter.h>
 #include <simcore/utils/sim_functions.h>
+#include <nlohmann/json.hpp>
 #include <gtest/gtest.h>
 
 
@@ -41,21 +41,23 @@ class LoggingTest : public ::testing::Test, public sim::ISynchronized {
 
 public:
 
+
     double time{};
     double deltaTime{};
     double value1{};
     double value2{};
 
     // create objects
-    ::sim::BasicTimer timer{};
-    ::sim::TimeIsUp stop{};
-    ::sim::Loop loop{};
+    sim::logging::FileLogger logger{};
+    sim::BasicTimer timer{};
+    sim::TimeIsUp stop{};
+    sim::Loop loop{};
 
     void SetUp() override {
 
         // set parameters
-        timer.setTimeStepSize(0.01);
-        stop.setStopTime(10.0);
+        timer.setTimeStepSize(0.125);
+        stop.setStopTime(1.0);
 
         // set timer and stop condition
         loop.setTimer(&timer);
@@ -66,7 +68,17 @@ public:
         loop.addComponent(this);
 
         // set time step size
-        setTimeStepSize(0.01);
+        setTimeStepSize(0.0001);
+
+        // file logger
+        logger.setTimeStepSize(0.125);
+        loop.addComponent(&logger);
+
+        // register values
+        logger.registerValue("t",  &time);
+        logger.registerValue("dt", &deltaTime);
+        logger.registerValue("a",  &value1);
+        logger.registerValue("b",  &value2);
 
     }
 
@@ -78,8 +90,8 @@ public:
         deltaTime = timeStepSize;
 
         // some random values
-        value1 = cos(time * 2.0);
-        value2 = sin(time * 3.0);
+        value1 = cos(time * M_PI * 2.0);
+        value2 = sin(time * M_PI * 2.0);
 
     }
 
@@ -96,24 +108,9 @@ TEST_F(LoggingTest, SaveDataCSV) {
 
     using namespace sim::logging;
 
-    // file logger
-    FileLogger logger{};
-    logger.setTimeStepSize(0.01);
-    loop.addComponent(&logger);
-
-    // set data file
+    // set filename and type
     auto dataFile = "data.csv";
-
-    // create logger
     logger.setFilename(dataFile);
-
-    // register values
-    logger.registerValue("t",  &time);
-    logger.registerValue("dt", &deltaTime);
-    logger.registerValue("a",  &value1);
-    logger.registerValue("b",  &value2);
-
-    // set format
     logger.setLogFormat(FileLogger::LogFormat::CSV);
 
     // run simulation
@@ -129,29 +126,44 @@ TEST_F(LoggingTest, SaveDataCSV) {
 
     // check second line
     getline(file, line);
-    EXPECT_EQ("0,0,1,0", line); // TODO: check with near
+    EXPECT_EQ("0,0,1,0", line);
 
 }
 
 
-TEST_F(LoggingTest, TimeReporter) {
+TEST_F(LoggingTest, SaveDataJSON) {
 
     using namespace sim::logging;
 
-    // stream
-    std::stringstream ss;
-
-    // time reporter
-    TimeReporter rep{};
-    rep.ostream(ss);
-    rep.setTimeStepSize(1.0);
-    loop.addComponent(&rep);
+    // set filename and type
+    auto dataFile = "data.json";
+    logger.setFilename(dataFile);
+    logger.setLogFormat(FileLogger::LogFormat::JSON);
 
     // run simulation
     loop.run();
 
+    // open file
+    std::ifstream file(dataFile);
 
+    // read json file
+    nlohmann::json json;
+    file >> json;
+
+    // iterate over content
+    unsigned int i = 0;
+    for(auto &obj : json) {
+
+        EXPECT_DOUBLE_EQ(i * 0.125, obj["t"].get<double>());
+        EXPECT_DOUBLE_EQ(i == 0 ? 0.0 : 0.125, obj["dt"].get<double>());
+        EXPECT_NEAR(cos(M_PI * 0.25 * i), obj["a"].get<double>(), 1e-4);
+        EXPECT_NEAR(sin(M_PI * 0.25 * i), obj["b"].get<double>(), 1e-4);
+
+        ++i;
+
+    }
 
 }
+
 
 #pragma clang diagnostic pop
