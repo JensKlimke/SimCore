@@ -85,11 +85,10 @@ protected:
 
         // save last time
         lastTime = t;
-        std::cout << t << " " << dt << std::endl;
 
         // check time
-        EXPECT_NEAR(1.0 + steps * 0.1, t, 1e-3);
-        EXPECT_NEAR(steps > 0 ? 0.1 : 0.0, dt, 1e-3);
+        EXPECT_NEAR(1.0 + steps * 0.1, t, 0.1);
+        EXPECT_NEAR(steps > 0 ? 0.1 : 0.0, dt, 0.1);
 
         // increment
         steps++;
@@ -131,7 +130,7 @@ TEST_F(TimerTest, RealTime) {
 
     // create timer
     auto bt = new sim::RealTimeTimer;
-    bt->setAcceleration(10.0);
+    bt->setAcceleration(100.0);
     bt->setTimeStepSize(0.01);
     bt->setStartTime(1.0);
 
@@ -149,10 +148,10 @@ TEST_F(TimerTest, RealTime) {
     auto runTime = static_cast<double>(elapsed.count()) / 1000.0;
 
     // check
-    EXPECT_NEAR(0.9, runTime, 5e-2);
-    EXPECT_NEAR(1.0, initTime, 1e-3);
-    EXPECT_NEAR(10.0, termTime, 1e-3);
-    EXPECT_NEAR(10.0, lastTime, 1e-3);
+    EXPECT_NEAR(0.09, runTime, 0.01);
+    EXPECT_NEAR(1.0, initTime, 0.1);
+    EXPECT_NEAR(10.0, termTime, 0.1);
+    EXPECT_NEAR(10.0, lastTime, 0.1);
 
 }
 
