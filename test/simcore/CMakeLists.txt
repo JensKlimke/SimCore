@@ -7,7 +7,6 @@ set(SOURCE_FILES
         SignalBasicTest.cpp
         SignalTest.cpp
         LifeCycleTest.cpp
-        DataTest.cpp
         LoggingTest.cpp
         StorageTest.cpp
     )
