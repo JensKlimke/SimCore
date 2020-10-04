@@ -38,7 +38,7 @@ namespace sim {
 
 
         /**
-         * Default deconstructor
+         * Default destructor
          */
         virtual ~ITimer() = default;
 
