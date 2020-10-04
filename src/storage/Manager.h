@@ -18,45 +18,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke on 2020-10-04.
+// Created by Jens Klimke on $date.get('yyyy-M-d').
 // Contributors:
 //
 
-#include <gtest/gtest.h>
-#include <simcore/testing/SimulationTest.h>
 
+#ifndef SIMCORE_MANAGER_H
+#define SIMCORE_MANAGER_H
 
-class SimDump : public sim::Model {
+#include <SimCore.pb.h>
+#include <simcore/Loop.h>
 
-protected:
+namespace sim {
 
-    void initialize(double t) override {
+    class Manager {
 
-    }
+    public:
 
-    void step(double t, double dt) override {
+        static void saveLoop(sim::dump::Simulation &sim, const sim::Loop *loop);
 
-
-    }
-
-    void terminate(double t) override {
-
-    }
-
-};
-
-
-class ProtoTest : public ::testing::Test, public ::sim::testing::SimulationTest<SimDump> {
-
-public:
-
-    ProtoTest() = default;
-    ~ProtoTest() override = default;
-
-};
-
-
-TEST_F(ProtoTest, Dump) {
-
+    };
 
 }
+
+#endif //SIMCORE_MANAGER_H

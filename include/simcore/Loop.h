@@ -38,7 +38,7 @@ namespace sim {
     public:
 
         enum class Status { INITIALIZED, RUNNING, STOPPED };
-
+        friend class Manager;
 
     protected:
 

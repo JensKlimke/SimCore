@@ -22,41 +22,29 @@
 // Contributors:
 //
 
-#include <gtest/gtest.h>
-#include <simcore/testing/SimulationTest.h>
+#include "Manager.h"
 
+namespace sim {
 
-class SimDump : public sim::Model {
+    void Manager::saveLoop(sim::dump::Simulation &sim, const sim::Loop *_loop) {
 
-protected:
+        sim::dump::Loop loop{};
 
-    void initialize(double t) override {
+        loop.set_id(1);
+        loop.set_stop(_loop->_stop);
+
+        // status
+        switch(_loop->_status) {
+            case Loop::Status::INITIALIZED:
+                loop.set_status(sim::dump::Loop_Status_INITIALIZED);
+            case Loop::Status::RUNNING:
+                loop.set_status(sim::dump::Loop_Status_RUNNING);
+            case Loop::Status::STOPPED:
+                loop.set_status(sim::dump::Loop_Status_STOPPED);
+        }
+
+        sim.set_allocated_loop(&loop);
 
     }
-
-    void step(double t, double dt) override {
-
-
-    }
-
-    void terminate(double t) override {
-
-    }
-
-};
-
-
-class ProtoTest : public ::testing::Test, public ::sim::testing::SimulationTest<SimDump> {
-
-public:
-
-    ProtoTest() = default;
-    ~ProtoTest() override = default;
-
-};
-
-
-TEST_F(ProtoTest, Dump) {
-
 
 }

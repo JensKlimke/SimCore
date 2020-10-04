@@ -21,3 +21,4 @@ include(ModuleTesting)
 
 # lib sources
 add_subdirectory(src/socket)
+add_subdirectory(src/storage)
