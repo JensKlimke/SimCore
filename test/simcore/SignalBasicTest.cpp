@@ -1,5 +1,3 @@
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "cert-err58-cpp"
 //
 // Copyright (c) 2019-2020 Jens Klimke <jens.klimke@rwth-aachen.de>
 //
@@ -27,6 +25,7 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunknown-pragmas"
 #pragma clang diagnostic ignored "-Wunused-result"
+#pragma ide diagnostic ignored "cert-err58-cpp"
 
 #include <gtest/gtest.h>
 #include <simcore/value/SignalCurve.h>
@@ -178,5 +177,4 @@ TEST(SignalBasicTest, SignalTube) {
 
 }
 
-#pragma clang diagnostic pop
 #pragma clang diagnostic pop
