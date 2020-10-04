@@ -1,7 +1,6 @@
 # source files
 set(SOURCE_FILES
         TimerTest.cpp
-        SynchronizedTimerTest.cpp
         StopConditionTest.cpp
         SignalBasicTest.cpp
         SignalTest.cpp
