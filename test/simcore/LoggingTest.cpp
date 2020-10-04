@@ -125,7 +125,7 @@ TEST_F(LoggingTest, SaveDataCSV) {
 
     // check second line
     getline(file, line);
-    EXPECT_EQ("0,0,1,0", line);
+    EXPECT_EQ("0,0,1,0", line); // TODO: check with near
 
 }
 
@@ -146,19 +146,7 @@ TEST_F(LoggingTest, TimeReporter) {
     // run simulation
     loop.run();
 
-    // open file
-    std::string line;
-    std::cout << ss.str() << std::endl;
-    ss.seekg(0);
 
-
-    // check first line
-    getline(ss, line);
-    EXPECT_EQ("t=0s, dt=0s", line);
-
-    // check second line
-    getline(ss, line);
-    EXPECT_EQ("t=1s, dt=1s", line);
 
 }
 
