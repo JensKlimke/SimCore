@@ -18,6 +18,7 @@ add_executable(SimCoreTest ${SOURCE_FILES})
 # include directories
 target_include_directories(SimCoreTest PRIVATE
         ${PROJECT_SOURCE_DIR}/include
+        ${PROJECT_SOURCE_DIR}/lib/json/include
         )
 
 # add tests
