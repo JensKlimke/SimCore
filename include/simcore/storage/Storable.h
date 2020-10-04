@@ -32,7 +32,6 @@ namespace sim::storage {
     /*!< The storage interface */
     struct Storable {
         virtual void registerSignals(DataNode &node) = 0;
-
         virtual void fromNode(const DataNode &node) = 0;
     };
 
