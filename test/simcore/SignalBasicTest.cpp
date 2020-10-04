@@ -112,6 +112,15 @@ TEST(SignalBasicTest, SignalCurve) {
 }
 
 
+TEST(SignalBasicTest, SignalCurveErrors) {
+
+    SignalCurve sc;
+    EXPECT_THROW(sc.define({0.0, 10.0, 20.0, 30.0}, {1.0, 2.0, 2.0}), std::invalid_argument);
+    EXPECT_THROW(sc.define({0.0, 10.0, 10.0, 30.0}, {1.0, 2.0, 2.0, 3.0}), std::invalid_argument);
+
+}
+
+
 TEST(SignalBasicTest, SignalTube) {
 
     SignalTube sc;

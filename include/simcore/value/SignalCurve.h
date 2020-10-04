@@ -60,8 +60,14 @@ public:
      */
     void define(std::vector<double> &&x, std::vector<double> &&y) {
 
-        if(_x.size() != _y.size())
+        // check size
+        if(x.size() != y.size())
             throw std::invalid_argument("sizes must be equal");
+
+        // TODO: check data
+        for(unsigned int i = 1; i < x.size(); ++i)
+            if(x[i - 1] >= x[i])
+                throw std::invalid_argument("x data must be strictly monotonically.");
 
         _x = std::move(x);
         _y = std::move(y);
@@ -150,20 +156,14 @@ public:
 
         auto n = _x.size();
 
-        // check boundaries
+        // x smaller than first element -> extrapolate
         if (x <= _x[0])
             return {_x[0] - x, _y[0], _x[1] - x, _y[1]};
 
-        else if (x >= _x[n - 1])
-            return {_x[n - 2] - x, _y[n - 2], _x[n - 1] - x, _y[n - 1]};
 
-
+        // find interval
         unsigned int i;
         for(i = 1; i < _x.size(); ++i) {
-
-            // check for strictly monotonous
-            if(_x[i - 1] >= _x[i])
-                throw std::runtime_error("interpolation only possible with strictly monotonous data");
 
             // interpolate if in bounds
             if (_x[i] > x)
@@ -171,7 +171,8 @@ public:
 
         }
 
-        return {};
+        // x larger than last element -> extrapolate
+        return {_x[n - 2] - x, _y[n - 2], _x[n - 1] - x, _y[n - 1]};
 
     }
 

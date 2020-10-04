@@ -48,7 +48,7 @@ namespace sim::value {
         void _init(double initTime) override {
 
             if (!isSet())
-                throw ProcessException("Band is not initialized.");
+                throw ProcessException("Tube is not initialized.");
 
         }
 
