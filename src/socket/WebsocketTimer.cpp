@@ -87,8 +87,6 @@ namespace sim {
             auto str = timer->_websocket->read();
             auto time = std::stod(str);
 
-            std::cout << str << "s " << std::endl;
-
             // set time
             timer->setReferenceTime(time);
 
