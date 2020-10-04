@@ -28,6 +28,7 @@
 #include <thread>
 #include "SynchronizedTimer.h"
 
+// pre-define
 namespace sim::socket {
     class WebSocket;
 }
@@ -37,8 +38,8 @@ namespace sim {
     class WebSocketTimer : public SynchronizedTimer {
 
         sim::socket::WebSocket *_websocket = nullptr;
-
         std::thread _thread;
+
         bool _running{};
 
 
