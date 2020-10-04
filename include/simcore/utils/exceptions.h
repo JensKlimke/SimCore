@@ -34,9 +34,15 @@ namespace sim {
 
     class ProcessException : public std::exception {
 
-        std::string _msg;
+        std::string _msg{};
 
     public:
+
+
+        /**
+         * Constructor leaving the message empty
+         */
+        ProcessException() = default;
 
 
         /**
@@ -84,8 +90,10 @@ namespace sim {
     /*!< Exceptions thrown when errornous setup */
     class SetupException : public ProcessException {
     public:
+        SetupException() = default;
         explicit SetupException(const char *msg) : ProcessException(msg) {}
         SetupException(const SetupException &ex) noexcept: ProcessException(ex.what()) {}
+        ~SetupException() override = default;
     };
 
 }

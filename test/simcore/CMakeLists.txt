@@ -1,5 +1,6 @@
 # source files
 set(SOURCE_FILES
+        ExceptionTest.cpp
         LoopTest.cpp
         TimerTest.cpp
         StopConditionTest.cpp
