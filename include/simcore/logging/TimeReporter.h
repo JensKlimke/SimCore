@@ -34,7 +34,7 @@ namespace sim::logging {
     class TimeReporter : public sim::ISynchronized {
 
 
-        std::ostream *_stream = nullptr;
+        std::ostream *_stream = &std::cout;
 
 
     public:
@@ -49,16 +49,10 @@ namespace sim::logging {
 
         /**
          * @brief Initializes the logger
-         * Sets std::cout as output stream, if not set
+         * Does nothing
          * @param initTime Initialization time
          */
-        void initialize(double initTime) override {
-
-            // take std::cout if no stream is set
-            if (_stream == nullptr)
-                _stream = &std::cout;
-
-        }
+        void initialize(double initTime) override {}
 
 
         /**
