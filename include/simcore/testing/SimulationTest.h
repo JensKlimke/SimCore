@@ -39,11 +39,19 @@
 namespace sim::testing {
 
     template<class T>
-    class SimulationTest : public Loop, public T {
+    class SimulationTest : public T {
 
+    protected:
+
+        // elements
+        std::unique_ptr<sim::Loop> _loop{};
         std::unique_ptr<sim::BasicTimer> _timer{};
         std::vector<std::unique_ptr<sim::IComponent>> _components{};
 
+        // pointers
+        sim::TimeIsUp *_stopTimer{};
+
+        // storage
         sim::storage::DataNode _data{};
 
     public:
@@ -71,7 +79,7 @@ namespace sim::testing {
             _components.emplace_back(comp);
 
             // add component
-            this->addComponent(comp);
+            _loop->addComponent(comp);
 
             // return component
             return comp;
@@ -88,6 +96,9 @@ namespace sim::testing {
          */
         void create(double endTime, double timeStepSize, double startTime = INFINITY, double acceleration = INFINITY) {
 
+            // create loop
+            _loop = std::make_unique<sim::Loop>();
+
             // create timer
             if(std::isinf(acceleration)) {
 
@@ -103,6 +114,11 @@ namespace sim::testing {
                 // save timer
                 _timer.reset(timer);
 
+            }
+
+            // when acceleration is low, set reporter to visualize time
+            if(acceleration <= 10.0) {
+
                 // set time reporter
                 auto timeReporter = createComponent<sim::logging::TimeReporter>();
                 timeReporter->setTimeStepSize(1.0);
@@ -114,17 +130,28 @@ namespace sim::testing {
             _timer->setStartTime(startTime);
 
             // add to loop
-            setTimer(_timer.get());
+            _loop->setTimer(_timer.get());
 
             // stop condition (time)
-            auto stopTimer = createComponent<sim::TimeIsUp>();
-            stopTimer->setStopTime(endTime);
+            _stopTimer = createComponent<sim::TimeIsUp>();
+            _stopTimer->setStopTime(endTime);
 
             // add component as stop condition
-            addStopCondition(stopTimer);
+            _loop->addStopCondition(_stopTimer);
 
             // add myself to the loop
-            this->addComponent(this);
+            _loop->addComponent(this);
+
+        }
+
+
+        /**
+         * Executes the simulation
+         */
+        void run() {
+
+            // run loop
+            _loop->run();
 
         }
 
@@ -179,6 +206,17 @@ namespace sim::testing {
 
             // add to pre steps
             _postSteps.emplace_back(std::move(fnc));
+
+        }
+
+
+        /**
+         * Returns the main simulation loop
+         * @return Main simulation loop
+         */
+        sim::Loop *getLoop() {
+
+            return _loop.get();
 
         }
 
