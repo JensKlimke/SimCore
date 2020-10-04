@@ -34,6 +34,14 @@
 namespace sim {
 
 
+    /**
+     * Bounds the given value to the maximum and minimum
+     * @tparam T Value type
+     * @param value Value to be bounded
+     * @param minValue Lower bound
+     * @param maxValue Upper bound
+     * @return
+     */
     template<typename T>
     inline T range(T value, T minValue, T maxValue) {
         using namespace std;
