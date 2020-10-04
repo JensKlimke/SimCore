@@ -33,7 +33,7 @@
 #include <simcore/timers/RealTimeTimer.h>
 
 
-class LoopTest : public ::testing::Test, public sim::Loop, public sim::Model {
+class LoopTest : public ::testing::Test, public sim::Loop, public sim::Model, public sim::IStopCondition {
 
 public:
 
@@ -69,7 +69,7 @@ public:
             EXPECT_THROW(_initialize(), sim::ProcessException);
 
             // stop simulation
-            stop();
+            abort();
 
         }
 
@@ -94,7 +94,7 @@ TEST_F(LoopTest, NotSetProperly) {
 
     // erroneous calls before initialization
     EXPECT_THROW(run(), ProcessException);
-    EXPECT_THROW(stop(), ProcessException);
+    EXPECT_THROW(abort(), ProcessException);
     EXPECT_THROW(_execute(), ProcessException);
 
     // check status
@@ -106,11 +106,14 @@ TEST_F(LoopTest, NotSetProperly) {
 
     // set timer and stop condition
     setTimer(&timer);
-    addComponent(this);
 
-    // not allowed to set component twice
+    // add component, not allowed to add component twice
+    addComponent(this);
     EXPECT_THROW(addComponent(this), sim::SetupException);
-    // TODO: add stop condition twice
+
+    // add stop condition, not allowed to add stop condition twice
+    addStopCondition(this);
+    EXPECT_THROW(addStopCondition(this), sim::SetupException);
 
     // run simulation
     EXPECT_THROW(run(), sim::SetupException);

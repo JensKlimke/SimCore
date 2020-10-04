@@ -85,7 +85,7 @@ TEST_F(StopConditionTest, Interrupt) {
 
     // interrupt
     callback = [this] (double t, double dt) {
-        loop.stop();
+        loop.abort();
     };
 
     // run loop

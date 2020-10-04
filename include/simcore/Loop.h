@@ -128,7 +128,7 @@ namespace sim {
         /**
          * Abort the running simulation
          */
-        void stop() {
+        void abort() {
 
             // check state
             if(_status != Status::RUNNING)
