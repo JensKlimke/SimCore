@@ -459,8 +459,6 @@ TEST_F(VehicleModelTest, DriveCurvesLeft) {
     // initialize
     init = [this, &left, &forwards]() {
 
-        std::cout << std::endl << std::endl;
-
         // set state
         state.xPosition = 0.0;
         state.yPosition = left ? -100.0 : 100.0;
