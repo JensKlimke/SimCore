@@ -41,10 +41,10 @@ class LoggingTest : public ::testing::Test, public sim::ISynchronized {
 
 public:
 
-    double time;
-    double deltaTime;
-    double value1;
-    double value2;
+    double time{};
+    double deltaTime{};
+    double value1{};
+    double value2{};
 
     // create objects
     ::sim::BasicTimer timer{};
@@ -64,6 +64,9 @@ public:
         // models
         loop.addComponent(&stop);
         loop.addComponent(this);
+
+        // set time step size
+        setTimeStepSize(0.01);
 
     }
 
@@ -95,6 +98,7 @@ TEST_F(LoggingTest, SaveDataCSV) {
 
     // file logger
     FileLogger logger{};
+    logger.setTimeStepSize(0.01);
     loop.addComponent(&logger);
 
     // set data file

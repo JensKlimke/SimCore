@@ -28,7 +28,6 @@
 
 #include <simcore/ISynchronized.h>
 #include <simcore/Loop.h>
-#include <simcore/data/DataManager.h>
 #include <simcore/timers/TimeIsUp.h>
 #include <simcore/timers/RealTimeTimer.h>
 #include <gtest/gtest.h>
@@ -40,7 +39,23 @@ class StopConditionTest : public ::testing::Test, public ::sim::ISynchronized, p
 protected:
 
     sim::Loop loop{};
+    sim::BasicTimer timer{};
     std::function<void(double, double)> callback{};
+
+    void SetUp() override {
+
+        // set time step size
+        setTimeStepSize(0.01);
+
+        // create loop
+        loop.addComponent(this);
+        loop.addStopCondition(this);
+
+        // set timer
+        timer.setTimeStepSize(0.01);
+        loop.setTimer(&timer);
+
+    }
 
 
 public:
@@ -73,17 +88,6 @@ TEST_F(StopConditionTest, Interrupt) {
         loop.stop();
     };
 
-    using namespace ::sim;
-
-    // create loop
-    loop.addComponent(this);
-    loop.addStopCondition(this);
-
-    // set timer
-    BasicTimer timer;
-    timer.setTimeStepSize(0.01);
-    loop.setTimer(&timer);
-
     // run loop
     loop.run();
 
@@ -100,17 +104,6 @@ TEST_F(StopConditionTest, Success) {
     callback = [this] (double t, double dt) {
         this->success();
     };
-
-    using namespace ::sim;
-
-    // create loop
-    loop.addComponent(this);
-    loop.addStopCondition(this);
-
-    // set timer
-    BasicTimer timer;
-    timer.setTimeStepSize(0.01);
-    loop.setTimer(&timer);
 
     // run loop
     loop.run();
@@ -129,17 +122,6 @@ TEST_F(StopConditionTest, Fail) {
         this->failed();
     };
 
-    using namespace ::sim;
-
-    // create loop
-    loop.addComponent(this);
-    loop.addStopCondition(this);
-
-    // set timer
-    BasicTimer timer;
-    timer.setTimeStepSize(0.01);
-    loop.setTimer(&timer);
-
     // run loop
     loop.run();
 
@@ -157,17 +139,6 @@ TEST_F(StopConditionTest, End) {
     callback = [this] (double t, double dt) {
         this->end();
     };
-
-    using namespace ::sim;
-
-    // create loop
-    loop.addComponent(this);
-    loop.addStopCondition(this);
-
-    // set timer
-    BasicTimer timer;
-    timer.setTimeStepSize(0.01);
-    loop.setTimer(&timer);
 
     // run loop
     loop.run();

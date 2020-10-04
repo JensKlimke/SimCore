@@ -26,16 +26,18 @@
 #define SIMCORE_SYNCHRONIZED_H
 
 #include "IComponent.h"
+#include <simcore/utils/exceptions.h>
+#include <cmath>
 
 
 namespace sim {
 
     class ISynchronized : public sim::IComponent {
 
-        double _timeStepSize;
-        double _deltaStartTime;
-        double _nextExecTime;
-        double _lastTimeStep{};
+        double _timeStepSize = 0.0;
+        double _deltaStartTime = 0.0;
+        double _nextExecTime = 0.0;
+        double _lastTimeStep = 0.0;
 
 
     public:
@@ -56,11 +58,11 @@ namespace sim {
          * Sets the time (relative to first time step) when the component shall be executed the first time.
          * The absolute first execution time is calculated during initialization. The relative time is stored
          * and valid for each simulation loop.
-         * @param firstExecutionAfterStart The first relative execution time
+         * @param startTime The first relative execution time
          */
-        void setStartTime(double firstExecutionAfterStart) {
+        void setStartTime(double startTime) {
 
-            _deltaStartTime = firstExecutionAfterStart;
+            _deltaStartTime = startTime;
 
         }
 
@@ -138,6 +140,9 @@ namespace sim {
          * @param initTime Initialization time
          */
         void _init(double initTime) override {
+
+            if(_timeStepSize < EPS_SIM_TIME)
+                throw sim::SetupException("Time step size is not set for component.");
 
             // create timer
             _nextExecTime = _deltaStartTime + initTime;

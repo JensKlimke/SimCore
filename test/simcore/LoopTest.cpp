@@ -97,22 +97,30 @@ TEST_F(LoopTest, NotSetProperly) {
     EXPECT_THROW(stop(), ProcessException);
     EXPECT_THROW(_execute(), ProcessException);
 
+    // check status
+    EXPECT_EQ(Status::STOPPED, getStatus());
+
     // create objects
     BasicTimer timer;
     timer.setTimeStepSize(0.01);
 
     // set timer and stop condition
-    this->setTimer(&timer);
-    this->addComponent(this);
+    setTimer(&timer);
+    addComponent(this);
 
-    // check status
-    EXPECT_EQ(Status::STOPPED, this->getStatus());
+    // not allowed to set component twice
+    EXPECT_THROW(addComponent(this), sim::SetupException);
+    // TODO: add stop condition twice
 
     // run simulation
-    this->run();
+    EXPECT_THROW(run(), sim::SetupException);
+
+    // set time step size and run again
+    setTimeStepSize(0.01);
+    run();
 
     // check status
-    EXPECT_EQ(Status::STOPPED, this->getStatus());
+    EXPECT_EQ(Status::STOPPED, getStatus());
     EXPECT_TRUE(isInitialized);
     EXPECT_TRUE(isExecuted);
     EXPECT_TRUE(isTerminated);

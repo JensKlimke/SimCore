@@ -205,6 +205,7 @@ TEST_F(DataTest, DataManager) {
     data.registerStorable("Test", *this);
 
     // add this to loop
+    setTimeStepSize(0.01);
     loop.addComponent(this);
 
     // initialize simulation
