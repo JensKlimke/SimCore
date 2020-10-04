@@ -38,6 +38,16 @@
 
 namespace sim::testing {
 
+
+    struct TimeStep {
+        double time;
+        double deltaTime;
+        double initTime;
+        double termTime;
+        unsigned long steps;
+    };
+
+
     template<class T>
     class SimulationTest : public T {
 
@@ -52,17 +62,68 @@ namespace sim::testing {
         sim::TimeIsUp *_stopTimer{};
 
         // storage
+        TimeStep _time{};
         sim::storage::DataNode _data{};
 
-    public:
+        // callbacks
+        std::vector<std::function<void()>> _preSteps{};
+        std::vector<std::function<void()>> _postSteps{};
 
-        struct Time {
-            double time;
-            double deltaTime;
-            double initTime;
-            double termTime;
-            unsigned long steps;
-        };
+        // dump containers
+        std::map<std::string, std::function<void()>> _dumpCallback{};
+
+
+        void initialize(double t) override {
+
+            // call super init
+            T::initialize(t);
+
+            // set initialization time
+            _time.initTime = t;
+
+            // reset every other time elements
+            _time.termTime = INFINITY;
+            _time.time = 0.0;
+            _time.deltaTime = 0.0;
+            _time.steps = 0;
+
+        }
+
+
+        void step(double t, double dt) override {
+
+            // get time step size and save time
+            _time.deltaTime = dt;
+            _time.time = t;
+
+            // run pre-steps
+            for (auto &ps : _preSteps)
+                ps();
+
+            // run main step
+            T::step(t, dt);
+
+            // run post-steps
+            for (auto &ps : _postSteps)
+                ps();
+
+            // increment steps
+            _time.steps++;
+
+        }
+
+
+        void terminate(double t) override {
+
+            // set termination time
+            _time.termTime = t;
+
+            // terminate super
+            T::terminate(t);
+
+        }
+
+    public:
 
 
         /**
@@ -160,7 +221,7 @@ namespace sim::testing {
          * Returns the time structure
          * @return Time structure
          */
-        const Time &time() const {
+        const TimeStep &time() const {
 
             return _time;
 
@@ -217,65 +278,6 @@ namespace sim::testing {
         sim::Loop *getLoop() {
 
             return _loop.get();
-
-        }
-
-
-    protected:
-
-        Time _time;
-
-        std::vector<std::function<void()>> _preSteps{};
-        std::vector<std::function<void()>> _postSteps{};
-
-
-        void initialize(double t) override {
-
-            // call super init
-            T::initialize(t);
-
-            // set initialization time
-            _time.initTime = t;
-
-            // reset every other time elements
-            _time.termTime = INFINITY;
-            _time.time = 0.0;
-            _time.deltaTime = 0.0;
-            _time.steps = 0;
-
-        }
-
-
-        void step(double t, double dt) override {
-
-            // get time step size and save time
-            _time.deltaTime = dt;
-            _time.time = t;
-
-            // run pre-steps
-            for (auto &ps : _preSteps)
-                ps();
-
-            // run main step
-            T::step(t, dt);
-
-            // run post-steps
-            for (auto &ps : _postSteps)
-                ps();
-
-            // increment steps
-            _time.steps++;
-
-        }
-
-
-        void terminate(double t) override {
-
-            // set termination time
-            _time.termTime = t;
-
-            // terminate super
-            T::terminate(t);
 
         }
 
