@@ -33,7 +33,7 @@
 #include <simcore/timers/TimeIsUp.h>
 #include <simcore/logging/UDPLogger.h>
 #include <simcore/logging/WebsocketLogger.h>
-#include <simcore/functions.h>
+#include <simcore/utils/sim_functions.h>
 #include <gtest/gtest.h>
 
 
@@ -54,9 +54,10 @@ public:
 
         // set parameters
         timer.setTimeStepSize(0.1);
-        timer.setAcceleration(10.0);
+        timer.setAcceleration(1.0);
         stop.setStopTime(10.0);
         rep.setTimeStepSize(1.0);
+        setTimeStepSize(1.0);
 
         // set timer and stop condition
         loop.setTimer(&timer);
