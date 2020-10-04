@@ -83,7 +83,7 @@ namespace sim::logging {
             if (_format == LogFormat::JSON) {
 
                 // save time and open object brackets
-                *_ostream << (_hasContent ? ",\n\t" : "");
+                *_ostream << (_hasContent ? ",\n" : "") << "\t";
 
                 // write data point to file
                 Logger::writeJSONData(*_ostream);
