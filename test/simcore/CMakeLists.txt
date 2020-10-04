@@ -1,10 +1,11 @@
 # source files
 set(SOURCE_FILES
+        LoopTest.cpp
         TimerTest.cpp
         StopConditionTest.cpp
         SignalBasicTest.cpp
         SignalTest.cpp
-        SimulationTestTest.cpp
+        LifeCycleTest.cpp
         DataTest.cpp
         LoggingTest.cpp
         StorageTest.cpp

@@ -30,53 +30,64 @@
 #include <string>
 
 
-class ProcessException : public std::exception
-{
+namespace sim {
 
-    std::string _msg;
+    class ProcessException : public std::exception {
 
-public:
+        std::string _msg;
 
-
-    /**
-     * Constructor of an process exception
-     * @param msg Message to be set
-     */
-    explicit ProcessException(const char* msg) : _msg(msg) {}
+    public:
 
 
-    /**
-     * Copy constructor
-     * @param ex Exception to be copied
-     */
-    ProcessException(const ProcessException& ex) noexcept : _msg(ex._msg) {}
+        /**
+         * Constructor of an process exception
+         * @param msg Message to be set
+         */
+        explicit ProcessException(const char *msg) : _msg(msg) {}
 
 
-    /**
-     * Assignment operator
-     * @param ex Exception to be copied
-     * @return The copied exception
-     */
-    ProcessException& operator=(const ProcessException& ex) noexcept {
-        _msg = ex._msg;
-        return *this;
-    }
+        /**
+         * Copy constructor
+         * @param ex Exception to be copied
+         */
+        ProcessException(const ProcessException &ex) noexcept: _msg(ex._msg) {}
 
 
-    /**
-     * Destructor
-     */
-    ~ProcessException() noexcept override = default;
+        /**
+         * Assignment operator
+         * @param ex Exception to be copied
+         * @return The copied exception
+         */
+        ProcessException &operator=(const ProcessException &ex) noexcept {
+            _msg = ex._msg;
+            return *this;
+        }
 
 
-    /**
-     *
-     * @return
-     */
-    [[nodiscard]] const char* what() const noexcept override {
-        return _msg.c_str();
-    }
-};
+        /**
+         * Destructor
+         */
+        ~ProcessException() noexcept override = default;
 
+
+        /**
+         *
+         * @return
+         */
+        [[nodiscard]] const char *what() const noexcept override {
+            return _msg.c_str();
+        }
+
+    };
+
+
+    /*!< Exceptions thrown when errornous setup */
+    class SetupException : public ProcessException {
+    public:
+        explicit SetupException(const char *msg) : ProcessException(msg) {}
+        SetupException(const SetupException &ex) noexcept: ProcessException(ex.what()) {}
+    };
+
+}
 
 #endif //SIMCORE_SIMULATIONERRORS_H

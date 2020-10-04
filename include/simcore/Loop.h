@@ -83,6 +83,10 @@ namespace sim {
          */
         void addStopCondition(IStopCondition *stop) {
 
+            // check if component is already added
+            if(std::find(_stop_conditions.begin(), _stop_conditions.end(), stop) != _stop_conditions.end())
+                throw sim::SetupException("Stop condition object has been already added.");
+
             _stop_conditions.push_back(stop);
 
         }
@@ -94,6 +98,10 @@ namespace sim {
          * @param comp Model to be set
          */
         void addComponent(sim::IComponent *comp) {
+
+            // check if component is already added
+            if(std::find(_components.begin(), _components.end(), comp) != _components.end())
+                throw sim::SetupException("Component has been already added.");
 
             _components.push_back(comp);
 
