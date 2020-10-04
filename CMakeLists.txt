@@ -18,3 +18,6 @@ include(ModuleCucumber) # cucumber framework
 
 # testing
 include(ModuleTesting)
+
+# lib sources
+add_subdirectory(src/socket)
