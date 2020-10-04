@@ -22,8 +22,8 @@
 // Created by Jens Klimke on 2019-03-12
 //
 
-#ifndef SIMCORE_STOPCONDITION_H
-#define SIMCORE_STOPCONDITION_H
+#ifndef SIMCORE_STOP_CONDITION_H
+#define SIMCORE_STOP_CONDITION_H
 
 #include <string>
 
@@ -137,4 +137,4 @@ namespace sim {
 }
 
 
-#endif //SIMCORE_STOPCONDITION_H
+#endif //SIMCORE_STOP_CONDITION_H
