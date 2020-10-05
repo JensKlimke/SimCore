@@ -25,7 +25,6 @@
 #pragma clang diagnostic ignored "-Wunknown-pragmas"
 #pragma ide diagnostic ignored "cert-err58-cpp"
 
-#include <cmath>
 #include <simcore/Loop.h>
 #include <simcore/Model.h>
 #include <simcore/timers/RealTimeTimer.h>
