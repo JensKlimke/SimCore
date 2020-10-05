@@ -31,7 +31,7 @@
 #include <simcore/value/SignalCurve.h>
 #include <simcore/value/SignalTube.h>
 
-TEST(SignalBasicTest, SignalCurve) {
+TEST(ValueCheckBasicTest, SignalCurve) {
 
     SignalCurve sc;
 
@@ -40,16 +40,16 @@ TEST(SignalBasicTest, SignalCurve) {
     EXPECT_TRUE(sc.isSet());
 
     // check interpolate function
-    EXPECT_NEAR( 1.0, sc.interpolate(0.0), EPS_DISTANCE);
-    EXPECT_NEAR( 1.1, sc.interpolate(1.0), EPS_DISTANCE);
-    EXPECT_NEAR( 1.5, sc.interpolate(5.0), EPS_DISTANCE);
-    EXPECT_NEAR( 2.0, sc.interpolate(10.0), EPS_DISTANCE);
-    EXPECT_NEAR( 2.0, sc.interpolate(11.0), EPS_DISTANCE);
-    EXPECT_NEAR( 2.0, sc.interpolate(20.0), EPS_DISTANCE);
-    EXPECT_NEAR( 1.7, sc.interpolate(21.0), EPS_DISTANCE);
+    EXPECT_NEAR(1.0, sc.interpolate(0.0), EPS_DISTANCE);
+    EXPECT_NEAR(1.1, sc.interpolate(1.0), EPS_DISTANCE);
+    EXPECT_NEAR(1.5, sc.interpolate(5.0), EPS_DISTANCE);
+    EXPECT_NEAR(2.0, sc.interpolate(10.0), EPS_DISTANCE);
+    EXPECT_NEAR(2.0, sc.interpolate(11.0), EPS_DISTANCE);
+    EXPECT_NEAR(2.0, sc.interpolate(20.0), EPS_DISTANCE);
+    EXPECT_NEAR(1.7, sc.interpolate(21.0), EPS_DISTANCE);
     EXPECT_NEAR(-1.0, sc.interpolate(30.0), EPS_DISTANCE);
 
-    EXPECT_NEAR( 1.0, sc.interpolate(-1e-10), EPS_DISTANCE);
+    EXPECT_NEAR(1.0, sc.interpolate(-1e-10), EPS_DISTANCE);
     EXPECT_NEAR(-1.0, sc.interpolate(30.0 + 1e-10), EPS_DISTANCE);
 
     EXPECT_THROW(sc.interpolate(-1e-4), std::invalid_argument);
@@ -91,27 +91,27 @@ TEST(SignalBasicTest, SignalCurve) {
     EXPECT_TRUE(sc.hit(1.0,  1.1));
     EXPECT_TRUE(sc.hit(5.0,  1.5));
     EXPECT_TRUE(sc.hit(10.0,  2.0));
-    EXPECT_TRUE(sc.hit(11.0,  2.0));
-    EXPECT_TRUE(sc.hit(20.0,  2.0));
-    EXPECT_TRUE(sc.hit(21.0,  1.7));
+    EXPECT_TRUE(sc.hit(11.0, 2.0));
+    EXPECT_TRUE(sc.hit(20.0, 2.0));
+    EXPECT_TRUE(sc.hit(21.0, 1.7));
     EXPECT_TRUE(sc.hit(30.0, -1.0));
 
-    EXPECT_FALSE(sc.hit(0.0,  0.0));
-    EXPECT_FALSE(sc.hit(5.0,  2.5));
+    EXPECT_FALSE(sc.hit(0.0, 0.0));
+    EXPECT_FALSE(sc.hit(5.0, 2.5));
     EXPECT_FALSE(sc.hit(30.0, -1.5));
     EXPECT_FALSE(sc.hit(30.0, -1.5, 0.4));
 
-    EXPECT_TRUE(sc.hit(0.0,  0.0, 1.1));
-    EXPECT_TRUE(sc.hit(5.0,  2.5, 1.1));
+    EXPECT_TRUE(sc.hit(0.0, 0.0, 1.1));
+    EXPECT_TRUE(sc.hit(5.0, 2.5, 1.1));
     EXPECT_TRUE(sc.hit(30.0, -1.5, 0.6));
 
-    EXPECT_TRUE(sc.hit(-1e-10,  1.0));
+    EXPECT_TRUE(sc.hit(-1e-10, 1.0));
     EXPECT_TRUE(sc.hit(30.0 + 1e-10, -1.0));
 
 }
 
 
-TEST(SignalBasicTest, SignalCurveErrors) {
+TEST(ValueCheckBasicTest, SignalCurveErrors) {
 
     SignalCurve sc;
     EXPECT_THROW(sc.define({0.0, 10.0, 20.0, 30.0}, {1.0, 2.0, 2.0}), std::invalid_argument);
@@ -120,26 +120,26 @@ TEST(SignalBasicTest, SignalCurveErrors) {
 }
 
 
-TEST(SignalBasicTest, SignalTube) {
+TEST(ValueCheckBasicTest, SignalTube) {
 
     SignalTube sc;
 
     EXPECT_FALSE(sc.isSet());
-    sc.defineUpper({0.0, 10.0, 20.0, 30.0}, {2.0, 3.0, 3.0,  0.0});
+    sc.defineUpper({0.0, 10.0, 20.0, 30.0}, {2.0, 3.0, 3.0, 0.0});
     EXPECT_FALSE(sc.isSet());
     sc.defineLower({0.0, 10.0, 20.0, 30.0}, {0.0, 1.0, 1.0, -2.0});
     EXPECT_TRUE(sc.isSet());
 
-    EXPECT_NEAR( 1.0, sc.center(0.0),  EPS_DISTANCE);
-    EXPECT_NEAR( 1.1, sc.center(1.0),  EPS_DISTANCE);
-    EXPECT_NEAR( 1.5, sc.center(5.0),  EPS_DISTANCE);
-    EXPECT_NEAR( 2.0, sc.center(10.0), EPS_DISTANCE);
-    EXPECT_NEAR( 2.0, sc.center(11.0), EPS_DISTANCE);
-    EXPECT_NEAR( 2.0, sc.center(20.0), EPS_DISTANCE);
-    EXPECT_NEAR( 1.7, sc.center(21.0), EPS_DISTANCE);
+    EXPECT_NEAR(1.0, sc.center(0.0), EPS_DISTANCE);
+    EXPECT_NEAR(1.1, sc.center(1.0), EPS_DISTANCE);
+    EXPECT_NEAR(1.5, sc.center(5.0), EPS_DISTANCE);
+    EXPECT_NEAR(2.0, sc.center(10.0), EPS_DISTANCE);
+    EXPECT_NEAR(2.0, sc.center(11.0), EPS_DISTANCE);
+    EXPECT_NEAR(2.0, sc.center(20.0), EPS_DISTANCE);
+    EXPECT_NEAR(1.7, sc.center(21.0), EPS_DISTANCE);
     EXPECT_NEAR(-1.0, sc.center(30.0), EPS_DISTANCE);
 
-    EXPECT_NEAR( 1.0, sc.center(-1e-10),       EPS_DISTANCE);
+    EXPECT_NEAR(1.0, sc.center(-1e-10), EPS_DISTANCE);
     EXPECT_NEAR(-1.0, sc.center(30.0 + 1e-10), EPS_DISTANCE);
 
     EXPECT_THROW(sc.center(-1e-4),       std::invalid_argument);
