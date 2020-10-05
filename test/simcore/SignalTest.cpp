@@ -19,182 +19,107 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke on 2019-04-16.
+// Created by Jens Klimke on 2020-08-06.
 //
 
-#include <simcore/IComponent.h>
-#include <simcore/Loop.h>
-#include <simcore/value/SignalCurve.h>
-#include <simcore/value/ValueExceed.h>
-#include <simcore/value/StopIf.h>
-#include <simcore/value/ValueOutOfTube.h>
-#include <simcore/timers/BasicTimer.h>
-#include <simcore/timers/TimeIsUp.h>
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-pragmas"
+#pragma ide diagnostic ignored "cert-err58-cpp"
+
+
 #include <gtest/gtest.h>
+#include <simcore/storage/Signal.h>
 
+struct Complex {
+    double real;
+    double imag;
 
-class SignalTest : public ::testing::Test, public sim::IComponent {
+    Complex() = default;
+
+    Complex(double r, double i) : real(r), imag(i) {}
+};
+
+class SignalTest : public ::testing::Test {
+
+    void SetUp() override {
+        _double = 0.0;
+    }
 
 protected:
 
-    // create objects
-    ::sim::BasicTimer timer;
-    ::sim::TimeIsUp stop;
-    ::sim::Loop sim;
-
-    double x     = 0.0;
-    double value = 0.0;
-    bool flag    = false;
-
-
-    void SetUp() override {
-
-        // set parameters
-        timer.setTimeStepSize(1.0);
-        stop.setStopTime(10.0);
-
-        // set timer and stop condition
-        sim.setTimer(&timer);
-        sim.addStopCondition(&stop);
-
-        // models
-        sim.addComponent(&stop);
-
-    }
-
-
-private:
-
-    void _exec(double simTime) override {
-
-        x += 1.0;
-        value = x * x;
-        flag = x >= 10.0;
-
-    }
-
-
-public:
-
-    void _init(double initTime) override {
-        value = 0.0;
-        x = 0.0;
-        flag = false;
-    }
-
-    void _term(double simTime) override {
-    }
+    Signal<Complex> _complex{"Complex", "Signal"};
+    Signal<double> _double{"Basic", "Double"};
 
 };
 
 
-TEST_F(SignalTest, ValueExceed) {
+TEST_F(SignalTest, Naming) {
 
-    // check value to exceed
-    sim::value::ValueExceed<double> ex;
-    ex.setPointerAndLimit(&value, 25.1, sim::value::ValueExceed<double>::Mode::OBJECTIVES_MISSED);
-
-    // add to sim
-    sim.addComponent(&ex);
-    sim.addStopCondition(&ex);
-
-    // add value limiter
-    sim.addComponent(this);
-
-    // run sim
-    sim.run();
-    EXPECT_EQ(ex.getCode(), ::sim::IStopCondition::StopCode::OBJECTIVES_MISSED);
-    EXPECT_DOUBLE_EQ(6.0, timer.time());
-    EXPECT_DOUBLE_EQ(49.0, value);
-
-
-    // change mode
-    ex.setPointerAndLimit(&value, 25.1);
-
-    // run sim again
-    sim.run();
-    EXPECT_EQ(ex.getCode(), ::sim::IStopCondition::StopCode::SIM_ENDED);
-    EXPECT_EQ(6.0, timer.time());
-    EXPECT_DOUBLE_EQ(49.0, value);
-
-
-    // change limit
-    ex.setPointerAndLimit(&value, 100.1);
-
-    // run sim again
-    sim.run();
-    EXPECT_EQ(ex.getCode(), ::sim::IStopCondition::StopCode::NONE);
-    EXPECT_EQ(10.0, timer.time());
-    EXPECT_DOUBLE_EQ(121.0, value);
+    // check names
+    EXPECT_EQ("Basic.Double", _double.getName());
+    EXPECT_EQ("Complex.Signal", _complex.getName());
 
 }
 
 
-TEST_F(SignalTest, StopIf) {
+TEST_F(SignalTest, BasicType) {
 
-    // check value to exceed
-    sim::value::StopIf ex;
-    ex.setPointer(&flag);
+    // set and check content
+    _double = 1.0;
+    EXPECT_DOUBLE_EQ(1.0, _double);
 
-    // add to sim
-    sim.addComponent(&ex);
-    sim.addStopCondition(&ex);
-
-    // add value limiter
-    sim.addComponent(this);
-
-    // run sim
-    sim.run();
-    EXPECT_EQ(ex.getCode(), ::sim::IStopCondition::StopCode::SIM_ENDED);
-    EXPECT_DOUBLE_EQ(10.0, timer.time());
-    EXPECT_TRUE(flag);
-
-
-    // change mode
-    ex.setStopMode(::sim::IStopCondition::StopCode::OBJECTIVES_REACHED);
-
-    // run sim again
-    sim.run();
-    EXPECT_EQ(ex.getCode(), ::sim::IStopCondition::StopCode::OBJECTIVES_REACHED);
-    EXPECT_EQ(10.0, timer.time());
-    EXPECT_TRUE(flag);
+    // set and check content
+    _double = 2.0;
+    EXPECT_DOUBLE_EQ(2.0, _double);
 
 }
 
 
-TEST_F(SignalTest, OutOfTube) {
+TEST_F(SignalTest, ComplexType) {
 
-    // check value to exceed
-    sim::value::ValueOutOfTube tube;
-    tube.defineLower({0.0, 10.0}, {-0.1, -0.1});
-    tube.defineUpper({0.0, 10.0}, { 1.1,  1.1});
+    // create complex number
+    _complex = Complex{1.0, 2.0};
+    Complex c = _complex;
 
-    // set values
-    tube.setValues(&x, &value);
-
-    // add to sim
-    sim.addComponent(&tube);
-    sim.addStopCondition(&tube);
-
-    // add value limiter
-    sim.addComponent(this);
-
-
-    // run sim
-    sim.run();
-    EXPECT_EQ(tube.getCode(), ::sim::IStopCondition::StopCode::OBJECTIVES_MISSED);
-    EXPECT_EQ(2.0, timer.time());
-    EXPECT_DOUBLE_EQ(9.0, value);
-
-
-    // change limits
-    tube.defineLower({0.0, 2.5, 5.0, 7.5, 10.0}, {-0.1, 0.0,   6.25, 25.0,   56.25});
-    tube.defineUpper({0.0, 2.5, 5.0, 7.5, 10.0}, { 0.1, 6.35, 25.1,  56.35, 100.1 });
-
-    // run sim again
-    sim.run();
-    EXPECT_EQ(tube.getCode(), ::sim::IStopCondition::StopCode::NONE);
-    EXPECT_EQ(10.0, timer.time());
-    EXPECT_DOUBLE_EQ(121.0, value);
+    // check content
+    EXPECT_DOUBLE_EQ(1.0, c.real);
+    EXPECT_DOUBLE_EQ(2.0, c.imag);
 
 }
+
+
+TEST_F(SignalTest, Callback) {
+
+
+    // variable to store result
+    Complex vp{};
+
+    // define lambda function
+    auto fnc = [&vp](const double &n, const double &o, const Signal<double> &signal) {
+
+        // set values
+        vp.real = n;
+        vp.imag = o;
+
+        // check signal
+        EXPECT_EQ("Basic.Double", signal.getName());
+
+    };
+
+    // set callback
+    _double.setUpdateCallback(fnc);
+
+    // set value and check
+    _double = 3.0;
+    EXPECT_DOUBLE_EQ(3.0, vp.real);
+    EXPECT_DOUBLE_EQ(0.0, vp.imag);
+
+    // set value and check
+    _double = 2.0;
+    EXPECT_DOUBLE_EQ(2.0, vp.real);
+    EXPECT_DOUBLE_EQ(3.0, vp.imag);
+
+}
+
+
+#pragma clang diagnostic pop

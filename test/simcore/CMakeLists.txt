@@ -4,12 +4,13 @@ set(SOURCE_FILES
         LoopTest.cpp
         TimerTest.cpp
         StopConditionTest.cpp
-        SignalBasicTest.cpp
-        SignalTest.cpp
+        ValueCheckBasicTest.cpp
+        ValueCheckTest.cpp
         LifeCycleTest.cpp
         LoggingTest.cpp
         StorageTest.cpp
-    )
+        SignalTest.cpp
+        )
 
 # executable
 add_executable(SimCoreTest ${SOURCE_FILES})
