@@ -40,15 +40,15 @@ struct Complex {
 };
 
 
-void to_json(nlohmann::json &j, const Complex &c) {
-    j = nlohmann::json{{"real", c.real},
-                       {"imag", c.imag}};
-}
-
-void from_json(const nlohmann::json &j, Complex &c) {
-    j.at("name").get_to(c.real);
-    j.at("address").get_to(c.imag);
-}
+//void to_json(nlohmann::json &j, const Complex &c) {
+//    j = nlohmann::json{{"real", c.real},
+//                       {"imag", c.imag}};
+//}
+//
+//void from_json(const nlohmann::json &j, Complex &c) {
+//    j.at("name").get_to(c.real);
+//    j.at("address").get_to(c.imag);
+//}
 
 
 class SignalTest : public ::testing::Test {
@@ -59,21 +59,21 @@ class SignalTest : public ::testing::Test {
 
 protected:
 
-    sim::storage::Signal<Complex> _complex{this, "signal"};
-    SIG_DEFINE_DOUBLE(double)
-    SIG_DEFINE_BOOL(bool)
-    SIG_DEFINE_FLOAT(float)
-    SIG_DEFINE_CHAR(char)
-    SIG_DEFINE_UCHAR(unsigned_char)
-    SIG_DEFINE_SHORT(short)
-    SIG_DEFINE_USHORT(unsigned_short)
-    SIG_DEFINE_LONGLONG(long_long)
-    SIG_DEFINE_ULONGLONG(unsigned_long_long)
-    SIG_DEFINE_INT(int)
-    SIG_DEFINE_UINT(unsigned_int)
-    SIG_DEFINE_LONG(long)
-    SIG_DEFINE_ULONG(unsigned_long)
-    SIG_DEFINE_STRING(string)
+    sim::storage::Signal<Complex> _complex{this, "signal"}; // user-defined type
+    sim::storage::Signal<double> _double{this, "double"}; // DOUBLE
+    sim::storage::Signal<bool> _bool{this, "bool"}; // BOOL
+    sim::storage::Signal<float> _float{this, "float"}; // FLOAT
+    sim::storage::Signal<char> _char{this, "char"}; // CHAR
+    sim::storage::Signal<unsigned char> _unsigned_char{this, "unsigned_char"}; // UCHAR
+    sim::storage::Signal<short> _short{this, "short"}; // SHORT
+    sim::storage::Signal<unsigned short> _unsigned_short{this, "unsigned_short"}; // USHORT
+    sim::storage::Signal<long long> _long_long{this, "long_long"}; // LONGLONG
+    sim::storage::Signal<unsigned long long> _unsigned_long_long{this, "unsigned_long_long"}; // ULONGLONG
+    sim::storage::Signal<int> _int{this, "int"}; // INT
+    sim::storage::Signal<unsigned int> _unsigned_int{this, "unsigned_int"}; // UINT
+    sim::storage::Signal<long> _long{this, "long"}; // LONG
+    sim::storage::Signal<unsigned long> _unsigned_long{this, "unsigned_long"}; // ULONG
+    sim::storage::Signal<std::string> _string{this, "string"}; // STRING
 
 };
 
@@ -91,27 +91,27 @@ TEST_F(SignalTest, NamingAndOwnership) {
 }
 
 
-TEST_F(SignalTest, Manager) {
-
-    // a variable
-    int a = 0;
-
-    // out of def definition
-    sim::storage::Signal<double> time(&a, "time");
-    time = 10.0;
-
-    // set value
-    _double = -2.0;
-
-    // check pointer
-    EXPECT_EQ(&time, sim::storage::signal<double>(&a, "time"));
-    EXPECT_EQ(&_double, sim::storage::signal<double>(this, "double"));
-
-    // check values
-    EXPECT_DOUBLE_EQ(10.0, sim::storage::value<double>(&a, "time"));
-    EXPECT_DOUBLE_EQ(-2.0, sim::storage::value<double>(this, "double"));
-
-}
+//TEST_F(SignalTest, Manager) {
+//
+//    // a variable
+//    int a = 0;
+//
+//    // out of def definition
+//    sim::storage::Signal<double> time(&a, "time");
+//    time = 10.0;
+//
+//    // set value
+//    _double = -2.0;
+//
+//    // check pointer
+//    EXPECT_EQ(&time, sim::storage::signal<double>(&a, "time"));
+//    EXPECT_EQ(&_double, sim::storage::signal<double>(this, "double"));
+//
+//    // check values
+//    EXPECT_DOUBLE_EQ(10.0, sim::storage::value<double>(&a, "time"));
+//    EXPECT_DOUBLE_EQ(-2.0, sim::storage::value<double>(this, "double"));
+//
+//}
 
 
 TEST_F(SignalTest, BasicTypes) {

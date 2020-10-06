@@ -1,7 +1,8 @@
 add_executable(StorageTest
         ProtoTest.cpp
         SignalTest.cpp
-        DumpTest.cpp
+        #DumpTest.cpp
+        SimulationSignalTest.cpp
         )
 
 target_include_directories(StorageTest PRIVATE

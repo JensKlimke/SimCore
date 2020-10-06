@@ -29,6 +29,8 @@
 #define EPS_SIM_TIME 1e-9
 #endif
 
+#include "storage/Signal.h"
+
 namespace sim {
 
     class Loop;

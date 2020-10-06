@@ -45,22 +45,22 @@ namespace sim::storage {
     }
 
     void Manager::saveLoop(sim::protobuf::Loop &p, const sim::Loop *l) {
-
-        // set ID
-        p.set_id(1);
-
-        // stop flag
-        p.set_stop(l->_stopFlag);
-
-        // status
-        switch (l->_status) {
-            case Loop::Status::INITIALIZED:
-                p.set_status(sim::protobuf::Loop_Status_INITIALIZED);
-            case Loop::Status::RUNNING:
-                p.set_status(sim::protobuf::Loop_Status_RUNNING);
-            case Loop::Status::STOPPED:
-                p.set_status(sim::protobuf::Loop_Status_STOPPED);
-        }
+//
+//        // set ID
+//        p.set_id(1);
+//
+//        // stop flag
+//        p.set_stop(l->_stopFlag);
+//
+//        // status
+//        switch (l->_status) {
+//            case Loop::Status::INITIALIZED:
+//                p.set_status(sim::protobuf::Loop_Status_INITIALIZED);
+//            case Loop::Status::RUNNING:
+//                p.set_status(sim::protobuf::Loop_Status_RUNNING);
+//            case Loop::Status::STOPPED:
+//                p.set_status(sim::protobuf::Loop_Status_STOPPED);
+//        }
 //
 //        // create IDs for components
 //        unsigned long cid = 0;
@@ -72,18 +72,18 @@ namespace sim::storage {
 
 
     void Manager::writeSetup(nlohmann::json &j, const sim::Loop &element) {
-
-        // add arrays
-        j["components"] = {};
-        j["stopConditions"] = {};
-
-        // iterate over components
-        for (const auto &e : element._components)
-            j["components"].emplace_back(Manager::id(e));
-
-        // iterate over stop conditions
-        for (const auto &e : element._stopConditions)
-            j["stopConditions"].emplace_back(Manager::id(e));
+//
+//        // add arrays
+//        j["components"] = {};
+//        j["stopConditions"] = {};
+//
+//        // iterate over components
+//        for (const auto &e : element._components)
+//            j["components"].emplace_back(Manager::id(e));
+//
+//        // iterate over stop conditions
+//        for (const auto &e : element._stopConditions)
+//            j["stopConditions"].emplace_back(Manager::id(e));
 
     }
 
@@ -96,14 +96,14 @@ namespace sim::storage {
 
 
     void Manager::writeState(nlohmann::json &j, const sim::Loop &element) {
-        JW(status)
-        JW(stopFlag)
+//        j["status"] = element._status;
+//        j["stopFlag"] = element._stopFlag;
     }
 
 
     void Manager::readState(const nlohmann::json &j, sim::Loop &element) {
-        j.get_to(element._status);
-        j.get_to(element._stopFlag);
+//        j.get_to(element._status);
+//        j.get_to(element._stopFlag);
     }
 
 
@@ -113,15 +113,15 @@ namespace sim::storage {
 
 
     void Manager::writeState(nlohmann::json &j, const sim::BasicTimer &element) {
-        JW(startTime)
-        JW(time)
-        JW(stepSize)
+//        j["startTime"] = element._startTime;
+//        j["time"] = element._time;
+//        j["stepSize"] = element._stepSize;
     }
 
     void Manager::readState(const nlohmann::json &j, sim::BasicTimer &element) {
-        j.get_to(element._startTime);
-        j.get_to(element._time);
-        j.get_to(element._stepSize);
+//        j.get_to(element._startTime);
+//        j.get_to(element._time);
+//        j.get_to(element._stepSize);
     }
 
 
@@ -131,19 +131,19 @@ namespace sim::storage {
 
 
     void Manager::writeState(nlohmann::json &j, const sim::RealTimeTimer &element) {
-        writeState(j, *dynamic_cast<const BasicTimer *>(&element));
-        JW(acceleration)
-        JW(startRefTime)
-        JW(refTime)
-        JW(steps)
+//        writeState(j, *dynamic_cast<const BasicTimer *>(&element));
+//        j["acceleration"] = element._acceleration;
+//        j["startRefTime"] = element._startRefTime;
+//        j["refTime"] = element._refTime;
+//        j["steps"] = element._steps;
     }
 
     void Manager::readState(const nlohmann::json &j, sim::RealTimeTimer &element) {
-        readState(j, *dynamic_cast<BasicTimer *>(&element));
-        j.get_to(element._acceleration);
-        j.get_to(element._startRefTime);
-        j.get_to(element._refTime);
-        j.get_to(element._steps);
+//        readState(j, *dynamic_cast<BasicTimer *>(&element));
+//        j.get_to(element._acceleration);
+//        j.get_to(element._startRefTime);
+//        j.get_to(element._refTime);
+//        j.get_to(element._steps);
     }
 
 
@@ -152,8 +152,8 @@ namespace sim::storage {
     void Manager::readSetup(const nlohmann::json &j, sim::TimeIsUp &element) {}
 
     void Manager::writeState(nlohmann::json &j, const sim::TimeIsUp &element) {
-        JW(stopTime)
-        JW(code)
+//        j["stopTime"] = element._stopTime;
+//        j["code"] = element._code;
     }
 
     void Manager::readState(const nlohmann::json &j, sim::TimeIsUp &element) {

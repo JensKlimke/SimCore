@@ -36,10 +36,12 @@ namespace sim {
 
     protected:
 
-        double _acceleration = 1.0; //!< Acceleration factor of the timer
-        double _startRefTime = 0.0; //!< Start point in reference time
-        double _refTime = 0.0;      //!< Actual reference time of the synchronization system
-        unsigned long _steps = 0;   //!< Steps performed
+        // states
+        sim::storage::Signal<double> _acceleration{this, "acceleration", 1.0}; //!< Acceleration factor of the timer
+        sim::storage::Signal<double> _startRefTime{this, "startRefTime"}; //!< Start point in reference time
+        sim::storage::Signal<double> _refTime{this,
+                                              "refTime"};      //!< Actual reference time of the synchronization system
+        sim::storage::Signal<unsigned long> _steps{this, "steps"};   //!< Steps performed
 
 
     public:
@@ -120,6 +122,7 @@ namespace sim {
 
             // reset steps
             _steps = 0;
+            _refTime = 0.0;
 
             // reset super
             BasicTimer::reset();

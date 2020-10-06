@@ -22,23 +22,15 @@
 // Created by Jens Klimke on 2019-03-19
 //
 
-#ifndef SIMCORE_BASICTIMER_H
-#define SIMCORE_BASICTIMER_H
+#ifndef SIMCORE_BASIC_TIMER_H
+#define SIMCORE_BASIC_TIMER_H
 
-#include "../ITimer.h"
+#include "ITimer.h"
 
 
 namespace sim {
 
     class BasicTimer : public ::sim::ITimer {
-
-        friend class sim::storage::Manager;
-
-    private:
-
-        double _time{};
-        double _stepSize{};
-        double _startTime = 0;
 
     public:
 
@@ -144,6 +136,12 @@ namespace sim {
 
     protected:
 
+        // states
+        sim::storage::Signal<double> _time{this, "time"};
+        sim::storage::Signal<double> _stepSize{this, "stepSize"};
+        sim::storage::Signal<double> _startTime{this, "startTime", 0.0};
+
+
         /**
          * Sets the current time
          * @param time Time to be set
@@ -160,4 +158,4 @@ namespace sim {
 }
 
 
-#endif //SIMCORE_STEADYTIMER_H
+#endif // SIMCORE_BASIC_TIMER_H

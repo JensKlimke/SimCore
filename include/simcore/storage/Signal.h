@@ -27,7 +27,8 @@
 
 #include <string>
 #include <functional>
-#include "DataManager.h"
+#include <utility>
+#include "SignalInterface.h"
 
 #define UPDATE(N) {     \
     auto old = _value;  \
@@ -42,9 +43,9 @@ namespace sim::storage {
 
     protected:
 
-        T _value{};                   //!< The value of the signal
-        const void *_owner = nullptr; //!< The pointer to the owner
-        std::string _name{};          //!< The name of the signal
+        T _value{};           //!< The value of the signal
+        const void *_owner{}; //!< The pointer to the owner
+        std::string _name{};  //!< The name of the signal
 
         std::function<void(const T &newValue, const T &oldValue, const Signal<T> &signal)> _onUpdate
                 = nullptr; //!< The callback which is called when the value is updated
@@ -56,7 +57,7 @@ namespace sim::storage {
         /**
          * Basic constructor
          */
-        Signal() = default;
+        Signal() = delete;
 
 
         /**
@@ -64,40 +65,18 @@ namespace sim::storage {
          * @param owner Owner of the signal
          * @param name Signal name
          */
-        Signal(const void *owner, std::string &&name) {
-
-            // set the name
-            setOwner(owner);
-            setName(name);
-
-            // add signal to data manager
-            DataManager::addSignal(owner, name, this);
-
-        }
+        Signal(const void *owner, std::string &&name)
+                : _owner{owner}, _name{std::move(name)} {}
 
 
         /**
-         * Sets the full name of the signal
-         * @param name Name of the signal
+         * Constructor
+         * @param owner Owner of the signal
+         * @param name Signal name
+         * @param def Default value
          */
-        void setName(const std::string &name) {
-
-            // generate full name
-            _name = name;
-
-        }
-
-
-        /**
-         * Sets the full name of the signal
-         * @param name Name of the signal
-         */
-        void setOwner(const void *owner) {
-
-            // generate full name
-            _owner = owner;
-
-        }
+        Signal(const void *owner, std::string &&name, T &&def)
+                : _owner{owner}, _name{std::move(name)}, _value(std::move(def)) {}
 
 
         /**
@@ -228,6 +207,10 @@ namespace sim::storage {
             return _value;
         }
 
+        T operator++() { return ++_value; }
+
+        T operator--() { return --_value; }
+
         T operator+(const T &b) const { return _value + b; }
 
         T operator-(const T &b) const { return _value - b; }
@@ -317,20 +300,20 @@ namespace sim::storage {
     };
 
 
-    template<typename T>
-    const Signal<T> *signal(const void *owner, const std::string &key) {
-
-        return (sim::storage::Signal<T> *) (DataManager::getSignal(owner, key));
-
-    }
-
-
-    template<typename T>
-    T value(const void *owner, const std::string &key) {
-
-        return (T) *signal<T>(owner, key);
-
-    }
+//    template<typename T>
+//    const Signal<T> *signal(const void *owner, const std::string &key) {
+//
+//        return (sim::storage::Signal<T> *) (DataManager::getSignal(owner, key));
+//
+//    }
+//
+//
+//    template<typename T>
+//    T value(const void *owner, const std::string &key) {
+//
+//        return (T) *signal<T>(owner, key);
+//
+//    }
 
 
     typedef storage::Signal<double> Double;
@@ -351,20 +334,35 @@ namespace sim::storage {
 }
 
 // macros
-#define SIG_DEFINE_DOUBLE(name) sim::storage::Double _##name{this, #name};
-#define SIG_DEFINE_FLOAT(name) sim::storage::Float _##name{this, #name};
-#define SIG_DEFINE_BOOL(name) sim::storage::Bool _##name{this, #name};
-#define SIG_DEFINE_CHAR(name) sim::storage::Char _##name{this, #name};
-#define SIG_DEFINE_UCHAR(name) sim::storage::UChar _##name{this, #name};
-#define SIG_DEFINE_SHORT(name) sim::storage::Short _##name{this, #name};
-#define SIG_DEFINE_USHORT(name) sim::storage::UShort _##name{this, #name};
-#define SIG_DEFINE_INT(name) sim::storage::Int _##name{this, #name};
-#define SIG_DEFINE_UINT(name) sim::storage::UInt _##name{this, #name};
-#define SIG_DEFINE_LONG(name) sim::storage::Long _##name{this, #name};
-#define SIG_DEFINE_ULONG(name) sim::storage::ULong _##name{this, #name};
-#define SIG_DEFINE_LONGLONG(name) sim::storage::LongLong _##name{this, #name};
-#define SIG_DEFINE_ULONGLONG(name) sim::storage::ULongLong _##name{this, #name};
-#define SIG_DEFINE_STRING(name) sim::storage::String _##name{this, #name};
+//#define SIG_DEFINE_DEFAULT_DOUBLE(name, def)    sim::storage::Double _##name{this, #name, def);
+//#define SIG_DEFINE_DEFAULT_FLOAT(name, def)     sim::storage::Float _##name{this, #name, def);
+//#define SIG_DEFINE_DEFAULT_BOOL(name, def)      sim::storage::Bool _##name{this, #name, def);
+//#define SIG_DEFINE_DEFAULT_CHAR(name, def)      sim::storage::Char _##name{this, #name, def);
+//#define SIG_DEFINE_DEFAULT_UCHAR(name, def)     sim::storage::UChar _##name{this, #name, def);
+//#define SIG_DEFINE_DEFAULT_SHORT(name, def)     sim::storage::Short _##name{this, #name, def);
+//#define SIG_DEFINE_DEFAULT_USHORT(name, def)    sim::storage::UShort _##name{this, #name, def);
+//#define SIG_DEFINE_DEFAULT_INT(name, def)       sim::storage::Int _##name{this, #name, def);
+//#define SIG_DEFINE_DEFAULT_UINT(name, def)      sim::storage::UInt _##name{this, #name, def);
+//#define SIG_DEFINE_DEFAULT_LONG(name, def)      sim::storage::Long _##name{this, #name, def);
+//#define SIG_DEFINE_DEFAULT_ULONG(name, def)     sim::storage::ULong _##name{this, #name, def);
+//#define SIG_DEFINE_DEFAULT_LONGLONG(name, def)  sim::storage::LongLong _##name{this, #name, def);
+//#define SIG_DEFINE_DEFAULT_ULONGLONG(name, def) sim::storage::ULongLong _##name{this, #name, def);
+//#define SIG_DEFINE_DEFAULT_STRING(name, def)    sim::storage::String _##name{this, #name, def);
+
+//#define SIG_DEFINE_DOUBLE(name)    sim::storage::Double _##name{this, #name);
+//#define SIG_DEFINE_FLOAT(name)     sim::storage::Float _##name{this, #name);
+//#define SIG_DEFINE_BOOL(name)      sim::storage::Bool _##name{this, #name);
+//#define SIG_DEFINE_CHAR(name)      sim::storage::Char _##name{this, #name);
+//#define SIG_DEFINE_UCHAR(name)     sim::storage::UChar _##name{this, #name);
+//#define SIG_DEFINE_SHORT(name)     sim::storage::Short _##name{this, #name);
+//#define SIG_DEFINE_USHORT(name)    sim::storage::UShort _##name{this, #name);
+//#define SIG_DEFINE_INT(name)       sim::storage::Int _##name{this, #name);
+//#define SIG_DEFINE_UINT(name)      sim::storage::UInt _##name{this, #name);
+//#define SIG_DEFINE_LONG(name)      sim::storage::Long _##name{this, #name);
+//#define SIG_DEFINE_ULONG(name)     sim::storage::ULong _##name{this, #name);
+//#define SIG_DEFINE_LONGLONG(name)  sim::storage::LongLong _##name{this, #name);
+//#define SIG_DEFINE_ULONGLONG(name) sim::storage::ULongLong _##name{this, #name);
+//#define SIG_DEFINE_STRING(name)    sim::storage::String _##name{this, #name);
 
 
 #endif // SIMCORE_SIGNAL_H

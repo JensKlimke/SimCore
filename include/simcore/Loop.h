@@ -27,8 +27,9 @@
 
 #include <vector>
 #include <algorithm>
+#include <simcore/storage/Signal.h>
 #include "utils/exceptions.h"
-#include "ITimer.h"
+#include "timers/ITimer.h"
 #include "IStopCondition.h"
 #include "IComponent.h"
 
@@ -156,12 +157,15 @@ namespace sim {
 
     protected:
 
-        Status _status = Status::STOPPED;
-        bool _stopFlag = true;
+        // states
+        sim::storage::Signal<Status> _status{this, "status", Status::STOPPED};
 
+        // attributes
+        bool _stopFlag{};
+
+        // elements
         std::vector<IComponent *> _components{};
         std::vector<IStopCondition *> _stopConditions{};
-
         ITimer *_timer = nullptr;
 
 

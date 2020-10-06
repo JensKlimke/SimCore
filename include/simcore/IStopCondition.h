@@ -83,7 +83,8 @@ namespace sim {
 
     protected:
 
-        StopCode _code = StopCode::NONE;
+        // states
+        sim::storage::Signal<StopCode> _code{this, "code", StopCode::NONE};
 
 
         /**

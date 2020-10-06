@@ -34,11 +34,6 @@ namespace sim {
 
     class ISynchronized : public sim::IComponent {
 
-        double _timeStepSize = 0.0;
-        double _deltaStartTime = 0.0;
-        double _nextExecTime = 0.0;
-        double _lastTimeStep = 0.0;
-
 
     public:
 
@@ -59,6 +54,7 @@ namespace sim {
          * The absolute first execution time is calculated during initialization. The relative time is stored
          * and valid for each simulation loop.
          * @param startTime The first relative execution time
+         * TODO: test
          */
         void setStartTime(double startTime) {
 
@@ -68,6 +64,12 @@ namespace sim {
 
 
     protected:
+
+        // states
+        sim::storage::Signal<double> _timeStepSize{this, "timeStepSize", 0.0};
+        sim::storage::Signal<double> _deltaStartTime{this, "deltaStartTime", 0.0};
+        sim::storage::Signal<double> _nextExecTime{this, "nextExecTime", 0.0};
+        sim::storage::Signal<double> _lastTimeStep{this, "lastTimeStep", 0.0};
 
         /**
          * Executes a time step and return the time step size. Attention: only run once per simulation step

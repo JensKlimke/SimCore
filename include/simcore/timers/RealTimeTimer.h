@@ -36,8 +36,6 @@ namespace sim {
 
     class RealTimeTimer : public SynchronizedTimer {
 
-        friend class sim::storage::Manager;
-
     private:
 
         std::thread _timeThread{};

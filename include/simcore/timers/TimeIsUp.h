@@ -34,8 +34,6 @@ namespace sim {
 
     class TimeIsUp : public ::sim::IStopCondition, public ::sim::IComponent {
 
-        friend class sim::storage::Manager;
-
     public:
 
         /**
@@ -57,7 +55,8 @@ namespace sim {
 
     protected:
 
-        double _stopTime = INFINITY;
+        // state
+        sim::storage::Signal<double> _stopTime{this, "stopTime", INFINITY};
 
         /**
          * Initialize
