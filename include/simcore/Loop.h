@@ -41,13 +41,16 @@ namespace sim {
 
     class Loop {
 
+        /*!< The data manager can access all values */
+        friend class sim::storage::Manager;
+
+
     public:
 
+        /*!< Status of the loop */
         enum class Status {
             INITIALIZED, RUNNING, STOPPED
         };
-
-        friend class Manager;
 
 
         /**
@@ -80,10 +83,10 @@ namespace sim {
         void addStopCondition(IStopCondition *stop) {
 
             // check if component is already added
-            if (std::find(_stop_conditions.begin(), _stop_conditions.end(), stop) != _stop_conditions.end())
+            if (std::find(_stopConditions.begin(), _stopConditions.end(), stop) != _stopConditions.end())
                 throw sim::SetupException("Stop condition object has been already added.");
 
-            _stop_conditions.push_back(stop);
+            _stopConditions.push_back(stop);
 
         }
 
@@ -157,7 +160,7 @@ namespace sim {
         bool _stop = true;
 
         std::vector<IComponent *> _components{};
-        std::vector<IStopCondition *> _stop_conditions{};
+        std::vector<IStopCondition *> _stopConditions{};
 
         ITimer *_timer = nullptr;
 
@@ -191,7 +194,7 @@ namespace sim {
                 }
 
                 // iterate over stop conditions ...
-                for(auto &sc : _stop_conditions) {
+                for (auto &sc : _stopConditions) {
 
                     // ... and check status
                     if (sc->hasStopped())
@@ -229,7 +232,7 @@ namespace sim {
 
 
             // iterate over stop conditions ...
-            for (auto &sc : _stop_conditions) {
+            for (auto &sc : _stopConditions) {
 
                 // ... and reset
                 sc->reset();
