@@ -23,6 +23,7 @@
 //
 
 #include <gtest/gtest.h>
+#include <simcore/storage/Manager.h>
 #include <simcore/testing/SimulationTest.h>
 
 
@@ -58,5 +59,9 @@ public:
 
 TEST_F(ProtoTest, Dump) {
 
+    sim::protobuf::Loop loop{};
+
+    // save loop
+    sim::storage::Manager::saveLoop(loop, this->_loop.get());
 
 }

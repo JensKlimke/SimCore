@@ -1,5 +1,5 @@
 syntax = "proto3";
-package sim.dump;
+package sim.protobuf;
 
 message Synchronized {
 
@@ -73,11 +73,5 @@ message Loop {
     repeated uint64 components = 4;
     repeated uint64 stopConditions = 5;
     uint64 timer = 6;
-
-}
-
-message Simulation {
-
-    Loop loop = 1;
 
 }

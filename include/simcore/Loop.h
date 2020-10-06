@@ -32,6 +32,11 @@
 #include "IStopCondition.h"
 #include "IComponent.h"
 
+// pre-define manager class
+namespace sim::storage {
+    class Manager;
+}
+
 namespace sim {
 
     class Loop {
@@ -39,7 +44,7 @@ namespace sim {
     public:
 
         enum class Status { INITIALIZED, RUNNING, STOPPED };
-        friend class Manager;
+        friend class sim::storage::Manager;
 
     protected:
 

@@ -7,7 +7,7 @@ target_include_directories(ProtoTest PRIVATE
         )
 
 target_link_libraries(ProtoTest PUBLIC
-        simcore_dump
+        simcore_proto
         )
 
 add_gtest(ProtoTest)
