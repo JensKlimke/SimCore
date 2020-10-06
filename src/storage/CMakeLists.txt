@@ -3,9 +3,8 @@ find_package(Protobuf REQUIRED)
 protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS SimCore.proto)
 
 add_library(simcore_storage STATIC
-        #Manager.cpp
+        Manager.cpp
         DataManager.cpp
-        dump_implementations.cpp
         ${PROTO_SRCS} ${PROTO_HDRS}
         )
 
