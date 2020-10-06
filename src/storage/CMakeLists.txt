@@ -12,7 +12,7 @@ add_library(simcore_proto STATIC
 
 target_include_directories(simcore_proto
         PRIVATE ${PROJECT_SOURCE_DIR}/include
-        PUBLIC ${PROTO_HDRS}
+        PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
         )
 
 target_link_libraries(simcore_proto PUBLIC

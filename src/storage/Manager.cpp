@@ -22,28 +22,35 @@
 // Contributors:
 //
 
-#include "Manager.h"
+#include <simcore/storage/Manager.h>
 
-namespace sim {
+namespace sim::storage {
 
-    void Manager::saveLoop(sim::dump::Simulation &sim, const sim::Loop *_loop) {
+    std::map<const IComponent*, unsigned long> Manager::componentIds = std::map<const IComponent*, unsigned long>{};
 
-        sim::dump::Loop loop{};
+    void Manager::saveLoop(sim::protobuf::Loop &p, const sim::Loop *l) {
 
-        loop.set_id(1);
-        loop.set_stop(_loop->_stop);
+        // set ID
+        p.set_id(1);
+
+        // stop flag
+        p.set_stop(l->_stop);
 
         // status
-        switch(_loop->_status) {
+        switch(l->_status) {
             case Loop::Status::INITIALIZED:
-                loop.set_status(sim::dump::Loop_Status_INITIALIZED);
+                p.set_status(sim::protobuf::Loop_Status_INITIALIZED);
             case Loop::Status::RUNNING:
-                loop.set_status(sim::dump::Loop_Status_RUNNING);
+                p.set_status(sim::protobuf::Loop_Status_RUNNING);
             case Loop::Status::STOPPED:
-                loop.set_status(sim::dump::Loop_Status_STOPPED);
+                p.set_status(sim::protobuf::Loop_Status_STOPPED);
         }
 
-        sim.set_allocated_loop(&loop);
+        // create IDs for components
+        unsigned long cid = 0;
+        for(const auto &c : l->_components)
+            componentIds.emplace(&c, cid);
+
 
     }
 

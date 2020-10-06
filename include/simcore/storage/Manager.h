@@ -26,16 +26,19 @@
 #ifndef SIMCORE_MANAGER_H
 #define SIMCORE_MANAGER_H
 
+#include <map>
 #include <SimCore.pb.h>
 #include <simcore/Loop.h>
 
-namespace sim {
+namespace sim::storage {
 
     class Manager {
 
     public:
 
-        static void saveLoop(sim::dump::Simulation &sim, const sim::Loop *loop);
+        static std::map<const IComponent*, unsigned long> componentIds;
+
+        static void saveLoop(sim::protobuf::Loop &p, const sim::Loop *l);
 
     };
 
