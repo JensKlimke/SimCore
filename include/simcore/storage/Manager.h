@@ -27,25 +27,86 @@
 #define SIMCORE_MANAGER_H
 
 #include <map>
+#include <nlohmann/json.hpp>
 #include <SimCore.pb.h>
 #include <simcore/Loop.h>
+#include <simcore/timers/BasicTimer.h>
+#include <simcore/timers/RealTimeTimer.h>
+#include <simcore/timers/TimeIsUp.h>
+
 
 namespace sim::storage {
 
     class Manager {
 
+        static unsigned long _counter;
+        static std::map<const void *, unsigned long> _ids;
+
     public:
 
-        static std::map<const IComponent *, unsigned long> componentIds;
+        /**
+         * @brief Returns the ID of the instance
+         * Creates the ID of the instance if not existing
+         * @return ID of the instance
+         */
+        static unsigned long id(const void *);
 
         static void saveLoop(sim::protobuf::Loop &p, const sim::Loop *l);
 
+        static void writeSetup(nlohmann::json &j, const sim::Loop &loop);
+
+        static void readSetup(const nlohmann::json &j, sim::Loop &loop);
+
+        static void writeState(nlohmann::json &j, const sim::Loop &loop);
+
+        static void readState(const nlohmann::json &j, sim::Loop &loop);
+
+
+        static void writeSetup(nlohmann::json &j, const sim::BasicTimer &element);
+
+        static void readSetup(const nlohmann::json &j, sim::BasicTimer &element);
+
+        static void writeState(nlohmann::json &j, const sim::BasicTimer &element);
+
+        static void readState(const nlohmann::json &j, sim::BasicTimer &element);
+
+
+        static void writeSetup(nlohmann::json &j, const sim::RealTimeTimer &element);
+
+        static void readSetup(const nlohmann::json &j, sim::RealTimeTimer &element);
+
+        static void writeState(nlohmann::json &j, const sim::RealTimeTimer &element);
+
+        static void readState(const nlohmann::json &j, sim::RealTimeTimer &element);
+
+
+        static void writeSetup(nlohmann::json &j, const sim::TimeIsUp &element);
+
+        static void readSetup(const nlohmann::json &j, sim::TimeIsUp &element);
+
+        static void writeState(nlohmann::json &j, const sim::TimeIsUp &element);
+
+        static void readState(const nlohmann::json &j, sim::TimeIsUp &element);
+
+
     };
 
-    void from_json(const nlohmann::json &j, sim::Loop &loop);
-
-    void to_json(nlohmann::json &j, const sim::Loop &loop);
-
 }
+
+
+template<class T>
+void to_json(nlohmann::json &j, const T &element) {
+    j = nlohmann::json{};
+    sim::storage::Manager::writeSetup(j, element);
+    sim::storage::Manager::writeState(j, element);
+}
+
+
+template<class T>
+void from_json(const nlohmann::json &j, T &element) {
+    sim::storage::Manager::readSetup(j, element);
+    sim::storage::Manager::readState(j, element);
+}
+
 
 #endif //SIMCORE_MANAGER_H

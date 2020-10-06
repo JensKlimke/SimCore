@@ -32,6 +32,8 @@ namespace sim {
 
     class BasicTimer : public ::sim::ITimer {
 
+        friend class sim::storage::Manager;
+
     private:
 
         double _time{};

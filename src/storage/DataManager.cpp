@@ -47,11 +47,4 @@ namespace sim::storage {
     }
 
 
-    nlohmann::json DataManager::toJson() {
-
-        // TODO:
-        return nlohmann::json{};
-
-    }
-
 }

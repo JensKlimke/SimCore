@@ -54,23 +54,21 @@ namespace sim::testing {
     protected:
 
         // elements
+        sim::BasicTimer *_timer{};
+        sim::TimeIsUp *_stopTimer = nullptr;
+
+        // managed elements
         std::unique_ptr<sim::Loop> _loop{};
-        std::unique_ptr<sim::BasicTimer> _timer{};
+        std::unique_ptr<sim::BasicTimer> _basicTimer{};
+        std::unique_ptr<sim::RealTimeTimer> _rtTimer{};
         std::vector<std::unique_ptr<sim::IComponent>> _components{};
 
-        // pointers
-        sim::TimeIsUp *_stopTimer{};
-
-        // storage
+        // time step
         TimeStep _time{};
-        sim::storage::DataNode _data{};
 
         // callbacks
         std::vector<std::function<void()>> _preSteps{};
         std::vector<std::function<void()>> _postSteps{};
-
-        // dump containers
-        std::map<std::string, std::function<void()>> _dumpCallback{};
 
 
         void initialize(double t) override {
@@ -157,23 +155,28 @@ namespace sim::testing {
          */
         void create(double endTime, double timeStepSize, double startTime = INFINITY, double acceleration = INFINITY) {
 
+            // reset pointers
+            _basicTimer = nullptr;
+            _rtTimer = nullptr;
+
             // create loop
             _loop = std::make_unique<sim::Loop>();
 
             // create timer
-            if(std::isinf(acceleration)) {
+            if (std::isinf(acceleration)) {
 
                 // create and save basic timer
-                _timer = std::make_unique<sim::BasicTimer>();
+                _basicTimer = std::make_unique<sim::BasicTimer>();
+                _timer = _basicTimer.get();
 
             } else {
 
                 // create real-time timer
-                auto timer = new sim::RealTimeTimer;
-                timer->setAcceleration(acceleration);
+                _rtTimer = std::make_unique<RealTimeTimer>();
+                _rtTimer->setAcceleration(acceleration);
 
                 // save timer
-                _timer.reset(timer);
+                _timer = _rtTimer.get();
 
             }
 
@@ -191,7 +194,7 @@ namespace sim::testing {
             _timer->setStartTime(startTime);
 
             // add to loop
-            _loop->setTimer(_timer.get());
+            _loop->setTimer(_timer);
 
             // stop condition (time)
             _stopTimer = createComponent<sim::TimeIsUp>();
@@ -221,7 +224,7 @@ namespace sim::testing {
          * Returns the time structure
          * @return Time structure
          */
-        const TimeStep &time() const {
+        [[nodiscard]] const TimeStep &time() const {
 
             return _time;
 

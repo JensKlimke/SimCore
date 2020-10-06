@@ -24,6 +24,10 @@
 #ifndef SIMCORE_ITIMER_H
 #define SIMCORE_ITIMER_H
 
+namespace sim::storage {
+    class Manager;
+}
+
 namespace sim {
 
     class ITimer {

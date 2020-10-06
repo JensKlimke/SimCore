@@ -22,6 +22,10 @@
 // Contributors:
 //
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-pragmas"
+#pragma ide diagnostic ignored "cert-err58-cpp"
+
 #include <gtest/gtest.h>
 #include <simcore/storage/Manager.h>
 #include <simcore/testing/SimulationTest.h>
@@ -61,7 +65,11 @@ TEST_F(ProtoTest, Dump) {
 
     sim::protobuf::Loop loop{};
 
+    // TODO: create sim
+
     // save loop
-    sim::storage::Manager::saveLoop(loop, this->_loop.get());
+    // sim::storage::Manager::saveLoop(loop, this->_loop.get());
 
 }
+
+#pragma clang diagnostic pop

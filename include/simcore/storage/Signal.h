@@ -124,28 +124,6 @@ namespace sim::storage {
 
 
         /**
-         * Writes the value to the JSON object
-         * @param obj JSON object
-         */
-        void toJson(nlohmann::json &obj) const override {
-
-            obj[_name] = _value;
-
-        }
-
-
-        /**
-         * Writes the value from the JSON object
-         * @param obj JSON object
-         */
-        void fromJson(nlohmann::json &obj) override {
-
-            obj.at(_name).get_to(_value);
-
-        }
-
-
-        /**
          * Sets the callback to be executed when the signal is updated
          * @param callback Callback function to be set
          */

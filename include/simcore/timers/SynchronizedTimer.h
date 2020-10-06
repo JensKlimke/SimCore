@@ -34,7 +34,7 @@ namespace sim {
 
     class SynchronizedTimer : public BasicTimer {
 
-    private:
+    protected:
 
         double _acceleration = 1.0; //!< Acceleration factor of the timer
         double _startRefTime = 0.0; //!< Start point in reference time

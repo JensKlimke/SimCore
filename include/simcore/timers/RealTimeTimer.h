@@ -34,16 +34,14 @@
 
 namespace sim {
 
-    // predefine class
-    class RealTimeTimer;
-
-
     class RealTimeTimer : public SynchronizedTimer {
+
+        friend class sim::storage::Manager;
 
     private:
 
-        std::thread timeThread{};
-        bool stopSync{};
+        std::thread _timeThread{};
+        bool _stopSync{};
 
 
     public:
@@ -63,13 +61,13 @@ namespace sim {
         void start() override {
 
             // set flag
-            stopSync = false;
+            _stopSync = false;
 
             // reset reference time
             this->setReferenceTime(0.0);
 
             // run timing thread
-            timeThread = std::thread([this]() {
+            _timeThread = std::thread([this]() {
                 this->realtimeStep();
             });
 
@@ -82,10 +80,10 @@ namespace sim {
         void stop() override {
 
             // set flag
-            stopSync = true;
+            _stopSync = true;
 
             // wait for time thread to finish
-            timeThread.join();
+            _timeThread.join();
 
             // run super method
             SynchronizedTimer::stop();
@@ -102,7 +100,7 @@ namespace sim {
 
             // loop until
             auto refTime = system_clock::now();
-            while (!this->stopSync) {
+            while (!this->_stopSync) {
 
                 // calculate real time
                 auto elapsed = duration_cast<microseconds>(system_clock::now() - refTime);

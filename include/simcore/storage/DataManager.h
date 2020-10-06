@@ -41,8 +41,6 @@ namespace sim::storage {
 
         static SignalInterface *getSignal(const void *owner, const std::string &key);
 
-        static nlohmann::json toJson();
-
 
         struct Entry {
             std::map<std::string, SignalInterface *> signals{};

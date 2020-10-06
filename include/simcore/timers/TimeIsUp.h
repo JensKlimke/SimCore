@@ -34,13 +34,7 @@ namespace sim {
 
     class TimeIsUp : public ::sim::IStopCondition, public ::sim::IComponent {
 
-
-    private:
-
-
-        double _stopTime = INFINITY;
-        double _lastTime = INFINITY;
-
+        friend class sim::storage::Manager;
 
     public:
 
@@ -61,8 +55,9 @@ namespace sim {
         }
 
 
-
     protected:
+
+        double _stopTime = INFINITY;
 
         /**
          * Initialize
@@ -93,12 +88,7 @@ namespace sim {
          * Termination method
          * @param simTime Simulation time
          */
-        void _term(double simTime) override {
-
-            // set termination time
-            _lastTime = simTime;
-
-        }
+        void _term(double simTime) override {}
 
 
     };

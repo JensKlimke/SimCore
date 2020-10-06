@@ -37,14 +37,6 @@ namespace sim {
         enum class StopCode { NONE, OBJECTIVES_MISSED, OBJECTIVES_REACHED, SIM_ENDED };
 
 
-    private:
-
-        StopCode _code = StopCode::NONE;
-
-
-    public:
-
-
         /**
          * Constructor for stop condition
          */
@@ -90,6 +82,8 @@ namespace sim {
 
 
     protected:
+
+        StopCode _code = StopCode::NONE;
 
 
         /**

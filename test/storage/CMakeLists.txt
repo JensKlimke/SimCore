@@ -1,15 +1,15 @@
-add_executable(ProtoTest
+add_executable(StorageTest
         ProtoTest.cpp
         SignalTest.cpp
         DumpTest.cpp
         )
 
-target_include_directories(ProtoTest PRIVATE
+target_include_directories(StorageTest PRIVATE
         ${PROJECT_SOURCE_DIR}/include
         )
 
-target_link_libraries(ProtoTest PUBLIC
+target_link_libraries(StorageTest PUBLIC
         simcore_storage
         )
 
-add_gtest(ProtoTest)
+add_gtest(StorageTest)

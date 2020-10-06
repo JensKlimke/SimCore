@@ -134,7 +134,7 @@ namespace sim {
                 throw ProcessException("Simulation is not running.");
 
             // set stop flag
-            _stop = true;
+            _stopFlag = true;
 
             // set status
             _status = Status::STOPPED;
@@ -157,7 +157,7 @@ namespace sim {
     protected:
 
         Status _status = Status::STOPPED;
-        bool _stop = true;
+        bool _stopFlag = true;
 
         std::vector<IComponent *> _components{};
         std::vector<IStopCondition *> _stopConditions{};
@@ -181,7 +181,7 @@ namespace sim {
             _timer->start();
 
             // iterate while stop flag is not set
-            while (!_stop) {
+            while (!_stopFlag) {
 
                 // iterate over components ...
                 for (auto &m : _components) {
@@ -198,12 +198,12 @@ namespace sim {
 
                     // ... and check status
                     if (sc->hasStopped())
-                        _stop = true;
+                        _stopFlag = true;
 
                 }
 
                 // time step
-                if (!_stop)
+                if (!_stopFlag)
                     _timer->step();
 
             }
@@ -248,7 +248,7 @@ namespace sim {
             }
 
             // reset stop flag
-            _stop = false;
+            _stopFlag = false;
 
             // set status
             _status = Status::INITIALIZED;
