@@ -1,4 +1,4 @@
-// Copyright (c) 2020 Jens Klimke.
+// Copyright (c) 2020 Jens Klimke (jens.klimke@rwth-aachen.de). All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,34 +18,40 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke on $date.get('yyyy-M-d').
-// Contributors:
+// Created by Jens Klimke on $YEAR-$MONTH-05.
 //
 
-
-#ifndef SIMCORE_MANAGER_H
-#define SIMCORE_MANAGER_H
-
-#include <map>
-#include <SimCore.pb.h>
-#include <simcore/Loop.h>
+#include <simcore/storage/DataManager.h>
 
 namespace sim::storage {
 
-    class Manager {
+    std::map<const void *, DataManager::Entry> DataManager::_entries = std::map<const void *, DataManager::Entry>{};
 
-    public:
+    void DataManager::addSignal(const void *owner, const std::string &key, SignalInterface *signal) {
 
-        static std::map<const IComponent *, unsigned long> componentIds;
+        // add to map, if instance not registered
+        if (_entries.find(owner) == _entries.end())
+            _entries.emplace(owner, Entry{});
 
-        static void saveLoop(sim::protobuf::Loop &p, const sim::Loop *l);
+        // add signal
+        _entries[owner].signals.emplace(key, signal);
 
-    };
+    }
 
-    void from_json(const nlohmann::json &j, sim::Loop &loop);
 
-    void to_json(nlohmann::json &j, const sim::Loop &loop);
+    SignalInterface *DataManager::getSignal(const void *owner, const std::string &key) {
+
+        // return signal interface
+        return _entries.at(owner).signals.at(key);
+
+    }
+
+
+    nlohmann::json DataManager::toJson() {
+
+        // TODO:
+        return nlohmann::json{};
+
+    }
 
 }
-
-#endif //SIMCORE_MANAGER_H

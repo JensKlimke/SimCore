@@ -9,7 +9,6 @@ set(SOURCE_FILES
         LifeCycleTest.cpp
         LoggingTest.cpp
         StorageTest.cpp
-        SignalTest.cpp
         )
 
 # executable

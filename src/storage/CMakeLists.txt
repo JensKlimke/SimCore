@@ -1,20 +1,23 @@
 find_package(Protobuf REQUIRED)
 
-include_directories(${Protobuf_INCLUDE_DIRS})
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-
 protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS SimCore.proto)
 
-add_library(simcore_proto STATIC
-        Manager.cpp
+add_library(simcore_storage STATIC
+        #Manager.cpp
+        DataManager.cpp
+        dump_implementations.cpp
         ${PROTO_SRCS} ${PROTO_HDRS}
         )
 
-target_include_directories(simcore_proto
-        PRIVATE ${PROJECT_SOURCE_DIR}/include
-        PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
+target_include_directories(simcore_storage
+        PRIVATE
+        ${PROJECT_SOURCE_DIR}/include
+        ${Protobuf_INCLUDE_DIRS}
+        PUBLIC
+        ${CMAKE_CURRENT_BINARY_DIR}
+        ${PROJECT_SOURCE_DIR}/lib/json/include
         )
 
-target_link_libraries(simcore_proto PUBLIC
+target_link_libraries(simcore_storage PUBLIC
         ${Protobuf_LIBRARIES}
         )

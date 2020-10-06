@@ -48,9 +48,38 @@ namespace sim::storage {
 
         // create IDs for components
         unsigned long cid = 0;
-        for(const auto &c : l->_components)
+        for (const auto &c : l->_components)
             componentIds.emplace(&c, cid);
 
+
+    }
+
+    /**
+         * Converts the loop to json
+         * @param j JSON object
+         */
+    virtual void to_json(nlohmann::json &j) const {
+
+        j = nlohmann::json({
+                                   {"status",         _status}, // TODO
+                                   {"stop",           _stop},
+                                   {"components",     {}}, // TODO
+                                   {"stopConditions", {}} // TODO
+                           });
+
+    }
+
+
+    /**
+     * Reads loop attributes from json
+     * @param j JSON object
+     */
+    virtual void from_json(const nlohmann::json &j) {
+
+        j.get_to(_status);
+        j.get_to(_stop);
+        // TODO: components
+        // TODO: stopConditions
 
     }
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2020 Jens Klimke.
+// Copyright (c) 2020 Jens Klimke (jens.klimke@rwth-aachen.de). All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,34 +18,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke on $date.get('yyyy-M-d').
-// Contributors:
+// Created by Jens Klimke on 2020-10-05.
 //
 
-
-#ifndef SIMCORE_MANAGER_H
-#define SIMCORE_MANAGER_H
-
-#include <map>
-#include <SimCore.pb.h>
 #include <simcore/Loop.h>
 
-namespace sim::storage {
-
-    class Manager {
-
-    public:
-
-        static std::map<const IComponent *, unsigned long> componentIds;
-
-        static void saveLoop(sim::protobuf::Loop &p, const sim::Loop *l);
-
-    };
-
-    void from_json(const nlohmann::json &j, sim::Loop &loop);
-
-    void to_json(nlohmann::json &j, const sim::Loop &loop);
-
+void sim::from_json(const nlohmann::json &j, sim::Loop &loop) {
+    loop.from_json(j);
 }
 
-#endif //SIMCORE_MANAGER_H
+void sim::to_json(nlohmann::json &j, const sim::Loop &loop) {
+    loop.to_json(j);
+}

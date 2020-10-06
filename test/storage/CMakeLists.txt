@@ -1,5 +1,7 @@
 add_executable(ProtoTest
         ProtoTest.cpp
+        SignalTest.cpp
+        DumpTest.cpp
         )
 
 target_include_directories(ProtoTest PRIVATE
@@ -7,7 +9,7 @@ target_include_directories(ProtoTest PRIVATE
         )
 
 target_link_libraries(ProtoTest PUBLIC
-        simcore_proto
+        simcore_storage
         )
 
 add_gtest(ProtoTest)
