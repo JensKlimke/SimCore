@@ -56,7 +56,8 @@ namespace sim {
     protected:
 
         // state
-        sim::storage::Signal<double> _stopTime{this, "stopTime", INFINITY};
+        sim::Double _stopTime{this, "stopTime", INFINITY};
+
 
         /**
          * Initialize

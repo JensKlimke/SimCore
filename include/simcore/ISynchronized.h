@@ -66,10 +66,10 @@ namespace sim {
     protected:
 
         // states
-        sim::storage::Signal<double> _timeStepSize{this, "timeStepSize", 0.0};
-        sim::storage::Signal<double> _deltaStartTime{this, "deltaStartTime", 0.0};
-        sim::storage::Signal<double> _nextExecTime{this, "nextExecTime", 0.0};
-        sim::storage::Signal<double> _lastTimeStep{this, "lastTimeStep", 0.0};
+        sim::Double _timeStepSize{this, "timeStepSize", 0.0};
+        sim::Double _deltaStartTime{this, "deltaStartTime", 0.0};
+        sim::Double _nextExecTime{this, "nextExecTime", 0.0};
+        sim::Double _lastTimeStep{this, "lastTimeStep", 0.0};
 
         /**
          * Executes a time step and return the time step size. Attention: only run once per simulation step
@@ -107,7 +107,8 @@ namespace sim {
         */
         [[nodiscard]] double sinceLastTimeStep(double simTime) const {
 
-            return simTime - _lastTimeStep;
+            // TODO: operators double - Double
+            return -_lastTimeStep + simTime;
 
         }
 

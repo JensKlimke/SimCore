@@ -76,7 +76,7 @@ namespace sim {
          */
         [[nodiscard]] StopCode getCode() const {
 
-            return _code;
+            return static_cast<StopCode>(_code);
 
         }
 

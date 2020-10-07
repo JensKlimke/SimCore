@@ -129,26 +129,28 @@ namespace sim {
          */
         [[nodiscard]] double getStartTime() const {
 
-            return _startTime;
+        return _startTime;
 
-        }
-
-
-    protected:
-
-        // states
-        sim::storage::Signal<double> _time{this, "time"};
-        sim::storage::Signal<double> _stepSize{this, "stepSize"};
-        sim::storage::Signal<double> _startTime{this, "startTime", 0.0};
+}
 
 
-        /**
-         * Sets the current time
-         * @param time Time to be set
-         */
-        void setTime(double time) {
+protected:
 
-            _time = time;
+// states
+sim::Double _time{
+this, "time"
+};
+sim::Double _stepSize{ this, "stepSize" };
+sim::Double _startTime{ this, "startTime", 0.0 };
+
+
+/**
+ * Sets the current time
+ * @param time Time to be set
+ */
+void setTime(double time) {
+
+_time = time;
 
         }
 

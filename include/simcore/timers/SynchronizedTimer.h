@@ -37,11 +37,11 @@ namespace sim {
     protected:
 
         // states
-        sim::storage::Signal<double> _acceleration{this, "acceleration", 1.0}; //!< Acceleration factor of the timer
-        sim::storage::Signal<double> _startRefTime{this, "startRefTime"}; //!< Start point in reference time
-        sim::storage::Signal<double> _refTime{this,
-                                              "refTime"};      //!< Actual reference time of the synchronization system
-        sim::storage::Signal<unsigned long> _steps{this, "steps"};   //!< Steps performed
+        sim::Double _acceleration{this, "acceleration", 1.0}; //!< Acceleration factor of the timer
+        sim::Double _startRefTime{this, "startRefTime"}; //!< Start point in reference time
+        sim::Double _refTime{this,
+                             "refTime"};      //!< Actual reference time of the synchronization system
+        sim::ULong _steps{this, "steps"};   //!< Steps performed
 
 
     public:

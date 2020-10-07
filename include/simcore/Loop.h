@@ -150,7 +150,7 @@ namespace sim {
         [[nodiscard]] Status getStatus() const {
 
             // status
-            return _status;
+            return static_cast<Status>(_status);
 
         }
 
