@@ -30,7 +30,6 @@
 #include <gtest/gtest.h>
 #include <simcore/Model.h>
 #include <simcore/testing/SimulationTest.h>
-#include <simcore/storage/Manager.h>
 
 class Stepper : public sim::Model {
 protected:
@@ -60,48 +59,42 @@ protected:
 
 };
 
+TEST_F(DumpTest, DataManager) {
 
-TEST_F(DumpTest, ToJSON) {
+    using namespace sim;
 
-    // create simulation
-    create(10.0, 0.01, 1.0, 20.0);
+    DataManager::registerOwner(&this->_loop, "loop");
+    DataManager::registerOwner(&this->_basicTimer, "timer");
 
-    // json
-    nlohmann::json loop{}, timer{}, stop{};
+    for (auto &it : DataManager::index) {
 
-    // to json
-    to_json(loop, *this->_loop);
+        // get owner and entry
+        auto owner = it.first;
+        auto entry = it.second;
 
-    // basic timer
-    if (this->_basicTimer)
-        to_json(timer, *this->_basicTimer);
+        // check entry name
+        if (!entry.name.empty())
+            std::cout << "\"" << entry.name << "\": " << std::endl;
+        else
+            std::cout << "<empty>:" << std::endl;
 
-    // rt timer
-    if (this->_rtTimer)
-        to_json(timer, *this->_rtTimer);
+        for (auto &ite : entry.signals) {
 
-    // stop timer
-    to_json(stop, *this->_stopTimer);
+            // get signal and name
+            auto sig = ite.second;
+            auto sigName = ite.first;
 
-    // check loop
-    EXPECT_TRUE(loop["stopFlag"]);
-    EXPECT_EQ(2, loop["status"]);
-    EXPECT_EQ(1, loop["components"][0]);
-    EXPECT_EQ(2, loop["components"][1]);
-    EXPECT_EQ(3, loop["stopConditions"][0]);
+            // get json
+            nlohmann::json j{};
+            sig->toJson(j);
 
-    // check timer
-    EXPECT_DOUBLE_EQ(20.0, timer["acceleration"]);
-    EXPECT_DOUBLE_EQ(0.0, timer["refTime"]);
-    EXPECT_DOUBLE_EQ(0.0, timer["startRefTime"]);
-    EXPECT_DOUBLE_EQ(1.0, timer["startTime"]);
-    EXPECT_DOUBLE_EQ(0.01, timer["stepSize"]);
-    EXPECT_DOUBLE_EQ(0.0, timer["time"]);
-    EXPECT_EQ(0, timer["steps"]);
+            // output
+            std::cout << "- \"" << sigName << "\":" << std::endl;
+            std::cout << "   " << j << std::endl;
 
-    // check stop timer
-    EXPECT_EQ(0, stop["code"]);
-    EXPECT_DOUBLE_EQ(10.0, stop["stopTime"]);
+        }
+
+    }
 
 }
 

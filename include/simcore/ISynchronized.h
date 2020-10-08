@@ -66,10 +66,11 @@ namespace sim {
     protected:
 
         // states
-        sim::Double _timeStepSize{this, "timeStepSize", 0.0};
-        sim::Double _deltaStartTime{this, "deltaStartTime", 0.0};
-        sim::Double _nextExecTime{this, "nextExecTime", 0.0};
-        sim::Double _lastTimeStep{this, "lastTimeStep", 0.0};
+        double _timeStepSize = 0.0;
+        double _deltaStartTime = 0.0;
+        double _nextExecTime = 0.0;
+        double _lastTimeStep = 0.0;
+
 
         /**
          * Executes a time step and return the time step size. Attention: only run once per simulation step
@@ -108,7 +109,7 @@ namespace sim {
         [[nodiscard]] double sinceLastTimeStep(double simTime) const {
 
             // TODO: operators double - Double
-            return -_lastTimeStep + simTime;
+            return simTime - _lastTimeStep;
 
         }
 
@@ -165,7 +166,7 @@ namespace sim {
         bool _execCondition(double simTime) override {
 
             // check if next execution time is reached
-            return simTime + EPS_SIM_TIME >= _nextExecTime;
+            return (simTime + EPS_SIM_TIME) >= _nextExecTime;
 
         }
 

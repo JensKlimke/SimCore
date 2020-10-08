@@ -37,11 +37,10 @@ namespace sim {
     protected:
 
         // states
-        sim::Double _acceleration{this, "acceleration", 1.0}; //!< Acceleration factor of the timer
-        sim::Double _startRefTime{this, "startRefTime"}; //!< Start point in reference time
-        sim::Double _refTime{this,
-                             "refTime"};      //!< Actual reference time of the synchronization system
-        sim::ULong _steps{this, "steps"};   //!< Steps performed
+        double _acceleration = 1.0; //!< Acceleration factor of the timer
+        double _startRefTime;       //!< Start point in reference time
+        double _refTime;            //!< Actual reference time of the synchronization system
+        unsigned long _steps;       //!< Steps performed
 
 
     public:
@@ -64,7 +63,7 @@ namespace sim {
         void step() override {
 
             // get next time
-            auto nextTime = getTimeStepSize() * (double) (++_steps);
+            auto nextTime = getTimeStepSize() * static_cast<double>(static_cast<unsigned long>(++_steps));
 
             // wait until time has been elapsed
             double elapsed;

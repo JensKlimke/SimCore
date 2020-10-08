@@ -27,29 +27,27 @@
 
 #include <map>
 #include <string>
-#include <nlohmann/json.hpp>
 #include "SignalInterface.h"
 
-namespace sim::storage {
+namespace sim {
 
-
-    class DataManager {
-
-    public:
-
-        static void addSignal(const void *owner, const std::string &key, SignalInterface *signal);
-
-        static SignalInterface *getSignal(const void *owner, const std::string &key);
-
+    struct DataManager {
 
         struct Entry {
-            std::map<std::string, SignalInterface *> signals{};
+            std::string name{};
+            void *instance = nullptr;
+            std::map<std::string, sim::storage::SignalInterface *> signals{};
         };
 
+        static std::map<const void *, Entry> index;
 
-    protected:
+        static void registerSignal(const void *owner, const std::string &name, sim::storage::SignalInterface *signal);
 
-        static std::map<const void *, Entry> _entries;
+        static sim::storage::SignalInterface *getSignal(const void *owner, const std::string &name);
+
+        static void registerOwner(void *owner, const std::string &name);
+
+        static const std::string &getOwner(const void *owner);
 
     };
 

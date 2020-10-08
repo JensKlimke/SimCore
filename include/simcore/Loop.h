@@ -27,24 +27,17 @@
 
 #include <vector>
 #include <algorithm>
-#include <simcore/storage/Signal.h>
+#include <SimCore.pb.h>
 #include "utils/exceptions.h"
 #include "timers/ITimer.h"
 #include "IStopCondition.h"
 #include "IComponent.h"
 
-// pre-define manager class
-namespace sim::storage {
-    class Manager;
-}
 
 namespace sim {
 
+
     class Loop {
-
-        /*!< The data manager can access all values */
-        friend class sim::storage::Manager;
-
 
     public:
 
@@ -150,7 +143,33 @@ namespace sim {
         [[nodiscard]] Status getStatus() const {
 
             // status
-            return static_cast<Status>(_status);
+            return _status;
+
+        }
+
+
+        /**
+         * Stores the state to the given protobuf object
+         * @param obj Protobuf object
+         */
+        void toProtobuf(sim::protobuf::Loop &obj) const {
+
+            using namespace sim::protobuf;
+
+            obj.set_status(static_cast<Loop_Status>(_status));
+            obj.set_stopflag(_stopFlag);
+
+        }
+
+
+        /**
+         * Sets the state given by the protobuf object
+         * @param obj Protobuf object
+         */
+        void fromProtobuf(const sim::protobuf::Loop &obj) {
+
+            _status = static_cast<Status>(obj.status());
+            _stopFlag = obj.stopflag();
 
         }
 
@@ -158,10 +177,8 @@ namespace sim {
     protected:
 
         // states
-        sim::storage::Signal<Status> _status{this, "status", Status::STOPPED};
-
-        // attributes
-        bool _stopFlag{};
+        Status _status = Status::STOPPED;
+        bool _stopFlag = true;
 
         // elements
         std::vector<IComponent *> _components{};

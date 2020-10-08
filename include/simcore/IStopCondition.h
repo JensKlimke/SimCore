@@ -76,7 +76,29 @@ namespace sim {
          */
         [[nodiscard]] StopCode getCode() const {
 
-            return static_cast<StopCode>(_code);
+            return _code;
+
+        }
+
+
+        /**
+         * Stores the state to the given protobuf object
+         * @param obj Protobuf object
+         */
+        void toProtobuf(sim::protobuf::StopCondition &obj) const {
+
+            obj.set_code(static_cast<sim::protobuf::StopCondition_StopCode>(_code));
+
+        }
+
+
+        /**
+         * Sets the state given by the protobuf object
+         * @param obj Protobuf object
+         */
+        void fromProtobuf(const sim::protobuf::StopCondition &obj) {
+
+            _code = static_cast<StopCode>(obj.code());
 
         }
 
@@ -84,7 +106,7 @@ namespace sim {
     protected:
 
         // states
-        sim::storage::Signal<StopCode> _code{this, "code", StopCode::NONE};
+        StopCode _code = StopCode::NONE;
 
 
         /**

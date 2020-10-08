@@ -71,11 +71,11 @@ namespace sim {
 
         /**
          * Returns the actual time
-         * @return
+         * @return The actual time
          */
         [[nodiscard]] double time() const override {
 
-            return _time;
+            return static_cast<double>(_time);
 
         }
 
@@ -118,7 +118,7 @@ namespace sim {
          */
         [[nodiscard]] double getTimeStepSize() const {
 
-            return _stepSize;
+            return static_cast<double>(_stepSize);
 
         }
 
@@ -129,31 +129,54 @@ namespace sim {
          */
         [[nodiscard]] double getStartTime() const {
 
-        return _startTime;
-
-}
-
-
-protected:
-
-// states
-sim::Double _time{
-this, "time"
-};
-sim::Double _stepSize{ this, "stepSize" };
-sim::Double _startTime{ this, "startTime", 0.0 };
-
-
-/**
- * Sets the current time
- * @param time Time to be set
- */
-void setTime(double time) {
-
-_time = time;
+            return static_cast<double>(_startTime);
 
         }
 
+
+        /**
+         * Stores the loop state to the given protobuf object
+         * @param obj Protobuf loop object
+         */
+        void toProtobuf(sim::protobuf::BasicTimer &obj) const {
+
+            obj.set_starttime(_startTime);
+            obj.set_time(_time);
+            obj.set_stepsize(_stepSize);
+
+        }
+
+
+        /**
+         * Sets the state given by the protobuf object
+         * @param obj Protobuf loop object
+         */
+        void fromProtobuf(const sim::protobuf::BasicTimer &obj) {
+
+            _startTime = obj.starttime();
+            _time = obj.time();
+            _stepSize = obj.stepsize();
+
+        }
+
+
+    protected:
+
+        // states
+        double _time;
+        double _stepSize;
+        double _startTime = 0.0;
+
+
+        /**
+         * Sets the current time
+         * @param time Time to be set
+         */
+        void setTime(double time) {
+
+            _time = time;
+
+        }
 
     };
 

@@ -23,26 +23,53 @@
 
 #include <simcore/storage/DataManager.h>
 
-namespace sim::storage {
+namespace sim {
 
-    std::map<const void *, DataManager::Entry> DataManager::_entries = std::map<const void *, DataManager::Entry>{};
+    std::map<const void *, DataManager::Entry> DataManager::index = std::map<const void *, DataManager::Entry>{};
 
-    void DataManager::addSignal(const void *owner, const std::string &key, SignalInterface *signal) {
+    void
+    DataManager::registerSignal(const void *owner, const std::string &name, sim::storage::SignalInterface *signal) {
 
         // add to map, if instance not registered
-        if (_entries.find(owner) == _entries.end())
-            _entries.emplace(owner, Entry{});
+        if (index.find(owner) == index.end())
+            index.emplace(std::pair<const void *, Entry>(owner, {}));
 
         // add signal
-        _entries[owner].signals.emplace(key, signal);
+        index[owner].signals.emplace(name, signal);
 
     }
 
 
-    SignalInterface *DataManager::getSignal(const void *owner, const std::string &key) {
+    sim::storage::SignalInterface *DataManager::getSignal(const void *owner, const std::string &key) {
 
         // return signal interface
-        return _entries.at(owner).signals.at(key);
+        return index.at(owner).signals.at(key);
+
+    }
+
+
+    void DataManager::registerOwner(void *owner, const std::string &name) {
+
+
+        if (index.find(owner) == index.end()) {
+
+            // create entry
+            index.emplace(std::pair<const void *, Entry>(owner, Entry{name, owner, {}}));
+
+        } else {
+
+            // set instance and name
+            index.at(owner).instance = owner;
+            index.at(owner).name = name;
+
+        }
+
+    }
+
+
+    const std::string &DataManager::getOwner(const void *owner) {
+
+        return index.at(owner).name;
 
     }
 

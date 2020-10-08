@@ -20,8 +20,9 @@ target_include_directories(SimCoreTest PRIVATE
         ${PROJECT_SOURCE_DIR}/lib/json/include
         )
 
-# deactivate signal functionality
-target_compile_definitions(SimCoreTest PRIVATE INTELLIGENT_ATTRIBUTES=0)
+target_link_libraries(SimCoreTest PRIVATE
+        simcore_storage
+        )
 
 # add tests
 add_gtest(SimCoreTest)

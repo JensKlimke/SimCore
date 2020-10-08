@@ -28,309 +28,128 @@
 #include <string>
 #include <functional>
 #include <utility>
-#include "SignalInterface.h"
-
-#define UPDATE(N) {     \
-    auto old = _value;  \
-    N;                  \
-    update(old);        \
-}
+#include "DataManager.h"
 
 namespace sim::storage {
 
     template<typename T>
-    class Signal : public SignalInterface {
+    struct Signal : public SignalInterface {
 
-    protected:
+        T value;
+        std::string name{};
+        const void *owner = nullptr;
 
-        T _value{};           //!< The value of the signal
-        const void *_owner{}; //!< The pointer to the owner
-        std::string _name{};  //!< The name of the signal
-
-        std::function<void(const T &newValue, const T &oldValue, const Signal<T> &signal)> _onUpdate
-                = nullptr; //!< The callback which is called when the value is updated
-
-
-    public:
-
-
-        /**
-         * Basic constructor
-         */
         Signal() = delete;
 
+        Signal(const void *o, std::string &&n) : owner(o), name(n), value() {
+            reg();
+        }
 
-        /**
-         * Constructor
-         * @param owner Owner of the signal
-         * @param name Signal name
-         */
-        Signal(const void *owner, std::string &&name)
-                : _owner{owner}, _name{std::move(name)} {}
-
-
-        /**
-         * Constructor
-         * @param owner Owner of the signal
-         * @param name Signal name
-         * @param def Default value
-         */
-        Signal(const void *owner, std::string &&name, T &&def)
-                : _owner{owner}, _name{std::move(name)}, _value(std::move(def)) {}
+        Signal(const void *o, std::string &&n, T &&v) : owner(o), name(n), value(v) {
+            reg();
+        }
 
 
-        /**
-         * Returns the name of the signal
-         * @return
-         */
-        [[nodiscard]] const std::string &getName() const {
-
-            // return the name
-            return _name;
-
+        void reg() {
+#ifdef MANAGE_SIGNALS
+            sim::DataManager::registerSignal(owner, name, this);
+#endif
         }
 
 
         /**
-         * Returns the pointer to the owner
-         * @return Owner pointer
+         * Writes the value to the JSON object
+         * @param obj JSON object
          */
-        [[nodiscard]] const void *getOwner() const {
-
-            return _owner;
-
+        void toJson(nlohmann::json &obj) const override {
+            obj[name] = value;
         }
 
 
         /**
-         * Sets the callback to be executed when the signal is updated
-         * @param callback Callback function to be set
+         * Reads the value from JSON object
+         * @param obj JSON object
          */
-        void
-        setUpdateCallback(std::function<void(const T &newValue, const T &oldValue, const Signal &signal)> callback) {
-
-            // set function
-            _onUpdate = callback;
-
+        void fromJson(nlohmann::json &obj) override {
+            obj[name].get_to(value);
         }
 
 
-        /**
-         * Assignment operator
-         * @param value Value to be set
-         * @return Returns the signal object
-         */
-        Signal &operator=(T value) {
+        /*!< conversion operator */
+        explicit operator T() const { return value; }
 
-            // execute update and return this object
-            UPDATE(_value = value)
+        /*!< assignment operator */
+        Signal &operator=(T v) {
+            value = std::move(v);
             return *this;
-
         }
 
+        /*!< comparison operators */
+        bool operator==(const T &v) const { return value == v; }
 
-        explicit operator T() const { return _value; }
+        bool operator!=(const T &v) const { return value != v; }
 
-        explicit operator T() { return _value; }
+        bool operator<(const T &v) const { return value < v; }
 
-        bool operator==(const T &b) const { return _value == b; }
+        bool operator<=(const T &v) const { return value <= v; }
 
-        bool operator!=(const T &b) const { return _value != b; }
+        bool operator>(const T &v) const { return value > v; }
 
-        bool operator<(const T &b) const { return _value < b; }
+        bool operator>=(const T &v) const { return value >= v; }
 
-        bool operator>(const T &b) const { return _value > b; }
 
-        bool operator<=(const T &b) const { return _value <= b; }
+        /*!< math operators */
+        T operator+(const T &v) const { return value + v; }
 
-        bool operator>=(const T &b) const { return _value >= b; }
+        T operator-(const T &v) const { return value - v; }
 
-        T operator+() const { return +_value; }
+        T operator*(const T &v) const { return value * v; }
 
-        T operator-() const { return +_value; }
+        T operator/(const T &v) const { return value / v; }
 
-        T operator~() const { return ~_value; }
+        T operator+(const Signal<T> &v) const { return value + v.value; }
 
-        T operator+(const Signal<T> &b) const { return _value + b._value; }
+        T operator-(const Signal<T> &v) const { return value - v.value; }
 
-        T operator-(const Signal<T> &b) const { return _value - b._value; }
+        T operator*(const Signal<T> &v) const { return value * v.value; }
 
-        T operator*(const Signal<T> &b) const { return _value * b._value; }
+        T operator/(const Signal<T> &v) const { return value / v.value; }
 
-        T operator/(const Signal<T> &b) const { return _value / b._value; }
 
-        T operator%(const Signal<T> &b) const { return _value % b._value; }
-
-        T operator&(const Signal<T> &b) const { return _value & b._value; }
-
-        T operator|(const Signal<T> &b) const { return _value | b._value; }
-
-        T operator^(const Signal<T> &b) const { return _value ^ b._value; }
-
-        T operator<<(const Signal<T> &b) const { return _value << b._value; }
-
-        T operator>>(const Signal<T> &b) const { return _value >> b._value; }
-
-        T &operator+=(const Signal<T> &b) {
-            UPDATE(_value += b._value)
-            return _value;
+        Signal<T> &operator++() {
+            ++value;
+            return *this;
         }
 
-        T &operator-=(const Signal<T> &b) {
-            UPDATE(_value -= b._value)
-            return _value;
+        Signal<T> &operator--() {
+            --value;
+            return *this;
         }
 
-        T &operator*=(const Signal<T> &b) {
-            UPDATE(_value *= b._value)
-            return _value;
+        Signal &operator+=(T v) {
+            value += v;
+            return *this;
         }
 
-        T &operator/=(const Signal<T> &b) {
-            UPDATE(_value /= b._value)
-            return _value;
+        Signal &operator-=(T v) {
+            value += v;
+            return *this;
         }
 
-        T &operator%=(const Signal<T> &b) {
-            UPDATE(_value %= b._value)
-            return _value;
+        Signal &operator+=(const Signal<T> &v) {
+            value += v.value;
+            return *this;
         }
 
-        T &operator&=(const Signal<T> &b) {
-            UPDATE(_value &= b._value)
-            return _value;
-        }
-
-        T &operator|=(const Signal<T> &b) {
-            UPDATE(_value |= b._value)
-            return _value;
-        }
-
-        T &operator^=(const Signal<T> &b) {
-            UPDATE(_value ^= b._value)
-            return _value;
-        }
-
-        T &operator<<=(const Signal<T> &b) {
-            UPDATE(_value <<= b._value)
-            return _value;
-        }
-
-        T &operator>>=(const Signal<T> &b) {
-            UPDATE(_value >>= b._value)
-            return _value;
-        }
-
-        T operator++() { return ++_value; }
-
-        T operator--() { return --_value; }
-
-        T operator+(const T &b) const { return _value + b; }
-
-        T operator-(const T &b) const { return _value - b; }
-
-        T operator*(const T &b) const { return _value * b; }
-
-        T operator/(const T &b) const { return _value / b; }
-
-        T operator%(const T &b) const { return _value % b; }
-
-        T operator&(const T &b) const { return _value & b; }
-
-        T operator|(const T &b) const { return _value | b; }
-
-        T operator^(const T &b) const { return _value ^ b; }
-
-        T operator<<(const T &b) const { return _value << b; }
-
-        T operator>>(const T &b) const { return _value >> b; }
-
-        T &operator+=(const T &b) {
-            UPDATE(_value += b)
-            return _value;
-        }
-
-        T &operator-=(const T &b) {
-            UPDATE(_value -= b)
-            return _value;
-        }
-
-        T &operator*=(const T &b) {
-            UPDATE(_value *= b)
-            return _value;
-        }
-
-        T &operator/=(const T &b) {
-            UPDATE(_value /= b)
-            return _value;
-        }
-
-        T &operator%=(const T &b) {
-            UPDATE(_value %= b)
-            return _value;
-        }
-
-        T &operator&=(const T &b) {
-            UPDATE(_value &= b)
-            return _value;
-        }
-
-        T &operator|=(const T &b) {
-            UPDATE(_value |= b)
-            return _value;
-        }
-
-        T &operator^=(const T &b) {
-            UPDATE(_value ^= b)
-            return _value;
-        }
-
-        T &operator<<=(const T &b) {
-            UPDATE(_value <<= b)
-            return _value;
-        }
-
-        T &operator>>=(const T &b) {
-            UPDATE(_value >>= b)
-            return _value;
-        }
-
-
-    protected:
-
-
-        /**
-         * Method to be called, when value has been changed
-         * @param old The old value
-         */
-        void update(const T &old) {
-
-            // callback
-            if (_onUpdate)
-                _onUpdate(_value, old, *this);
-
+        Signal &operator-=(const Signal<T> &v) {
+            value += v.value;
+            return *this;
         }
 
     };
 
 
-//    template<typename T>
-//    const Signal<T> *signal(const void *owner, const std::string &key) {
-//
-//        return (sim::storage::Signal<T> *) (DataManager::getSignal(owner, key));
-//
-//    }
-//
-//
-//    template<typename T>
-//    T value(const void *owner, const std::string &key) {
-//
-//        return (T) *signal<T>(owner, key);
-//
-//    }
-
-
-} // namspace: sim::storage
+} // namespace: sim::storage
 
 
 namespace sim {
@@ -351,5 +170,36 @@ namespace sim {
     typedef storage::Signal<std::string> String;
 
 }
+
+template<typename T>
+bool operator==(const T &a, const sim::storage::Signal<T> b) { return a == b.value; }
+
+template<typename T>
+bool operator!=(const T &a, const sim::storage::Signal<T> b) { return a != b.value; }
+
+template<typename T>
+bool operator<(const T &a, const sim::storage::Signal<T> b) { return a < b.value; }
+
+template<typename T>
+bool operator<=(const T &a, const sim::storage::Signal<T> b) { return a <= b.value; }
+
+template<typename T>
+bool operator>(const T &a, const sim::storage::Signal<T> b) { return a > b.value; }
+
+template<typename T>
+bool operator>=(const T &a, const sim::storage::Signal<T> b) { return a >= b.value; }
+
+
+template<typename T>
+T operator+(const T &a, const sim::storage::Signal<T> b) { return a + b.value; }
+
+template<typename T>
+T operator-(const T &a, const sim::storage::Signal<T> b) { return a - b.value; }
+
+template<typename T>
+T operator*(const T &a, const sim::storage::Signal<T> b) { return a * b.value; }
+
+template<typename T>
+T operator/(const T &a, const sim::storage::Signal<T> b) { return a / b.value; }
 
 #endif // SIMCORE_SIGNAL_H

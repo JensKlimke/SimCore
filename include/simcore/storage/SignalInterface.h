@@ -32,8 +32,9 @@ namespace sim::storage {
     // interface
     struct SignalInterface {
 
-//        virtual void toJson(nlohmann::json &obj) const = 0;
-//        virtual void fromJson(nlohmann::json &obj) = 0;
+        virtual void toJson(nlohmann::json &obj) const = 0;
+
+        virtual void fromJson(nlohmann::json &obj) = 0;
 
     };
 

@@ -27,8 +27,8 @@
 #pragma ide diagnostic ignored "cert-err58-cpp"
 
 #include <gtest/gtest.h>
-#include <simcore/storage/Manager.h>
 #include <simcore/testing/SimulationTest.h>
+#include <google/protobuf/util/json_util.h>
 
 
 class SimDump : public sim::Model {
@@ -63,12 +63,21 @@ public:
 
 TEST_F(ProtoTest, Dump) {
 
-    sim::protobuf::Loop loop{};
+    // create sim
+    create(11.0, 0.01, 1.0);
 
-    // TODO: create sim
+    // create sim
+    sim::protobuf::Simulation sim{};
 
     // save loop
-    // sim::storage::Manager::saveLoop(loop, this->_loop.get());
+    _loop->toProtobuf(*sim.add_loops());
+    _basicTimer->toProtobuf(*sim.add_basictimers());
+    _stopTimer->toProtobuf(*sim.add_timeisups());
+
+    std::string json{};
+    google::protobuf::util::JsonPrintOptions opt{};
+    google::protobuf::util::MessageToJsonString(sim, &json, opt);
+    std::cout << "JSON: " << json << std::endl;
 
 }
 

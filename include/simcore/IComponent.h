@@ -39,9 +39,7 @@ namespace sim {
 
     public:
 
-        /**
-         * allow Loop class access to methods
-         */
+        /*!< Allow Loop class access to methods */
         friend class Loop;
 
 
