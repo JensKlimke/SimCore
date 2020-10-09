@@ -37,7 +37,7 @@
 namespace sim {
 
 
-    class Loop {
+    class Loop : public sim::storage::IStorable {
 
     public:
 
@@ -145,6 +145,26 @@ namespace sim {
             // status
             return _status;
 
+        }
+
+
+        /**
+         * Stores the state to the given JSON object
+         * @param obj JSON object
+         */
+        void toJSON(nlohmann::json &obj) const override {
+            obj["status"] = _status;
+            obj["stopFlag"] = _stopFlag;
+        }
+
+
+        /**
+         * Sets the state given by the JSON object
+         * @param obj JSON object
+         */
+        void fromJSON(const nlohmann::json &obj) override {
+            obj["status"].get_to(_status);
+            obj["stopFlag"].get_to(_stopFlag);
         }
 
 

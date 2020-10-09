@@ -29,13 +29,13 @@
 #define EPS_SIM_TIME 1e-9
 #endif
 
-#include "storage/Signal.h"
+#include "storage/IStorable.h"
 
 namespace sim {
 
     class Loop;
 
-    class IComponent {
+    class IComponent : virtual public sim::storage::IStorable {
 
     public:
 
@@ -70,10 +70,7 @@ namespace sim {
          * @return Flag to indicate whether the execution shall be done in this step
          */
         virtual bool _execCondition(double simTime) {
-
-            // default is true
             return true;
-
         }
 
 

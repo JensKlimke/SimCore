@@ -141,6 +141,32 @@ namespace sim {
 
         }
 
+
+        /**
+         * Stores the state to the given JSON object
+         * @param obj JSON object
+         */
+        void toJSON(nlohmann::json &obj) const override {
+            BasicTimer::toJSON(obj);
+            obj["acceleration"] = _acceleration;
+            obj["startRefTime"] = _startRefTime;
+            obj["refTime"] = _refTime;
+            obj["steps"] = _steps;
+        }
+
+
+        /**
+         * Sets the state given by the JSON object
+         * @param obj JSON object
+         */
+        void fromJSON(const nlohmann::json &obj) override {
+            BasicTimer::fromJSON(obj);
+            obj["acceleration"].get_to(_acceleration);
+            obj["startRefTime"].get_to(_startRefTime);
+            obj["refTime"].get_to(_refTime);
+            obj["steps"].get_to(_steps);
+        }
+
     };
 
 }

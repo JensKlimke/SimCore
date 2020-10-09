@@ -89,6 +89,26 @@ namespace sim {
         }
 
 
+        /**
+         * Stores the state to the given JSON object
+         * @param obj JSON object
+         */
+        void toJSON(nlohmann::json &obj) const override {
+            BasicTimer::toJSON(obj);
+            obj["stopSync"] = _stopSync;
+        }
+
+
+        /**
+         * Sets the state given by the JSON object
+         * @param obj JSON object
+         */
+        void fromJSON(const nlohmann::json &obj) override {
+            BasicTimer::fromJSON(obj);
+            obj["stopSync"].get_to(_stopSync);
+        }
+
+
     protected:
 
         void realtimeStep() {

@@ -26,15 +26,18 @@
 #define SIMCORE_STOP_CONDITION_H
 
 #include <string>
+#include "storage/IStorable.h"
 
 namespace sim {
 
 
-    class IStopCondition {
+    class IStopCondition : virtual public sim::storage::IStorable {
 
     public:
 
-        enum class StopCode { NONE, OBJECTIVES_MISSED, OBJECTIVES_REACHED, SIM_ENDED };
+        enum class StopCode {
+            NONE, OBJECTIVES_MISSED, OBJECTIVES_REACHED, SIM_ENDED
+        };
 
 
         /**
@@ -78,6 +81,24 @@ namespace sim {
 
             return _code;
 
+        }
+
+
+        /**
+         * Stores the state to the given JSON object
+         * @param obj JSON object
+         */
+        void toJSON(nlohmann::json &obj) const override {
+            obj["code"] = _code;
+        }
+
+
+        /**
+         * Sets the state given by the JSON object
+         * @param obj JSON object
+         */
+        void fromJSON(const nlohmann::json &obj) override {
+            obj["code"].get_to(_code);
         }
 
 

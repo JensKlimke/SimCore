@@ -24,13 +24,11 @@
 #ifndef SIMCORE_ITIMER_H
 #define SIMCORE_ITIMER_H
 
-namespace sim::storage {
-    class Manager;
-}
+#include "../storage/IStorable.h"
 
 namespace sim {
 
-    class ITimer {
+    class ITimer : public sim::storage::IStorable {
 
     public:
 

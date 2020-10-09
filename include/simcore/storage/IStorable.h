@@ -1,5 +1,4 @@
-//
-// Copyright (c) 2019-2020 Jens Klimke <jens.klimke@rwth-aachen.de>
+// Copyright (c) 2020 Jens Klimke (jens.klimke@rwth-aachen.de). All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,30 +18,36 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke on 2020-08-06.
+// Created by Jens Klimke on $YEAR-$MONTH-09.
 //
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunknown-pragmas"
-#pragma ide diagnostic ignored "cert-err58-cpp"
+
+#ifndef SIMCORE_ISTORABLE_H
+#define SIMCORE_ISTORABLE_H
+
+#include <nlohmann/json.hpp>
+
+namespace sim::storage {
+
+    class IStorable {
+
+    public:
+
+        /**
+         * Stores the state to the given JSON object
+         * @param obj JSON object
+         */
+        virtual void toJSON(nlohmann::json &obj) const = 0;
 
 
-#include <gtest/gtest.h>
-#include <simcore/Loop.h>
+        /**
+         * Sets the state given by the JSON object
+         * @param obj JSON object
+         */
+        virtual void fromJSON(const nlohmann::json &obj) = 0;
 
-
-class SimulationSignalTest : public ::testing::Test, public sim::Loop {
-
-    void SetUp() override {
-    }
-
-};
-
-
-TEST_F(SimulationSignalTest, Access) {
-
+    };
 
 }
 
-
-#pragma clang diagnostic pop
+#endif // SIMCORE_ISTORABLE_H

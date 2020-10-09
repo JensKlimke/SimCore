@@ -31,7 +31,8 @@
 #include <simcore/Model.h>
 #include <simcore/testing/SimulationTest.h>
 
-class Stepper : public sim::Model {
+class Dump : public sim::Model {
+
 protected:
 
     void initialize(double t) override {
@@ -48,53 +49,49 @@ protected:
 
 };
 
-class DumpTest : public ::testing::Test, public sim::testing::SimulationTest<Stepper> {
-
-protected:
+class DumpTest : public ::testing::Test, public sim::testing::SimulationTest<Dump> {
 
     void SetUp() override {
     }
 
-    double value = 10.0;
-
 };
 
-TEST_F(DumpTest, DataManager) {
 
-    using namespace sim;
+TEST_F(DumpTest, Dump) {
 
-    DataManager::registerOwner(&this->_loop, "loop");
-    DataManager::registerOwner(&this->_basicTimer, "timer");
+    // create simulation
+    create(11.0, 0.01, 1.0);
+    setTimeStepSize(0.01);
 
-    for (auto &it : DataManager::index) {
+    addPreCallback([](const sim::testing::TimeStep &timeStep) {
 
-        // get owner and entry
-        auto owner = it.first;
-        auto entry = it.second;
+        if (timeStep.steps == 10) {
 
-        // check entry name
-        if (!entry.name.empty())
-            std::cout << "\"" << entry.name << "\": " << std::endl;
-        else
-            std::cout << "<empty>:" << std::endl;
-
-        for (auto &ite : entry.signals) {
-
-            // get signal and name
-            auto sig = ite.second;
-            auto sigName = ite.first;
-
-            // get json
-            nlohmann::json j{};
-            sig->toJson(j);
-
-            // output
-            std::cout << "- \"" << sigName << "\":" << std::endl;
-            std::cout << "   " << j << std::endl;
+            // TODO:
+            std::cout << "Step 10" << std::endl;
 
         }
 
+    });
+
+    run();
+
+    // create json object
+    nlohmann::json j{{"loop",  {}},
+                     {"timer", {}}};
+
+    // loop and timer
+    _loop->toJSON(j["loop"]);
+    _timer->toJSON(j["timer"]);
+    Model::toJSON(j["test"]);
+
+    // iterate over elements
+    for (const auto &c : _stored) {
+        j[c.first] = {};
+        c.second->toJSON(j[c.first]);
     }
+
+    std::cout << j << std::endl;
 
 }
 

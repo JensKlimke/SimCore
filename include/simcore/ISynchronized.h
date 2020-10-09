@@ -63,6 +63,30 @@ namespace sim {
         }
 
 
+        /**
+         * Stores the state to the given JSON object
+         * @param obj JSON object
+         */
+        void toJSON(nlohmann::json &obj) const override {
+            obj["timeStepSize"] = _timeStepSize;
+            obj["deltaStartTime"] = _deltaStartTime;
+            obj["nextExecTime"] = _nextExecTime;
+            obj["lastTimeStep"] = _lastTimeStep;
+        }
+
+
+        /**
+         * Sets the state given by the JSON object
+         * @param obj JSON object
+         */
+        void fromJSON(const nlohmann::json &obj) override {
+            obj["timeStepSize"].get_to(_timeStepSize);
+            obj["deltaStartTime"].get_to(_deltaStartTime);
+            obj["nextExecTime"].get_to(_nextExecTime);
+            obj["lastTimeStep"].get_to(_lastTimeStep);
+        }
+
+
     protected:
 
         // states

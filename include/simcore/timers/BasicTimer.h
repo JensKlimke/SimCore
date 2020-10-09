@@ -135,6 +135,28 @@ namespace sim {
 
 
         /**
+         * Stores the state to the given JSON object
+         * @param obj JSON object
+         */
+        void toJSON(nlohmann::json &obj) const override {
+            obj["time"] = _time;
+            obj["stepSize"] = _stepSize;
+            obj["startTime"] = _startTime;
+        }
+
+
+        /**
+         * Sets the state given by the JSON object
+         * @param obj JSON object
+         */
+        void fromJSON(const nlohmann::json &obj) override {
+            obj["time"].get_to(_time);
+            obj["stepSize"].get_to(_stepSize);
+            obj["startTime"].get_to(_startTime);
+        }
+
+
+        /**
          * Stores the loop state to the given protobuf object
          * @param obj Protobuf loop object
          */

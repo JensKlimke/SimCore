@@ -32,7 +32,7 @@
 #include "../Model.h"
 #include "../timers/RealTimeTimer.h"
 #include "../timers/TimeIsUp.h"
-#include "../storage/Storage.h"
+#include "../storage/IStorable.h"
 #include "../logging/TimeReporter.h"
 #include "../value/ValueExceed.h"
 
@@ -53,22 +53,20 @@ namespace sim::testing {
 
     protected:
 
-        // elements
-        sim::BasicTimer *_timer{};
-        sim::TimeIsUp *_stopTimer = nullptr;
-
         // managed elements
         std::unique_ptr<sim::Loop> _loop{};
-        std::unique_ptr<sim::BasicTimer> _basicTimer{};
-        std::unique_ptr<sim::RealTimeTimer> _rtTimer{};
-        std::vector<std::unique_ptr<sim::IComponent>> _components{};
+        std::unique_ptr<sim::ITimer> _timer{};
+        std::vector<std::unique_ptr<sim::IComponent>> _managed{};
+
+        // list of storable objects
+        std::map<std::string, sim::storage::IStorable *> _stored{};
 
         // time step
         TimeStep _time{};
 
         // callbacks
-        std::vector<std::function<void()>> _preSteps{};
-        std::vector<std::function<void()>> _postSteps{};
+        std::vector<std::function<void(const TimeStep &)>> _preSteps{};
+        std::vector<std::function<void(const TimeStep &)>> _postSteps{};
 
 
         void initialize(double t) override {
@@ -96,14 +94,14 @@ namespace sim::testing {
 
             // run pre-steps
             for (auto &ps : _preSteps)
-                ps();
+                ps(_time);
 
             // run main step
             T::step(t, dt);
 
             // run post-steps
             for (auto &ps : _postSteps)
-                ps();
+                ps(_time);
 
             // increment steps
             _time.steps++;
@@ -131,11 +129,14 @@ namespace sim::testing {
          * @param args Arguments
          */
         template<class Comp, class ...Args>
-        Comp *createComponent(Args &&...args) {
+        Comp *createManagedComponent(std::string &&name, Args &&...args) {
 
             // create component and add to component list
             auto comp = new Comp(std::forward<Args>(args)...);
-            _components.emplace_back(comp);
+
+            // add to lists
+            _stored.emplace(name, comp);
+            _managed.emplace_back(comp);
 
             // add component
             _loop->addComponent(comp);
@@ -155,9 +156,8 @@ namespace sim::testing {
          */
         void create(double endTime, double timeStepSize, double startTime = INFINITY, double acceleration = INFINITY) {
 
-            // reset pointers
-            _basicTimer = nullptr;
-            _rtTimer = nullptr;
+            // delete lists
+            _stored.clear();
 
             // create loop
             _loop = std::make_unique<sim::Loop>();
@@ -166,42 +166,51 @@ namespace sim::testing {
             if (std::isinf(acceleration)) {
 
                 // create and save basic timer
-                _basicTimer = std::make_unique<sim::BasicTimer>();
-                _timer = _basicTimer.get();
+                auto timer = new sim::BasicTimer;
+
+                // setup timer
+                timer->setTimeStepSize(timeStepSize);
+                timer->setStartTime(startTime);
+
+                // set timer
+                _loop->setTimer(timer);
+
+                // set to timer unique pointer
+                _timer.reset(timer);
 
             } else {
 
                 // create real-time timer
-                _rtTimer = std::make_unique<RealTimeTimer>();
-                _rtTimer->setAcceleration(acceleration);
+                auto timer = new RealTimeTimer;
+
+                // setup timer
+                timer->setAcceleration(acceleration);
+                timer->setTimeStepSize(timeStepSize);
+                timer->setStartTime(startTime);
+
+                // set timer
+                _loop->setTimer(timer);
 
                 // save timer
-                _timer = _rtTimer.get();
+                _timer.reset(timer);
 
             }
 
             // when acceleration is low, set reporter to visualize time
-            if(acceleration <= 10.0) {
+            if (acceleration <= 10.0) {
 
                 // set time reporter
-                auto timeReporter = createComponent<sim::logging::TimeReporter>();
+                auto timeReporter = createManagedComponent<sim::logging::TimeReporter>("timeReporter");
                 timeReporter->setTimeStepSize(1.0);
 
             }
 
-            // setup timer
-            _timer->setTimeStepSize(timeStepSize);
-            _timer->setStartTime(startTime);
-
-            // add to loop
-            _loop->setTimer(_timer);
-
             // stop condition (time)
-            _stopTimer = createComponent<sim::TimeIsUp>();
-            _stopTimer->setStopTime(endTime);
+            auto stop = createManagedComponent<sim::TimeIsUp>("stopTimer");
+            stop->setStopTime(endTime);
 
             // add component as stop condition
-            _loop->addStopCondition(_stopTimer);
+            _loop->addStopCondition(stop);
 
             // add myself to the loop
             _loop->addComponent(this);
@@ -241,7 +250,7 @@ namespace sim::testing {
         void stopExceed(const std::pair<double, VType*> &stopValues) {
 
             // create stop condition
-            auto b = createComponent<sim::value::ValueExceed<VType>>();
+            auto b = createManagedComponent<sim::value::ValueExceed<VType>>();
             b->setPointerAndLimit(stopValues.first, stopValues.second);
 
             // add stop condition
@@ -254,7 +263,7 @@ namespace sim::testing {
          * Adds a callback function to be executed before the execution step of this component is executed
          * @param fnc Callback function
          */
-        void addPreCallback(std::function<void()> &&fnc) {
+        void addPreCallback(std::function<void(const TimeStep &)> &&fnc) {
 
             // add to pre steps
             _preSteps.emplace_back(std::move(fnc));
@@ -266,21 +275,10 @@ namespace sim::testing {
          * Adds a callback function to be executed before the execution step of this component is executed
          * @param fnc Callback function
          */
-        void addPostCallback(std::function<void()> &&fnc) {
+        void addPostCallback(std::function<void(const TimeStep &)> &&fnc) {
 
             // add to pre steps
             _postSteps.emplace_back(std::move(fnc));
-
-        }
-
-
-        /**
-         * Returns the main simulation loop
-         * @return Main simulation loop
-         */
-        sim::Loop *getLoop() {
-
-            return _loop.get();
 
         }
 

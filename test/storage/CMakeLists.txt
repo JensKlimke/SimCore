@@ -1,16 +1,10 @@
 add_executable(StorageTest
-        ProtoTest.cpp
         SignalTest.cpp
         DumpTest.cpp
-        SimulationSignalTest.cpp
         )
 
 target_include_directories(StorageTest PRIVATE
         ${PROJECT_SOURCE_DIR}/include
-        )
-
-target_compile_definitions(StorageTest PRIVATE
-        MANAGE_SIGNALS
         )
 
 target_link_libraries(StorageTest PUBLIC
