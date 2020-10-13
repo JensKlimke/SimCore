@@ -1,5 +1,4 @@
-//
-// Copyright (c) 2019-2020 Jens Klimke <jens.klimke@rwth-aachen.de>
+// Copyright (c) 2020 Jens Klimke (jens.klimke@rwth-aachen.de). All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,34 +18,58 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke on 2019-04-17
+// Created by Jens Klimke on 2020-10-13.
 //
 
-#ifndef SIMCORE_MODEL_H
-#define SIMCORE_MODEL_H
 
-#include "IComponent.h"
-#include "ISynchronized.h"
+#ifndef SIMCORE_SIMULATION_MODEL_H
+#define SIMCORE_SIMULATION_MODEL_H
 
-namespace sim {
+#include "Simulation.h"
 
-    class Model : public ISynchronized {
+namespace sim::testing {
+
+    class SimulationModel : public Simulation, public ISynchronized {
+
+        std::function<void()> _callback{};
 
     public:
 
-        /**
-         * Default constructor
-         */
-        Model() = default;
+        void setCallback(std::function<void()> fnc) {
 
-        /**
-         * Default destructor
-         */
-        ~Model() override = default;
+            _callback = std::move(fnc);
 
+        }
+
+
+    protected:
+
+
+        void initialize(double t) override {
+
+            preInitialize(t);
+
+        }
+
+        void step(double t, double dt) override {
+
+            preStep(t, dt);
+
+            // call
+            _callback();
+
+            postStep(t, dt);
+
+        }
+
+        void terminate(double t) override {
+
+            postStep(t);
+
+        }
 
     };
 
 }
 
-#endif //SIMCORE_MODEL_H
+#endif // SIMCORE_SIMULATION_MODEL_H

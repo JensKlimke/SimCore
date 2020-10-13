@@ -26,13 +26,14 @@
 #define SIMCORE_SYNCHRONIZED_H
 
 #include "IComponent.h"
+#include "storage/IStorable.h"
 #include <simcore/utils/exceptions.h>
 #include <cmath>
 
 
 namespace sim {
 
-    class ISynchronized : public sim::IComponent {
+    class ISynchronized : public sim::IComponent, public sim::storage::IStorable {
 
 
     public:
@@ -89,57 +90,9 @@ namespace sim {
 
     protected:
 
-        // states
-        double _timeStepSize = 0.0;
-        double _deltaStartTime = 0.0;
-        double _nextExecTime = 0.0;
-        double _lastTimeStep = 0.0;
-
 
         /**
-         * Executes a time step and return the time step size. Attention: only run once per simulation step
-         * @param simTime Simulation time
-         * @return Time step size
-         */
-        double timeStep(double simTime) {
-
-            // get time step size
-            double dt = sinceLastTimeStep(simTime);
-            _lastTimeStep = simTime;
-
-            // update time
-            _nextExecTime += _timeStepSize;
-
-            return dt;
-
-        }
-
-
-        /**
-         * Resets the model timer
-         * @param initTime Initial time
-         */
-        void initializeTimer(double initTime) {
-
-            _lastTimeStep = initTime;
-
-        }
-
-
-        /**
-        * Returns the time since the last time step was performed
-        * @return Time passed
-        */
-        [[nodiscard]] double sinceLastTimeStep(double simTime) const {
-
-            // TODO: operators double - Double
-            return simTime - _lastTimeStep;
-
-        }
-
-
-        /**
-         * Initializes the model
+         * Initializes the component
          * @param t Initialization time
          */
         virtual void initialize(double t) = 0;
@@ -154,14 +107,60 @@ namespace sim {
 
 
         /**
-         *
+         * Terminates the component
          * @param t Termination time
          */
         virtual void terminate(double t) = 0;
 
 
-
     private:
+
+        // states
+        double _timeStepSize = 0.0;
+        double _deltaStartTime = 0.0;
+        double _nextExecTime = 0.0;
+        double _lastTimeStep = 0.0;
+
+
+        /**
+         * Executes a time step and return the time step size. Attention: only run once per simulation step
+         * @param simTime Simulation time
+         * @return Time step size
+         */
+        double _timeStep(double simTime) {
+
+            // get time step size
+            double dt = _sinceLastTimeStep(simTime);
+            _lastTimeStep = simTime;
+
+            // update time
+            _nextExecTime += _timeStepSize;
+
+            return dt;
+
+        }
+
+
+        /**
+         * Resets the model timer
+         * @param initTime Initial time
+         */
+        void _initializeTimer(double initTime) {
+
+            _lastTimeStep = initTime;
+
+        }
+
+
+        /**
+        * Returns the time since the last time step was performed
+        * @return Time passed
+        */
+        [[nodiscard]] double _sinceLastTimeStep(double simTime) const {
+
+            return simTime - _lastTimeStep;
+
+        }
 
         /**
          * Initializes the component. Increases the next execution time by the initialization time
@@ -169,12 +168,12 @@ namespace sim {
          */
         void _init(double initTime) override {
 
-            if(_timeStepSize < EPS_SIM_TIME)
+            if (_timeStepSize < EPS_SIM_TIME)
                 throw sim::SetupException("Time step size is not set for component.");
 
             // create timer
             _nextExecTime = _deltaStartTime + initTime;
-            initializeTimer(initTime);
+            _initializeTimer(initTime);
 
             // initialize model
             initialize(initTime);
@@ -203,7 +202,7 @@ namespace sim {
         void _exec(double simTime) override {
 
             // model step
-            step(simTime, timeStep(simTime));
+            step(simTime, _timeStep(simTime));
 
         }
 

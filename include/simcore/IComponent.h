@@ -29,13 +29,11 @@
 #define EPS_SIM_TIME 1e-9
 #endif
 
-#include "storage/IStorable.h"
-
 namespace sim {
 
     class Loop;
 
-    class IComponent : virtual public sim::storage::IStorable {
+    class IComponent {
 
     public:
 

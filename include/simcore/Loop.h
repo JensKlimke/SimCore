@@ -50,7 +50,9 @@ namespace sim {
         /**
          * Default constructor
          */
-        Loop() = default;
+        Loop() {
+            reset();
+        }
 
 
         /**
@@ -197,13 +199,13 @@ namespace sim {
     protected:
 
         // states
-        Status _status = Status::STOPPED;
-        bool _stopFlag = true;
+        Status _status;
+        bool _stopFlag;
 
         // elements
-        std::vector<IComponent *> _components{};
-        std::vector<IStopCondition *> _stopConditions{};
-        ITimer *_timer = nullptr;
+        std::vector<IComponent *> _components;
+        std::vector<IStopCondition *> _stopConditions;
+        ITimer *_timer;
 
 
         /**
@@ -313,6 +315,22 @@ namespace sim {
 
             // set status
             _status = Status::STOPPED;
+
+        }
+
+
+        void reset() {
+
+            // states
+            _status = Status::STOPPED;
+            _stopFlag = true;
+
+            // elements
+            _components.clear();
+            _stopConditions.clear();
+
+            // timer
+            _timer = nullptr;
 
         }
 

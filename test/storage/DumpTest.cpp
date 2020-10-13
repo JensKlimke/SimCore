@@ -34,18 +34,11 @@
 class Dump : public sim::Model {
 
 protected:
+    void initialize(double t) override {}
 
-    void initialize(double t) override {
+    void step(double t, double dt) override {}
 
-    }
-
-    void step(double t, double dt) override {
-
-    }
-
-    void terminate(double t) override {
-
-    }
+    void terminate(double t) override {}
 
 };
 

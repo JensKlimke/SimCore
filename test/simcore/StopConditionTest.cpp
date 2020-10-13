@@ -26,57 +26,28 @@
 #pragma clang diagnostic ignored "-Wunknown-pragmas"
 #pragma ide diagnostic ignored "cert-err58-cpp"
 
-#include <simcore/ISynchronized.h>
-#include <simcore/Loop.h>
-#include <simcore/timers/TimeIsUp.h>
-#include <simcore/timers/RealTimeTimer.h>
+#include <simcore/testing/SimulationModel.h>
 #include <gtest/gtest.h>
 
 
-class StopConditionTest : public ::testing::Test, public ::sim::ISynchronized, public ::sim::IStopCondition {
+class StopConditionTest : public ::testing::Test, public sim::testing::SimulationModel, public ::sim::IStopCondition {
 
 
 protected:
 
-    sim::Loop loop{};
-    sim::BasicTimer timer{};
-    std::function<void(double, double)> callback{};
+    std::function<void()> callback{};
+
+    StopConditionTest() = default;
+
+    ~StopConditionTest() override = default;
 
     void SetUp() override {
 
-        // set time step size
-        setTimeStepSize(0.01);
-
-        // create loop
-        loop.addComponent(this);
-        loop.addStopCondition(this);
-
-        // set timer
-        timer.setTimeStepSize(0.01);
-        loop.setTimer(&timer);
+        // add stop condition
+        this->addStopCondition(this);
 
     }
 
-
-public:
-
-    StopConditionTest() = default;
-    ~StopConditionTest() override = default;
-
-
-    void initialize(double initTime) override {}
-
-
-    void step(double t, double dt) override {
-
-        // call
-        if(t > 9.999 & t < 10.001)
-            this->callback(t, dt);
-
-    }
-
-
-    void terminate(double simTime) override {}
 
 };
 
@@ -84,16 +55,15 @@ public:
 TEST_F(StopConditionTest, Interrupt) {
 
     // interrupt
-    callback = [this] (double t, double dt) {
-        loop.abort();
+    callback = [this]() {
+        abort();
     };
 
     // run loop
-    loop.run();
+    run();
 
     // check
     EXPECT_EQ(IStopCondition::StopCode::NONE, this->getCode());
-    EXPECT_NEAR(10.0, timer.time(), EPS_SIM_TIME);
 
 }
 
@@ -101,16 +71,15 @@ TEST_F(StopConditionTest, Interrupt) {
 TEST_F(StopConditionTest, Success) {
 
     // interrupt
-    callback = [this] (double t, double dt) {
+    callback = [this]() {
         this->success();
     };
 
     // run loop
-    loop.run();
+    run();
 
     // check
     EXPECT_EQ(IStopCondition::StopCode::OBJECTIVES_REACHED, this->getCode());
-    EXPECT_NEAR(10.0, timer.time(), EPS_SIM_TIME);
 
 }
 
@@ -118,16 +87,15 @@ TEST_F(StopConditionTest, Success) {
 TEST_F(StopConditionTest, Fail) {
 
     // interrupt
-    callback = [this] (double t, double dt) {
+    callback = [this]() {
         this->failed();
     };
 
     // run loop
-    loop.run();
+    run();
 
     // check
     EXPECT_EQ(IStopCondition::StopCode::OBJECTIVES_MISSED, this->getCode());
-    EXPECT_NEAR(10.0, timer.time(), EPS_SIM_TIME);
 
 }
 
@@ -136,16 +104,15 @@ TEST_F(StopConditionTest, Fail) {
 TEST_F(StopConditionTest, End) {
 
     // interrupt
-    callback = [this] (double t, double dt) {
+    callback = [this]() {
         this->end();
     };
 
     // run loop
-    loop.run();
+    run();
 
     // check
     EXPECT_EQ(IStopCondition::StopCode::SIM_ENDED, this->getCode());
-    EXPECT_NEAR(10.0, timer.time(), EPS_SIM_TIME);
 
 }
 

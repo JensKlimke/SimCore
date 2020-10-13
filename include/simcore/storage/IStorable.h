@@ -37,14 +37,14 @@ namespace sim::storage {
          * Stores the state to the given JSON object
          * @param obj JSON object
          */
-        virtual void toJSON(nlohmann::json &obj) const = 0;
+        virtual void toJSON(nlohmann::json &obj) const {}
 
 
         /**
          * Sets the state given by the JSON object
          * @param obj JSON object
          */
-        virtual void fromJSON(const nlohmann::json &obj) = 0;
+        virtual void fromJSON(const nlohmann::json &obj) {};
 
     };
 
