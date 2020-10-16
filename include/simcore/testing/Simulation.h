@@ -60,7 +60,7 @@ namespace sim::testing {
         std::map<std::string, sim::storage::IStorable *> _stored{};
 
         // time step
-        TimeStep timeStep{};
+        TimeStep _timeStep{};
 
         // callbacks
         std::vector<std::function<void(const TimeStep &)>> _preInit{};
@@ -72,17 +72,17 @@ namespace sim::testing {
         void preInitialize(double t) {
 
             // set initialization time
-            timeStep.initTime = t;
+            _timeStep.initTime = t;
 
             // reset every other time elements
-            timeStep.termTime = INFINITY;
-            timeStep.time = 0.0;
-            timeStep.deltaTime = 0.0;
-            timeStep.steps = 0;
+            _timeStep.termTime = INFINITY;
+            _timeStep.time = 0.0;
+            _timeStep.deltaTime = 0.0;
+            _timeStep.steps = 0;
 
             // run init callback
             for (auto &cb : _preInit)
-                cb(timeStep);
+                cb(_timeStep);
 
         }
 
@@ -90,12 +90,12 @@ namespace sim::testing {
         void preStep(double t, double dt) {
 
             // get time step size and save time
-            timeStep.deltaTime = dt;
-            timeStep.time = t;
+            _timeStep.deltaTime = dt;
+            _timeStep.time = t;
 
             // run pre-steps
             for (auto &cb : _preSteps)
-                cb(timeStep);
+                cb(_timeStep);
 
         }
 
@@ -104,10 +104,10 @@ namespace sim::testing {
 
             // run post-steps
             for (auto &cb : _postSteps)
-                cb(timeStep);
+                cb(_timeStep);
 
             // increment steps
-            timeStep.steps++;
+            _timeStep.steps++;
 
         }
 
@@ -115,11 +115,11 @@ namespace sim::testing {
         void preTerminate(double t) {
 
             // set termination time
-            timeStep.termTime = t;
+            _timeStep.termTime = t;
 
             // run terminate callback
             for (auto &cb : _preTerm)
-                cb(timeStep);
+                cb(_timeStep);
 
         }
 
@@ -159,7 +159,7 @@ namespace sim::testing {
          * @param startTime Time at which the simulation shall start, default: 0.0
          * @param acceleration The acceleration to real-time, the simulation shall be executed, default = INFINITY
          */
-        void create(double endTime, double timeStepSize, double startTime = INFINITY, double acceleration = INFINITY) {
+        void create(double endTime, double timeStepSize, double startTime = 0.0, double acceleration = INFINITY) {
 
             // reset loop
             reset();
@@ -221,12 +221,12 @@ namespace sim::testing {
 
 
         /**
-         * Returns the time structure
-         * @return Time structure
+         * Returns the time step structure
+         * @return Time step structure
          */
-        [[nodiscard]] const TimeStep &time() const {
+        [[nodiscard]] const TimeStep &getTimeStep() const {
 
-            return timeStep;
+            return _timeStep;
 
         }
 

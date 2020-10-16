@@ -127,7 +127,7 @@ namespace sim {
          * @param simTime Simulation time
          * @return Time step size
          */
-        double _timeStep(double simTime) {
+        double _calculateTimeStep(double simTime) {
 
             // get time step size
             double dt = _sinceLastTimeStep(simTime);
@@ -202,7 +202,7 @@ namespace sim {
         void _exec(double simTime) override {
 
             // model step
-            step(simTime, _timeStep(simTime));
+            step(simTime, _calculateTimeStep(simTime));
 
         }
 

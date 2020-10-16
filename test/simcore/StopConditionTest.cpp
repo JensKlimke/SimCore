@@ -31,20 +31,22 @@
 
 
 class StopConditionTest : public ::testing::Test, public sim::testing::SimulationModel, public ::sim::IStopCondition {
-
-
 protected:
 
     std::function<void()> callback{};
 
-    StopConditionTest() = default;
-
-    ~StopConditionTest() override = default;
-
     void SetUp() override {
 
+        // create simulation
+        create(10.0, 0.1);
+
+        // set callback
+        this->setCallback([this](const sim::testing::TimeStep &a) {
+            this->callback();
+        });
+
         // add stop condition
-        this->addStopCondition(this);
+        addStopCondition(this);
 
     }
 

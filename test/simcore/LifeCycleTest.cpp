@@ -39,6 +39,7 @@ public:
     double startTime{};
     double timeStepSize{};
     double endTime{};
+    double time{};
 
     LifeCycleTest() = default;
 
@@ -68,6 +69,9 @@ public:
         // run init of simulation
         preInitialize(t);
 
+        // save time
+        time = t;
+
         // check initial time
         EXPECT_NEAR(startTime, t, timeAccuracy);
 
@@ -75,18 +79,19 @@ public:
 
     void step(double t, double dt) override {
 
-        // get previous time
-        double time = timeStep.time;
-
         // run pre-step of simulation
         preStep(t, dt);
 
         // check
-        EXPECT_NEAR(t, startTime + timeStep.steps * timeStepSize, timeAccuracy);
-        EXPECT_NEAR(timeStep.steps > 0 ? dt : 0.0, t - time, timeAccuracy);
+        EXPECT_NEAR(t, startTime + getTimeStep().steps * timeStepSize, timeAccuracy);
+        EXPECT_NEAR(dt, t - time, timeAccuracy);
+        EXPECT_NEAR(dt, getTimeStep().deltaTime, timeAccuracy);
 
         // run pre-step of simulation
         postStep(t, dt);
+
+        // save time
+        time = t;
 
     }
 
@@ -102,9 +107,9 @@ public:
         auto totSteps = (unsigned int) floor((endTime - startTime) / timeStepSize) + 1;
 
         // check
-        EXPECT_EQ(totSteps, timeStep.steps);                   // steps performed
-        EXPECT_NEAR(endTime, timeStep.time, timeAccuracy);     // last time
-        EXPECT_NEAR(endTime, timeStep.termTime, timeAccuracy); // termination
+        EXPECT_EQ(totSteps, getTimeStep().steps);                   // steps performed
+        EXPECT_NEAR(endTime, getTimeStep().time, timeAccuracy);     // last time
+        EXPECT_NEAR(endTime, getTimeStep().termTime, timeAccuracy); // termination
 
     }
 
@@ -120,6 +125,7 @@ TEST_F(LifeCycleTest, Simple) {
     run();
 
 }
+
 
 
 TEST_F(LifeCycleTest, StartTime) {
@@ -158,16 +164,16 @@ TEST_F(LifeCycleTest, MultipleRuns) {
     run();
 
     // check
-    EXPECT_EQ(91, timeStep.steps);                  // steps performed
-    EXPECT_NEAR(10.0, timeStep.time, EPS_SIM_TIME); // last time
+    EXPECT_EQ(91, getTimeStep().steps);                  // steps performed
+    EXPECT_NEAR(10.0, getTimeStep().time, EPS_SIM_TIME); // last time
 
 
     // run second time
     run();
 
     // check
-    EXPECT_EQ(91, timeStep.steps);                  // steps performed
-    EXPECT_NEAR(10.0, timeStep.time, EPS_SIM_TIME); // last time
+    EXPECT_EQ(91, getTimeStep().steps);                  // steps performed
+    EXPECT_NEAR(10.0, getTimeStep().time, EPS_SIM_TIME); // last time
 
 
     // change times
@@ -183,8 +189,8 @@ TEST_F(LifeCycleTest, MultipleRuns) {
     run();
 
     // check
-    EXPECT_EQ(181, timeStep.steps);                  // steps performed
-    EXPECT_NEAR(20.0, timeStep.time, EPS_SIM_TIME);  // last time
+    EXPECT_EQ(181, getTimeStep().steps);                  // steps performed
+    EXPECT_NEAR(20.0, getTimeStep().time, EPS_SIM_TIME);  // last time
 
 }
 
@@ -215,6 +221,7 @@ TEST_F(LifeCycleTest, RealTime) {
     EXPECT_NEAR(0.09, runTime, 1e-2);
 
 }
+
 
 
 #pragma clang diagnostic pop

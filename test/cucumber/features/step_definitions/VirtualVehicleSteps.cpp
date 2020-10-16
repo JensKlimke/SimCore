@@ -236,7 +236,7 @@ THEN ("^the vehicle's (\\w+) profile shall be shaped as (\\w+)\\((.*)\\)$") {
             std::cout << "Checking..." << std::endl;
 
             // get time
-            auto time = sim->time().time;
+            auto time = sim->getTimeStep().time;
 
             // calculate polynomial
             double sum = 0.0;

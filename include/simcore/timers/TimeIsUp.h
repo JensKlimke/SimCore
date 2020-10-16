@@ -58,6 +58,7 @@ namespace sim {
          * @param obj JSON object
          */
         void toJSON(nlohmann::json &obj) const override {
+            IStopCondition::toJSON(obj);
             obj["stopTime"] = _stopTime;
         }
 
@@ -67,6 +68,7 @@ namespace sim {
          * @param obj JSON object
          */
         void fromJSON(const nlohmann::json &obj) override {
+            IStopCondition::fromJSON(obj);
             obj["stopTime"].get_to(_stopTime);
         }
 

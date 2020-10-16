@@ -45,17 +45,17 @@ namespace sim::testing {
         void initialize(double t) override {
 
             // set initialization time
-            timeStep.initTime = t;
+            _timeStep.initTime = t;
 
             // reset every other time elements
-            timeStep.termTime = INFINITY;
-            timeStep.time = 0.0;
-            timeStep.deltaTime = 0.0;
-            timeStep.steps = 0;
+            _timeStep.termTime = INFINITY;
+            _timeStep.time = 0.0;
+            _timeStep.deltaTime = 0.0;
+            _timeStep.steps = 0;
 
             // run init callback
             for (auto &cb : _preInit)
-                cb(timeStep);
+                cb(_timeStep);
 
             // run initialize of component
             T::initialze();
@@ -66,22 +66,22 @@ namespace sim::testing {
         void step(double t, double dt) override {
 
             // get time step size and save time
-            timeStep.deltaTime = dt;
-            timeStep.time = t;
+            _timeStep.deltaTime = dt;
+            _timeStep.time = t;
 
             // run pre-steps
             for (auto &cb : _preSteps)
-                cb(timeStep);
+                cb(_timeStep);
 
             // run step of main component
             T::step(t, dt);
 
             // run post-steps
             for (auto &cb : _postSteps)
-                cb(timeStep);
+                cb(_timeStep);
 
             // increment steps
-            timeStep.steps++;
+            _timeStep.steps++;
 
         }
 
@@ -89,11 +89,11 @@ namespace sim::testing {
         void terminate(double t) override {
 
             // set termination time
-            timeStep.termTime = t;
+            _timeStep.termTime = t;
 
             // run terminate callback
             for (auto &cb : _preTerm)
-                cb(timeStep);
+                cb(_timeStep);
 
             // run termination of component
             T::terminate(t);

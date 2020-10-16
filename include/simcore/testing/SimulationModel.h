@@ -31,13 +31,26 @@ namespace sim::testing {
 
     class SimulationModel : public Simulation, public ISynchronized {
 
-        std::function<void()> _callback{};
+        std::function<void(const TimeStep &timeStep)> _callback{};
 
     public:
 
-        void setCallback(std::function<void()> fnc) {
+        void setCallback(std::function<void(const TimeStep &timeStep)> &&fnc) {
 
             _callback = std::move(fnc);
+
+        }
+
+        void create(double endTime, double timeStepSize, double startTime = 0.0, double acceleration = INFINITY) {
+
+            // create simulation
+            Simulation::create(endTime, timeStepSize, startTime, acceleration);
+
+            // add this as component
+            addComponent(this);
+
+            // set time step size
+            setTimeStepSize(timeStepSize);
 
         }
 
@@ -47,24 +60,29 @@ namespace sim::testing {
 
         void initialize(double t) override {
 
+            // pre-init
             preInitialize(t);
 
         }
 
         void step(double t, double dt) override {
 
+            // pre-step
             preStep(t, dt);
 
-            // call
-            _callback();
+            // a callback
+            if(_callback)
+                _callback(_timeStep);
 
+            // post-step
             postStep(t, dt);
 
         }
 
         void terminate(double t) override {
 
-            postStep(t);
+            // pre term
+            preTerminate(t);
 
         }
 

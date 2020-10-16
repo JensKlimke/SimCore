@@ -108,11 +108,20 @@ namespace sim {
          */
         void run() {
 
-            // initialize components
-            _initialize();
+            if(_status == Status::RUNNING) {
 
-            // execute main loop
-            _execute();
+                // execute when completely set up (and running)
+                _executeDirectly();
+
+            } else {
+
+                // initialize components
+                _initialize();
+
+                // execute main loop
+                _execute();
+
+            }
 
             // terminate components
             _terminate();
@@ -175,12 +184,8 @@ namespace sim {
          * @param obj Protobuf object
          */
         void toProtobuf(sim::protobuf::Loop &obj) const {
-
-            using namespace sim::protobuf;
-
-            obj.set_status(static_cast<Loop_Status>(_status));
+            obj.set_status(static_cast<sim::protobuf::Loop_Status>(_status));
             obj.set_stopflag(_stopFlag);
-
         }
 
 
@@ -189,10 +194,8 @@ namespace sim {
          * @param obj Protobuf object
          */
         void fromProtobuf(const sim::protobuf::Loop &obj) {
-
             _status = static_cast<Status>(obj.status());
             _stopFlag = obj.stopflag();
-
         }
 
 
@@ -223,6 +226,35 @@ namespace sim {
             // start timer
             _timer->start();
 
+            // execute
+            _executeDirectly();
+
+        }
+
+
+        /**
+         * Execute simulation
+         */
+        void _executeDirectly() {
+
+            // check status
+            if(_status != Status::RUNNING)
+                throw ProcessException("Simulation must be setup.");
+
+            // run loop
+            _loop();
+
+            // stop timer
+            _timer->stop();
+
+        }
+
+
+        /**
+         * Runs the main loop of the simulation
+         */
+        void _loop() {
+
             // iterate while stop flag is not set
             while (!_stopFlag) {
 
@@ -251,9 +283,6 @@ namespace sim {
 
             }
 
-            // stop timer
-            _timer->stop();
-
         }
 
 
@@ -268,7 +297,7 @@ namespace sim {
 
             // check timer
             if (_timer == nullptr)
-                throw ProcessException("A timer must be set.");
+                throw SetupException("A timer must be set.");
 
             // reset timer
             _timer->reset();

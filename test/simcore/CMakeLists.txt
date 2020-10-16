@@ -5,6 +5,7 @@ set(SOURCE_FILES
         ValueCheckBasicTest.cpp
         ValueCheckTest.cpp
         LifeCycleTest.cpp
+        ProcessTest.cpp
         LoggingTest.cpp
         StorageTest.cpp
         )
