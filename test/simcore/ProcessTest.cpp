@@ -98,7 +98,7 @@ TEST_F(ProcessTest, Status) {
 
 TEST_F(ProcessTest, StoreAndResume) {
 
-    nlohmann::json json{{"loop", {}}, {"timer", {}}, {"stopCondition", {}}, {"model", {}}};
+    nlohmann::json json{{"loop", {}}, {"timer", {}}, {"stop", {}}, {"model", {}}};
 
     setCallback([this, &json](const sim::testing::TimeStep &step) {
 
@@ -109,8 +109,8 @@ TEST_F(ProcessTest, StoreAndResume) {
         // loop and timer
         sim::Loop::toJSON(json["loop"]);
         _timer->toJSON(json["timer"]);
-        _stopConditions.front()->toJSON(json);
-        sim::ISynchronized::toJSON(json);
+        _stopConditions.front()->toJSON(json["stop"]);
+        sim::ISynchronized::toJSON(json["model"]);
 
         // abort
         abort();
@@ -134,9 +134,9 @@ TEST_F(ProcessTest, StoreAndResume) {
     loop.addComponent(this);
 
     // get from json
-    loop.fromJSON(json);
-    stop.fromJSON(json);
-    timer.fromJSON(json);
+    loop.fromJSON(json["loop"]);
+    stop.fromJSON(json["stop"]);
+    timer.fromJSON(json["timer"]);
 
     // run loop
     loop.run();
