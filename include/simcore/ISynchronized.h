@@ -55,9 +55,8 @@ namespace sim {
          * The absolute first execution time is calculated during initialization. The relative time is stored
          * and valid for each simulation loop.
          * @param startTime The first relative execution time
-         * TODO: test
          */
-        void setStartTime(double startTime) {
+        void setDeltaStartTime(double startTime) {
 
             _deltaStartTime = startTime;
 

@@ -113,6 +113,9 @@ namespace sim {
                 // execute when completely set up (and running)
                 _executeDirectly();
 
+                // terminate components
+                _terminate();
+
             } else {
 
                 // initialize components
@@ -121,10 +124,10 @@ namespace sim {
                 // execute main loop
                 _execute();
 
-            }
+                // terminate components
+                _terminate();
 
-            // terminate components
-            _terminate();
+            }
 
         }
 
@@ -226,8 +229,11 @@ namespace sim {
             // start timer
             _timer->start();
 
-            // execute
-            _executeDirectly();
+            // run loop
+            _loop();
+
+            // stop timer
+            _timer->stop();
 
         }
 
