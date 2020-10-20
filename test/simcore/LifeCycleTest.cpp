@@ -36,26 +36,28 @@ class LifeCycleTest : public ::testing::Test, public sim::testing::Simulation, p
 public:
 
     double timeAccuracy{};
-    double startTime{};
     double timeStepSize{};
-    double endTime{};
-    double time{};
+    double simStartTime{};
+    double simEndTime{};
+
+    double compStartTime = 0.0;
+    double time = 0.0;
 
     LifeCycleTest() = default;
 
     ~LifeCycleTest() override = default;
 
 
-    void createSimulation(double setEndTime, double setTSS, double setStartTime, double setTimeAccuracy) {
+    void createSimulation(double setEndTime, double setTSS, double setSimStartTime, double setTimeAccuracy) {
 
         // set parameters
         this->timeAccuracy = setTimeAccuracy;
-        this->startTime = setStartTime;
-        this->endTime = setEndTime;
+        this->simStartTime = setSimStartTime;
+        this->simEndTime = setEndTime;
         this->timeStepSize = setTSS;
 
         // create simulation
-        create(setEndTime, setTSS, setStartTime);
+        create(setEndTime, setTSS, setSimStartTime);
 
         // add this
         setTimeStepSize(setTSS);
@@ -73,7 +75,7 @@ public:
         time = t;
 
         // check initial time
-        EXPECT_NEAR(startTime, t, timeAccuracy);
+        EXPECT_NEAR(simStartTime, t, timeAccuracy);
 
     }
 
@@ -83,7 +85,7 @@ public:
         preStep(t, dt);
 
         // check
-        EXPECT_NEAR(t, startTime + getTimeStep().steps * timeStepSize, timeAccuracy);
+        EXPECT_NEAR(t, simStartTime + compStartTime + getTimeStep().steps * timeStepSize, timeAccuracy);
         EXPECT_NEAR(dt, t - time, timeAccuracy);
         EXPECT_NEAR(dt, getTimeStep().deltaTime, timeAccuracy);
 
@@ -101,15 +103,15 @@ public:
         preTerminate(t);
 
         // termination time
-        EXPECT_NEAR(endTime, t, timeAccuracy);
+        EXPECT_NEAR(simEndTime, t, timeAccuracy);
 
         // calculate number or steps
-        auto totSteps = (unsigned int) floor((endTime - startTime) / timeStepSize) + 1;
+        auto totSteps = (unsigned int) floor((simEndTime - simStartTime - compStartTime) / timeStepSize) + 1;
 
         // check
         EXPECT_EQ(totSteps, getTimeStep().steps);                   // steps performed
-        EXPECT_NEAR(endTime, getTimeStep().time, timeAccuracy);     // last time
-        EXPECT_NEAR(endTime, getTimeStep().termTime, timeAccuracy); // termination
+        EXPECT_NEAR(simEndTime, getTimeStep().time, timeAccuracy);     // last time
+        EXPECT_NEAR(simEndTime, getTimeStep().termTime, timeAccuracy); // termination
 
     }
 
@@ -128,10 +130,28 @@ TEST_F(LifeCycleTest, Simple) {
 
 
 
-TEST_F(LifeCycleTest, StartTime) {
+TEST_F(LifeCycleTest, SimulationStartTime) {
 
     // create, run and check
     createSimulation(10.0, 0.01, 1.0, EPS_SIM_TIME);
+
+    // run
+    run();
+
+}
+
+
+TEST_F(LifeCycleTest, ComponentStartTime) {
+
+    // create, run and check
+    createSimulation(10.0, 0.01, 1.0, EPS_SIM_TIME);
+
+    // set start time of model
+    this->compStartTime = 2.0;
+    ISynchronized::setDeltaStartTime(this->compStartTime);
+
+    // run
+    run();
 
 }
 
@@ -182,8 +202,8 @@ TEST_F(LifeCycleTest, MultipleRuns) {
 
     // reset attributes
     timeStepSize = 0.1;
-    startTime = 2.0;
-    endTime = 20.0;
+    simStartTime = 2.0;
+    simEndTime = 20.0;
 
     // run third time
     run();
@@ -198,8 +218,8 @@ TEST_F(LifeCycleTest, MultipleRuns) {
 TEST_F(LifeCycleTest, RealTime) {
 
     // set attributes manually
-    startTime = 1.0;
-    endTime = 10.0;
+    simStartTime = 1.0;
+    simEndTime = 10.0;
     timeStepSize = 0.1;
     timeAccuracy = 0.1;
 
