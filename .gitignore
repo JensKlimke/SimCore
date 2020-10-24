@@ -35,12 +35,13 @@
 cmake-*
 build
 
-# OS stuff
+# OS/ide stuff
 .idea
 .DS_Store
 .vs
 
-# log files
-log/*.json
+# install folder
+install
 
-node_modules
+# others
+*.profraw

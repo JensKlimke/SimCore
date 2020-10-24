@@ -23,11 +23,9 @@
 //
 
 #include <simcore/Loop.h>
-#include <simcore/Model.h>
 #include <simcore/timers/RealTimeTimer.h>
 #include <simcore/timers/TimeIsUp.h>
 #include <simcore/socket/DataPublisher.h>
-#include <simcore/functions.h>
 #include <gtest/gtest.h>
 
 

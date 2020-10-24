@@ -1,4 +1,4 @@
-if (ENABLE_CUCUMBER)
+if (SIMCORE_ENABLE_CUCUMBER)
 
     # target to execute the cucumber framework
     add_custom_target(RunScenarioSteps ALL
@@ -24,4 +24,4 @@ if (ENABLE_CUCUMBER)
             cucumber-cpp
             )
 
-endif (ENABLE_CUCUMBER)
+endif (SIMCORE_ENABLE_CUCUMBER)

@@ -3,9 +3,9 @@
 # ------------------------------------------------------------------------------
 
 # option to build gtest
-option(ENABLE_CUCUMBER "Enables cucumber as testing framework" ON)
+option(SIMCORE_ENABLE_CUCUMBER "Enables cucumber as testing framework" OFF)
 
-if (ENABLE_CUCUMBER)
+if (SIMCORE_ENABLE_CUCUMBER)
 
     # message
     message(STATUS "Cucumber framework enabled")
@@ -25,4 +25,4 @@ if (ENABLE_CUCUMBER)
     # add yaml library
     add_subdirectory(${PROJECT_SOURCE_DIR}/lib/cucumber-cpp)
 
-endif (ENABLE_CUCUMBER)
+endif (SIMCORE_ENABLE_CUCUMBER)

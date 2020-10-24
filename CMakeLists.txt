@@ -5,8 +5,7 @@ project(SimCore CXX)
 set(CMAKE_CXX_STANDARD 17)
 
 # option to build gtest
-option(SIMCORE_ENABLE_BOOST "Enables boost and all boost-dependent modules" ON)
-option(SIMCORE_ENABLE_PROTOBUF "Enables protobuf and all protobuf-dependent modules" ON)
+option(SIMCORE_ENABLE_SOCKET "Enables boost and all boost-dependent modules" ON)
 
 # add ./cmake to CMAKE_MODULE_PATH
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
@@ -23,12 +22,10 @@ include(ModuleCucumber) # cucumber framework
 # testing
 include(ModuleTesting)
 
-# boost-dependent sources
-if (SIMCORE_ENABLE_BOOST)
-    add_subdirectory(src/socket)
-endif (SIMCORE_ENABLE_BOOST)
+# installation
+INSTALL( DIRECTORY ./include/simcore DESTINATION include)
 
-# protobuf-dependent sources
-if (SIMCORE_ENABLE_PROTOBUF)
-    add_subdirectory(src/storage)
-endif (SIMCORE_ENABLE_PROTOBUF)
+# boost-dependent sources
+if (SIMCORE_ENABLE_SOCKET)
+    add_subdirectory(src/socket)
+endif (SIMCORE_ENABLE_SOCKET)

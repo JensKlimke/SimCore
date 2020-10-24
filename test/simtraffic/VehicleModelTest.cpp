@@ -116,7 +116,7 @@ protected:
 TEST_F(VehicleModelTest, SimProcess) {
 
 
-    _postSteps.emplace_back([this](const sim::testing::TimeStep &) {
+    addPostStepCallback([this](const sim::testing::TimeStep &) {
          EXPECT_FALSE(_reset);
     });
 
@@ -135,7 +135,7 @@ TEST_F(VehicleModelTest, ConstantLongMotion) {
 
 
     // set checker
-    _postSteps.emplace_back([this](const sim::testing::TimeStep &timeStep) {
+    addPostStepCallback([this](const sim::testing::TimeStep &timeStep) {
 
         // check state
         EXPECT_NEAR(10.0, state.velocity, 1e-3);
@@ -164,7 +164,7 @@ TEST_F(VehicleModelTest, MotionAccelerated) {
 
 
     // set checker
-    _postSteps.emplace_back([this](const sim::testing::TimeStep &timeStep) {
+    addPostStepCallback([this](const sim::testing::TimeStep &timeStep) {
 
         // calculate s and v
         double s = 0.05 * timeStep.time * timeStep.time + 10.0 * timeStep.time;
@@ -203,7 +203,7 @@ TEST_F(VehicleModelTest, Resistances) {
     state.velocity = 9.999999;
 
     // set checker
-    _postSteps.emplace_back([this](const sim::testing::TimeStep &timeStep) {
+    addPostStepCallback([this](const sim::testing::TimeStep &timeStep) {
 
         // check until 10 s
         if(timeStep.time >= 10.0 + EPS_SIM_TIME) {
@@ -252,7 +252,7 @@ TEST_F(VehicleModelTest, ResistancesBackwards) {
     state.velocity = -9.999999;
 
     // set checker
-    _postSteps.emplace_back([this](const sim::testing::TimeStep &timeStep) {
+    addPostStepCallback([this](const sim::testing::TimeStep &timeStep) {
 
         // check until 10 s
         if(timeStep.time >= 10.0 + EPS_SIM_TIME) {
@@ -429,7 +429,7 @@ TEST_F(VehicleModelTest, DriveCurvesLeft) {
     bool forwards{};
 
     // initialize
-    _preInit.emplace_back([this, &left, &forwards](const sim::testing::TimeStep &timeStep) {
+    addInitCallback([this, &left, &forwards](const sim::testing::TimeStep &timeStep) {
 
         // set state
         state.xPosition = 0.0;
@@ -442,7 +442,7 @@ TEST_F(VehicleModelTest, DriveCurvesLeft) {
     });
 
     // set checker
-    _postSteps.emplace_back([this, &left, &forwards](const sim::testing::TimeStep &timeStep) {
+    addPostStepCallback([this, &left, &forwards](const sim::testing::TimeStep &timeStep) {
 
         // calculate results
         auto v = forwards ? 10.0 : -10.0;
@@ -537,7 +537,7 @@ TEST_F(VehicleModelTest, IndicatorStates) {
 TEST_F(VehicleModelTest, IndicatorProzess) {
 
     // set indicators
-    _preSteps.emplace_back([this](const sim::testing::TimeStep &timeStep) {
+    addPreStepCallback([this](const sim::testing::TimeStep &timeStep) {
 
         if(isSimTime(5.0))
             indicateRight(3.0);
@@ -551,7 +551,7 @@ TEST_F(VehicleModelTest, IndicatorProzess) {
     });
 
     // check indicators
-    _postSteps.emplace_back([this](const sim::testing::TimeStep &timeStep) {
+    addPostStepCallback([this](const sim::testing::TimeStep &timeStep) {
 
         if(isInterval(0.0, 5.0))
             EXPECT_EQ(IndicatorState::OFF, state.indicatorState);
@@ -605,7 +605,7 @@ TEST_F(VehicleModelTest, WrongShiftingForwards) {
     state.velocity = 10.0;
 
     // setting
-    _preSteps.emplace_back([this](const sim::testing::TimeStep &timeStep) {
+    addPreStepCallback([this](const sim::testing::TimeStep &timeStep) {
 
         if(isSimTime(1.0))
             setShifter(ShifterPosition::PARK);
@@ -617,7 +617,7 @@ TEST_F(VehicleModelTest, WrongShiftingForwards) {
     });
 
     // checking
-    _postSteps.emplace_back([this](const sim::testing::TimeStep &timeStep) {
+    addPostStepCallback([this](const sim::testing::TimeStep &timeStep) {
 
         if(isInterval(0.0, 3.0))
             EXPECT_EQ(ShifterPosition::DRIVE, state.shifterPosition);
@@ -643,7 +643,7 @@ TEST_F(VehicleModelTest, WrongShiftingBackwards) {
     state.velocity = -5.0;
 
     // setting
-    _preSteps.emplace_back([this](const sim::testing::TimeStep &timeStep) {
+    addPreStepCallback([this](const sim::testing::TimeStep &timeStep) {
 
         if(isSimTime(1.0))
             setShifter(ShifterPosition::PARK);
@@ -655,7 +655,7 @@ TEST_F(VehicleModelTest, WrongShiftingBackwards) {
     });
 
     // checking
-    _postSteps.emplace_back([this](const sim::testing::TimeStep &timeStep) {
+    addPostStepCallback([this](const sim::testing::TimeStep &timeStep) {
 
         if(isInterval(0.0, 3.0))
             EXPECT_EQ(ShifterPosition::REVERSE, state.shifterPosition);
@@ -684,7 +684,7 @@ TEST_F(VehicleModelTest, WrongShiftingReverting) {
     setPedal(-0.5);
 
     // setting
-    _preSteps.emplace_back([this](const sim::testing::TimeStep &timeStep) {
+    addPreStepCallback([this](const sim::testing::TimeStep &timeStep) {
 
         if(isSimTime(2.0))
             setShifter(ShifterPosition::REVERSE);
@@ -694,7 +694,7 @@ TEST_F(VehicleModelTest, WrongShiftingReverting) {
     });
 
     // checking
-    _postSteps.emplace_back([this](const sim::testing::TimeStep &timeStep) {
+    addPostStepCallback([this](const sim::testing::TimeStep &timeStep) {
 
         // check intervals
         if(isInterval(0.0, 2.0)) {
@@ -717,97 +717,118 @@ TEST_F(VehicleModelTest, WrongShiftingReverting) {
 
 
 
-//TEST_F(VehicleModelTest, ShiftingProcess) {
-//
-//    /**
-//     * Process:
-//     * -------------------------------------------
-//     *     init: switch to P        -> P enabled
-//     *  0s - 1s: pedal = -0.5       -> v = 0, a = 0
-//     *       1s: switch to D        -> D enabled
-//     *  1s - 2s: no pedal           -> v = 0, a = 0
-//     *  2s - 4s: pedal = 0.1        -> v > 0, a > 0
-//     *     2.5s: switch to R        -> no reaction, D enabled
-//     *     2.6s: switch to P        -> no reaction, D enabled
-//     *     2.7s: switch to N        -> N enabled, a < 0
-//     *  4s - 5s: no pedal           -> a < 0
-//     *  5s - 8s: pedal = -0.1       -> a < 0 -> a = 0, v = 0
-//     *       8s: switch to N        -> N enabled, a = 0, v = 0
-//     *     8.5s: switch to R        -> R enabled, a = 0, v = 0
-//     *  8s - 9s: pedal = 0.0        -> a = 0, v = 0
-//     * 9s - 12s: pedal = 0.1        -> a < 0, v < 0
-//     *    10.5s: switch to D        -> no reaction, R
-//     *    10.6s: switch to P        -> no reaction, R
-//     *    10.7s: switch to N        -> N, deceleration
-//     */
-//
-//
-//
-//
-//    // reset
-//    resetFull();
-//
-//    // set to park
-//    setShifter(ShifterPosition::PARK);
-//
-//    // set step
-//    _preSteps.emplace_back([this](const sim::testing::TimeStep &timeStep) {
-//
-//        // helpers
-//        auto D = ShifterPosition::DRIVE;
-//        auto R = ShifterPosition::REVERSE;
-//        auto P = ShifterPosition::PARK;
-//        auto N = ShifterPosition::NEUTRAL;
-//
-//        // reset both
-//        setPedal(0.0);
-//
-//        // 0s..1s
-//        if(isInterval(0.0, 1.0))
-//            setPedal(-0.5);
-//
-//        // 1s
-//        if(isSimTime(1.0))
-//            setShifter(D);
-//
-//        // 1s..2s
-//        if(isInterval(1.0, 2.0))
-//            setPedal(0.0);
-//
-//        // 2s..4s
-//        if(isInterval(1.0, 2.0))
-//            setPedal(0.1);
-//
-//        // 2.5s
-//        if(isSimTime(2.5))
-//            setShifter(R);
-//
-//        // 2.6s
-//        if(isSimTime(2.6))
-//            setShifter(P);
-//
-//        // 2.7s
-//        if(isSimTime(2.7))
-//            setShifter(N);
-//
-//        // 4s..5s
-//        if(isInterval(1.0, 2.0))
-//            setPedal(0.0);
-//
-//    };
-//
-//    // check checker
-//    _postSteps.emplace_back([this](const sim::testing::TimeStep &timeStep) {
-//
-//    };
-//
-//    // run, one more step than 10 s
-//    run(11.0);
-//
-//    // check
-//    EXPECT_EQ(0.0, state.velocity);
-//    EXPECT_NEAR(-50.0, state.distance, 1e-3);
-//
-//}
+TEST_F(VehicleModelTest, ShiftingProcess) {
+
+    /**
+     * Process:
+     * -------------------------------------------
+     *     init: switch to P        -> P enabled
+     *  0s - 1s: pedal = -0.5       -> v = 0, a = 0
+     *       1s: switch to D        -> D enabled
+     *  1s - 2s: no pedal           -> v = 0, a = 0
+     *  2s - 4s: pedal = 0.1        -> v > 0, a > 0
+     *     2.5s: switch to R        -> no reaction, D enabled
+     *     2.6s: switch to P        -> no reaction, D enabled
+     *     2.7s: switch to N        -> N enabled, a < 0
+     *  4s - 5s: no pedal           -> a < 0
+     *  5s - 8s: pedal = -0.1       -> a < 0 -> a = 0, v = 0
+     *       8s: switch to N        -> N enabled, a = 0, v = 0
+     *     8.5s: switch to R        -> R enabled, a = 0, v = 0
+     *  8s - 9s: pedal = 0.0        -> a = 0, v = 0
+     * 9s - 12s: pedal = 0.1        -> a < 0, v < 0
+     *    10.5s: switch to D        -> no reaction, R
+     *    10.6s: switch to P        -> no reaction, R
+     *    10.7s: switch to N        -> N, deceleration
+     */
+
+
+    // reset
+    resetFull();
+
+    // set to park
+    setShifter(ShifterPosition::PARK);
+
+    // set step
+    addPreStepCallback([this](const sim::testing::TimeStep &timeStep) {
+
+        // helpers
+        auto D = ShifterPosition::DRIVE;
+        auto R = ShifterPosition::REVERSE;
+        auto P = ShifterPosition::PARK;
+        auto N = ShifterPosition::NEUTRAL;
+
+        // reset both
+        setPedal(0.0);
+
+        // 0s..1s
+        if(isInterval(0.0, 1.0))
+            setPedal(-0.5);
+
+        // 1s
+        if(isSimTime(1.0))
+            setShifter(D);
+
+        // 1s..2s
+        if(isInterval(1.0, 2.0))
+            setPedal(0.0);
+
+        // 2s..4s
+        if(isInterval(1.0, 2.0))
+            setPedal(0.1);
+
+        // 2.5s
+        if(isSimTime(2.5))
+            setShifter(R);
+
+        // 2.6s
+        if(isSimTime(2.6))
+            setShifter(P);
+
+        // 2.7s
+        if(isSimTime(2.7))
+            setShifter(N);
+
+        // 4s..5s
+        if(isInterval(4.0, 5.0))
+            setPedal(0.0);
+
+        // 8s
+        if(isSimTime(8.0))
+            setShifter(N);
+
+        // 8.5s
+        if(isSimTime(8.5))
+            setShifter(R);
+
+        // 8s..9s
+        if(isInterval(8.0, 9.0))
+            setPedal(0.0);
+
+        // 9s..12s
+        if(isInterval(9.0, 12.0))
+            setPedal(0.1);
+
+        // 10.5s
+        if(isSimTime(10.5))
+            setShifter(D);
+
+        // 10.6s
+        if(isSimTime(10.6))
+            setShifter(P);
+
+        // 10.7s
+        if(isSimTime(10.7))
+            setShifter(N);
+
+    });
+
+    // run, one more step than 10 s
+    run(11.0);
+
+    // check
+    EXPECT_EQ(0.0, state.velocity);
+    EXPECT_NEAR(0.0, state.distance, 1e-3);
+
+}
 
 #pragma clang diagnostic pop

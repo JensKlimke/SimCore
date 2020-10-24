@@ -44,13 +44,6 @@ namespace sim::data {
     }
 
 
-    void DataPublisher::setDataManager(sim::data::DataManager *dataManager) {
-
-        _dataManager = dataManager;
-
-    }
-
-
     void DataPublisher::setHost(const std::string &host, const std::string &port) {
 
         _websocket->setHost(host);
@@ -79,9 +72,11 @@ namespace sim::data {
 
     void DataPublisher::step(double simTime, double deltaTime) {
 
+        // TODO: implement
+
         // serialize data ...
         std::stringstream ss;
-        _dataManager->streamTo(ss);
+        ss << "TODO: implement";
 
         // .. and send
         _websocket->send(ss.str());

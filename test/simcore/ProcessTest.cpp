@@ -26,6 +26,7 @@
 #pragma clang diagnostic ignored "-Wunknown-pragmas"
 #pragma ide diagnostic ignored "cert-err58-cpp"
 
+#include <nlohmann/json.hpp>
 #include <simcore/testing/SimulationModel.h>
 #include <gtest/gtest.h>
 
@@ -59,9 +60,11 @@ TEST_F(ProcessTest, Errors) {
 
     setCallback([this](const sim::testing::TimeStep& step){
 
+        // only check step 10
         if(step.steps != 10)
             return;
 
+        // try to initialize
         EXPECT_THROW(_initialize(), sim::ProcessException);
 
     });
@@ -106,11 +109,11 @@ TEST_F(ProcessTest, StoreAndResume) {
         if(step.steps != 50)
             return;
 
-        // loop and timer
-        sim::Loop::toJSON(json["loop"]);
-        _timer->toJSON(json["timer"]);
-        _stopConditions.front()->toJSON(json["stop"]);
-        sim::ISynchronized::toJSON(json["model"]);
+//        // loop and timer
+//        sim::Loop::toJSON(json["loop"]);
+//        _timer->toJSON(json["timer"]);
+//        _stopConditions.front()->toJSON(json["stop"]);
+//        sim::ISynchronized::toJSON(json["model"]);
 
         // abort
         abort();
@@ -120,6 +123,7 @@ TEST_F(ProcessTest, StoreAndResume) {
     // run
     run();
 
+    // TODO: Dump by external functions
     std::cout << json << std::endl;
 
     // setup and re-run
@@ -133,13 +137,15 @@ TEST_F(ProcessTest, StoreAndResume) {
     loop.addComponent(&stop);
     loop.addComponent(this);
 
-    // get from json
-    loop.fromJSON(json["loop"]);
-    stop.fromJSON(json["stop"]);
-    timer.fromJSON(json["timer"]);
+//    // get from json
+//    loop.fromJSON(json["loop"]);
+//    stop.fromJSON(json["stop"]);
+//    timer.fromJSON(json["timer"]);
 
     // run loop
-    loop.run();
+//     loop.run();
+
+    EXPECT_FALSE(true);
 
 }
 

@@ -8,6 +8,9 @@
 # option to build gtest
 option(GTEST_BUILD_LIBRARY "Enables gtest to be built from the submodule" ON)
 
+# set installation of gtest to off
+set(INSTALL_GTEST OFF)
+
 # define macro
 macro(add_gtest TESTNAME)
 

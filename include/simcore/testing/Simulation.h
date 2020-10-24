@@ -32,7 +32,6 @@
 #include "../ISynchronized.h"
 #include "../timers/RealTimeTimer.h"
 #include "../timers/TimeIsUp.h"
-#include "../storage/IStorable.h"
 #include "../logging/TimeReporter.h"
 #include "../value/ValueExceed.h"
 
@@ -50,23 +49,57 @@ namespace sim::testing {
 
     class Simulation : public sim::Loop {
 
+    public:
+
+        /**
+         * Adds an callback function to the init process
+         * @param fnc Callback function to be added
+         */
+        void addInitCallback(std::function<void(const TimeStep &)> &&fnc) {
+            _initCallback.emplace_back(fnc);
+        }
+
+
+        /**
+         * Adds an callback to the pre-step process
+         * @param fnc Callback function to be added
+         */
+        void addPreStepCallback(std::function<void(const TimeStep &)> &&fnc) {
+            _preStepsCallback.emplace_back(fnc);
+        }
+
+
+        /**
+         * Adds an callback to the post-step process
+         * @param fnc Callback function to be added
+         */
+        void addPostStepCallback(std::function<void(const TimeStep &)> &&fnc) {
+            _postStepsCallback.emplace_back(fnc);
+        }
+
+
+        /**
+         * Adds an callback to the termination process
+         * @param fnc Callback function to be added
+         */
+        void addTerminationCallback(std::function<void(const TimeStep &)> &&fnc) {
+            _termCallback.emplace_back(fnc);
+        }
+
     protected:
 
         // managed elements
         std::unique_ptr<sim::ITimer> _timer{};
         std::vector<std::unique_ptr<sim::IComponent>> _managed{};
 
-        // list of storable objects
-        std::map<std::string, sim::storage::IStorable *> _stored{};
-
         // time step
         TimeStep _timeStep{};
 
         // callbacks
-        std::vector<std::function<void(const TimeStep &)>> _preInit{};
-        std::vector<std::function<void(const TimeStep &)>> _preSteps{};
-        std::vector<std::function<void(const TimeStep &)>> _postSteps{};
-        std::vector<std::function<void(const TimeStep &)>> _preTerm{};
+        std::vector<std::function<void(const TimeStep &)>> _initCallback{};
+        std::vector<std::function<void(const TimeStep &)>> _preStepsCallback{};
+        std::vector<std::function<void(const TimeStep &)>> _postStepsCallback{};
+        std::vector<std::function<void(const TimeStep &)>> _termCallback{};
 
 
         void preInitialize(double t) {
@@ -81,7 +114,7 @@ namespace sim::testing {
             _timeStep.steps = 0;
 
             // run init callback
-            for (auto &cb : _preInit)
+            for (auto &cb : _initCallback)
                 cb(_timeStep);
 
         }
@@ -94,16 +127,16 @@ namespace sim::testing {
             _timeStep.time = t;
 
             // run pre-steps
-            for (auto &cb : _preSteps)
+            for (auto &cb : _preStepsCallback)
                 cb(_timeStep);
 
         }
 
 
-        void postStep(double t, double dt) {
+        void postStep(double, double) {
 
             // run post-steps
-            for (auto &cb : _postSteps)
+            for (auto &cb : _postStepsCallback)
                 cb(_timeStep);
 
             // increment steps
@@ -118,7 +151,7 @@ namespace sim::testing {
             _timeStep.termTime = t;
 
             // run terminate callback
-            for (auto &cb : _preTerm)
+            for (auto &cb : _termCallback)
                 cb(_timeStep);
 
         }
@@ -140,7 +173,6 @@ namespace sim::testing {
             auto comp = new Comp(std::forward<Args>(args)...);
 
             // add to lists
-            _stored.emplace(name, comp);
             _managed.emplace_back(comp);
 
             // add component
@@ -163,9 +195,6 @@ namespace sim::testing {
 
             // reset loop
             reset();
-
-            // delete lists
-            _stored.clear();
 
             // create timer
             if (std::isinf(acceleration)) {

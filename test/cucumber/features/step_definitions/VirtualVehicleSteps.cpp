@@ -222,21 +222,18 @@ THEN ("^the vehicle's (\\w+) profile shall be shaped as (\\w+)\\((.*)\\)$") {
     ScenarioScope<VehicleSimulation> context;
     const VehicleSimulation *sim = context.get();
 
-    // get signal
-    sim::storage::DataNode node;
-    context->registerSignals(node);
-
-    // signal
-    double *d = node.get<double>(sig);
+    // TODO: get signal
+    double *d = nullptr;
+    EXPECT_FALSE(true);
 
     if (fnc == "poly") {
 
-        context->addPostCallback([sim, d, parameters]() {
+        context->addPostStepCallback([sim, d, parameters](const sim::testing::TimeStep &timeStep) {
 
             std::cout << "Checking..." << std::endl;
 
             // get time
-            auto time = sim->getTimeStep().time;
+            auto time = timeStep.time;
 
             // calculate polynomial
             double sum = 0.0;

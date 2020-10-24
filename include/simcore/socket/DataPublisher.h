@@ -26,7 +26,6 @@
 #define SIMCORE_DATAPUBLISHER_H
 
 #include "../ISynchronized.h"
-#include "../data/DataManager.h"
 
 // predefine WebSocket class
 namespace sim::socket {
@@ -38,7 +37,6 @@ namespace sim::data {
     class DataPublisher : public ::sim::ISynchronized {
 
         sim::socket::WebSocket *_websocket = nullptr;
-        DataManager *_dataManager = nullptr;
 
 
     public:
@@ -54,13 +52,6 @@ namespace sim::data {
          * Destructor
          */
         ~DataPublisher() override;
-
-
-        /**
-         * Sets the data manager to be send via web socket
-         * @param dataManager Data manager to be send
-         */
-        void setDataManager(DataManager *dataManager);
 
 
         /**

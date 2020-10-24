@@ -33,29 +33,13 @@ namespace sim::testing {
     template<class T>
     class SimulationTest : public Simulation, public T {
 
+
     protected:
-
-        // callbacks
-        std::vector<std::function<void(const TimeStep &)>> _preInit{};
-        std::vector<std::function<void(const TimeStep &)>> _preSteps{};
-        std::vector<std::function<void(const TimeStep &)>> _postSteps{};
-        std::vector<std::function<void(const TimeStep &)>> _preTerm{};
-
 
         void initialize(double t) override {
 
-            // set initialization time
-            _timeStep.initTime = t;
-
-            // reset every other time elements
-            _timeStep.termTime = INFINITY;
-            _timeStep.time = 0.0;
-            _timeStep.deltaTime = 0.0;
-            _timeStep.steps = 0;
-
-            // run init callback
-            for (auto &cb : _preInit)
-                cb(_timeStep);
+            // pre initialization
+            preInitialize(t);
 
             // run initialize of component
             T::initialize(t);
@@ -65,35 +49,22 @@ namespace sim::testing {
 
         void step(double t, double dt) override {
 
-            // get time step size and save time
-            _timeStep.deltaTime = dt;
-            _timeStep.time = t;
-
-            // run pre-steps
-            for (auto &cb : _preSteps)
-                cb(_timeStep);
+            // pre step
+            preStep(t, dt);
 
             // run step of main component
             T::step(t, dt);
 
-            // run post-steps
-            for (auto &cb : _postSteps)
-                cb(_timeStep);
-
-            // increment steps
-            _timeStep.steps++;
+            // post-step
+            postStep(t, dt);
 
         }
 
 
         void terminate(double t) override {
 
-            // set termination time
-            _timeStep.termTime = t;
-
-            // run terminate callback
-            for (auto &cb : _preTerm)
-                cb(_timeStep);
+            // pre terminate
+            preTerminate(t);
 
             // run termination of component
             T::terminate(t);

@@ -26,12 +26,11 @@
 #define SIMCORE_STOP_CONDITION_H
 
 #include <string>
-#include "storage/IStorable.h"
 
 namespace sim {
 
 
-    class IStopCondition : virtual public sim::storage::IStorable {
+    class IStopCondition {
 
     public:
 
@@ -80,46 +79,6 @@ namespace sim {
         [[nodiscard]] StopCode getCode() const {
 
             return _code;
-
-        }
-
-
-        /**
-         * Stores the state to the given JSON object
-         * @param obj JSON object
-         */
-        void toJSON(nlohmann::json &obj) const override {
-            obj["code"] = _code;
-        }
-
-
-        /**
-         * Sets the state given by the JSON object
-         * @param obj JSON object
-         */
-        void fromJSON(const nlohmann::json &obj) override {
-            obj["code"].get_to(_code);
-        }
-
-
-        /**
-         * Stores the state to the given protobuf object
-         * @param obj Protobuf object
-         */
-        void toProtobuf(sim::protobuf::StopCondition &obj) const {
-
-            obj.set_code(static_cast<sim::protobuf::StopCondition_StopCode>(_code));
-
-        }
-
-
-        /**
-         * Sets the state given by the protobuf object
-         * @param obj Protobuf object
-         */
-        void fromProtobuf(const sim::protobuf::StopCondition &obj) {
-
-            _code = static_cast<StopCode>(obj.code());
 
         }
 

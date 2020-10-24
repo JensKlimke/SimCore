@@ -7,7 +7,6 @@ set(SOURCE_FILES
         LifeCycleTest.cpp
         ProcessTest.cpp
         LoggingTest.cpp
-        StorageTest.cpp
         )
 
 # executable
@@ -17,10 +16,6 @@ add_executable(SimCoreTest ${SOURCE_FILES})
 target_include_directories(SimCoreTest PRIVATE
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_SOURCE_DIR}/lib/json/include
-        )
-
-target_link_libraries(SimCoreTest PRIVATE
-        simcore_storage
         )
 
 # add tests

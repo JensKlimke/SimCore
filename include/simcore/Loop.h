@@ -27,7 +27,6 @@
 
 #include <vector>
 #include <algorithm>
-#include <SimCore.pb.h>
 #include "utils/exceptions.h"
 #include "timers/ITimer.h"
 #include "IStopCondition.h"
@@ -37,7 +36,7 @@
 namespace sim {
 
 
-    class Loop : public sim::storage::IStorable {
+    class Loop {
 
     public:
 
@@ -159,46 +158,6 @@ namespace sim {
             // status
             return _status;
 
-        }
-
-
-        /**
-         * Stores the state to the given JSON object
-         * @param obj JSON object
-         */
-        void toJSON(nlohmann::json &obj) const override {
-            obj["status"] = _status;
-            obj["stopFlag"] = _stopFlag;
-        }
-
-
-        /**
-         * Sets the state given by the JSON object
-         * @param obj JSON object
-         */
-        void fromJSON(const nlohmann::json &obj) override {
-            obj["status"].get_to(_status);
-            obj["stopFlag"].get_to(_stopFlag);
-        }
-
-
-        /**
-         * Stores the state to the given protobuf object
-         * @param obj Protobuf object
-         */
-        void toProtobuf(sim::protobuf::Loop &obj) const {
-            obj.set_status(static_cast<sim::protobuf::Loop_Status>(_status));
-            obj.set_stopflag(_stopFlag);
-        }
-
-
-        /**
-         * Sets the state given by the protobuf object
-         * @param obj Protobuf object
-         */
-        void fromProtobuf(const sim::protobuf::Loop &obj) {
-            _status = static_cast<Status>(obj.status());
-            _stopFlag = obj.stopflag();
         }
 
 
