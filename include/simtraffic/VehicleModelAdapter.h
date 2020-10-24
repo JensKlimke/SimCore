@@ -27,13 +27,13 @@
 #define SIMTRAFFIC_VEHICLE_MODEL_ADAPTER_H
 
 #include "VehicleModel.h"
-#include <simcore/Model.h>
+#include <simcore/ISynchronized.h>
 #include <simcore/storage/Storable.h>
 
 
 namespace sim::traffic {
 
-    class VehicleModelAdapter : public VehicleModel, public sim::Model, public sim::storage::Storable {
+    class VehicleModelAdapter : public VehicleModel, public sim::ISynchronized {
 
     public:
 
@@ -49,82 +49,82 @@ namespace sim::traffic {
         ~VehicleModelAdapter() override = default;
 
 
-        /**
-         * Registers the model to the data node
-         * @param node Data node
-         */
-        void registerSignals(sim::storage::DataNode &node) override {
-
-            // internal attributes
-            REGISTER_SIGNAL_ALIAS(_indicatorTime, indicatorTime);
-            REGISTER_SIGNAL_ALIAS(_reset, reset);
-
-            // states
-            REGISTER_SIGNAL_CONTEXT(velocity, state);
-            REGISTER_SIGNAL_CONTEXT(acceleration, state);
-            REGISTER_SIGNAL_CONTEXT(yawAngle, state);
-            REGISTER_SIGNAL_CONTEXT(yawRate, state);
-            REGISTER_SIGNAL_CONTEXT(curvature, state);
-            REGISTER_SIGNAL_CONTEXT(distance, state);
-            REGISTER_SIGNAL_CONTEXT(xPosition, state);
-            REGISTER_SIGNAL_CONTEXT(yPosition, state);
-            REGISTER_SIGNAL_CONTEXT(indicatorState, state);
-            REGISTER_SIGNAL_CONTEXT(shifterPosition, state);
-
-            // inputs
-            REGISTER_SIGNAL_CONTEXT(drive, input);
-            REGISTER_SIGNAL_CONTEXT(brake, input);
-            REGISTER_SIGNAL_CONTEXT(steering, input);
-
-            // parameters
-            REGISTER_SIGNAL_CONTEXT(maxCurvature, parameters);
-            REGISTER_SIGNAL_CONTEXT(maxRelDrivePower, parameters);
-            REGISTER_SIGNAL_CONTEXT(maxRelReverseDrivePower, parameters);
-            REGISTER_SIGNAL_CONTEXT(maxRelDriveTorque, parameters);
-            REGISTER_SIGNAL_CONTEXT(maxRelBrakeTorque, parameters);
-            REGISTER_SIGNAL_CONTEXT(externalRelForce, parameters);
-            REGISTER_SIGNAL_CONTEXT(resistanceParameters[0], parameters);
-            REGISTER_SIGNAL_CONTEXT(resistanceParameters[1], parameters);
-            REGISTER_SIGNAL_CONTEXT(resistanceParameters[2], parameters);
-
-        }
-
-
-        void fromNode(const sim::storage::DataNode &node) override {
-
-            // internal attributes
-            WRITE_SIGNAL_ALIAS(_indicatorTime, indicatorTime);
-            WRITE_SIGNAL_ALIAS(_reset, reset);
-
-            // states
-            WRITE_SIGNAL_CONTEXT(velocity, state);
-            WRITE_SIGNAL_CONTEXT(acceleration, state);
-            WRITE_SIGNAL_CONTEXT(yawAngle, state);
-            WRITE_SIGNAL_CONTEXT(yawRate, state);
-            WRITE_SIGNAL_CONTEXT(curvature, state);
-            WRITE_SIGNAL_CONTEXT(distance, state);
-            WRITE_SIGNAL_CONTEXT(xPosition, state);
-            WRITE_SIGNAL_CONTEXT(yPosition, state);
-            WRITE_SIGNAL_CONTEXT(indicatorState, state);
-            WRITE_SIGNAL_CONTEXT(shifterPosition, state);
-
-            // inputs
-            WRITE_SIGNAL_CONTEXT(drive, input);
-            WRITE_SIGNAL_CONTEXT(brake, input);
-            WRITE_SIGNAL_CONTEXT(steering, input);
-
-            // parameters
-            WRITE_SIGNAL_CONTEXT(maxCurvature, parameters);
-            WRITE_SIGNAL_CONTEXT(maxRelDrivePower, parameters);
-            WRITE_SIGNAL_CONTEXT(maxRelReverseDrivePower, parameters);
-            WRITE_SIGNAL_CONTEXT(maxRelDriveTorque, parameters);
-            WRITE_SIGNAL_CONTEXT(maxRelBrakeTorque, parameters);
-            WRITE_SIGNAL_CONTEXT(externalRelForce, parameters);
-            WRITE_SIGNAL_CONTEXT(resistanceParameters[0], parameters);
-            WRITE_SIGNAL_CONTEXT(resistanceParameters[1], parameters);
-            WRITE_SIGNAL_CONTEXT(resistanceParameters[2], parameters);
-
-        }
+//        /**
+//         * Registers the model to the data node
+//         * @param node Data node
+//         */
+//        void registerSignals(sim::storage::DataNode &node) override {
+//
+//            // internal attributes
+//            REGISTER_SIGNAL_ALIAS(_indicatorTime, indicatorTime);
+//            REGISTER_SIGNAL_ALIAS(_reset, reset);
+//
+//            // states
+//            REGISTER_SIGNAL_CONTEXT(velocity, state);
+//            REGISTER_SIGNAL_CONTEXT(acceleration, state);
+//            REGISTER_SIGNAL_CONTEXT(yawAngle, state);
+//            REGISTER_SIGNAL_CONTEXT(yawRate, state);
+//            REGISTER_SIGNAL_CONTEXT(curvature, state);
+//            REGISTER_SIGNAL_CONTEXT(distance, state);
+//            REGISTER_SIGNAL_CONTEXT(xPosition, state);
+//            REGISTER_SIGNAL_CONTEXT(yPosition, state);
+//            REGISTER_SIGNAL_CONTEXT(indicatorState, state);
+//            REGISTER_SIGNAL_CONTEXT(shifterPosition, state);
+//
+//            // inputs
+//            REGISTER_SIGNAL_CONTEXT(drive, input);
+//            REGISTER_SIGNAL_CONTEXT(brake, input);
+//            REGISTER_SIGNAL_CONTEXT(steering, input);
+//
+//            // parameters
+//            REGISTER_SIGNAL_CONTEXT(maxCurvature, parameters);
+//            REGISTER_SIGNAL_CONTEXT(maxRelDrivePower, parameters);
+//            REGISTER_SIGNAL_CONTEXT(maxRelReverseDrivePower, parameters);
+//            REGISTER_SIGNAL_CONTEXT(maxRelDriveTorque, parameters);
+//            REGISTER_SIGNAL_CONTEXT(maxRelBrakeTorque, parameters);
+//            REGISTER_SIGNAL_CONTEXT(externalRelForce, parameters);
+//            REGISTER_SIGNAL_CONTEXT(resistanceParameters[0], parameters);
+//            REGISTER_SIGNAL_CONTEXT(resistanceParameters[1], parameters);
+//            REGISTER_SIGNAL_CONTEXT(resistanceParameters[2], parameters);
+//
+//        }
+//
+//
+//        void fromNode(const sim::storage::DataNode &node) override {
+//
+//            // internal attributes
+//            WRITE_SIGNAL_ALIAS(_indicatorTime, indicatorTime);
+//            WRITE_SIGNAL_ALIAS(_reset, reset);
+//
+//            // states
+//            WRITE_SIGNAL_CONTEXT(velocity, state);
+//            WRITE_SIGNAL_CONTEXT(acceleration, state);
+//            WRITE_SIGNAL_CONTEXT(yawAngle, state);
+//            WRITE_SIGNAL_CONTEXT(yawRate, state);
+//            WRITE_SIGNAL_CONTEXT(curvature, state);
+//            WRITE_SIGNAL_CONTEXT(distance, state);
+//            WRITE_SIGNAL_CONTEXT(xPosition, state);
+//            WRITE_SIGNAL_CONTEXT(yPosition, state);
+//            WRITE_SIGNAL_CONTEXT(indicatorState, state);
+//            WRITE_SIGNAL_CONTEXT(shifterPosition, state);
+//
+//            // inputs
+//            WRITE_SIGNAL_CONTEXT(drive, input);
+//            WRITE_SIGNAL_CONTEXT(brake, input);
+//            WRITE_SIGNAL_CONTEXT(steering, input);
+//
+//            // parameters
+//            WRITE_SIGNAL_CONTEXT(maxCurvature, parameters);
+//            WRITE_SIGNAL_CONTEXT(maxRelDrivePower, parameters);
+//            WRITE_SIGNAL_CONTEXT(maxRelReverseDrivePower, parameters);
+//            WRITE_SIGNAL_CONTEXT(maxRelDriveTorque, parameters);
+//            WRITE_SIGNAL_CONTEXT(maxRelBrakeTorque, parameters);
+//            WRITE_SIGNAL_CONTEXT(externalRelForce, parameters);
+//            WRITE_SIGNAL_CONTEXT(resistanceParameters[0], parameters);
+//            WRITE_SIGNAL_CONTEXT(resistanceParameters[1], parameters);
+//            WRITE_SIGNAL_CONTEXT(resistanceParameters[2], parameters);
+//
+//        }
 
 
     protected:

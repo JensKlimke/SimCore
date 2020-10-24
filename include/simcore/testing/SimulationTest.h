@@ -58,7 +58,7 @@ namespace sim::testing {
                 cb(_timeStep);
 
             // run initialize of component
-            T::initialze();
+            T::initialize(t);
 
         }
 

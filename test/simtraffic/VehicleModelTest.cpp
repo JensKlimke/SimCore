@@ -27,62 +27,18 @@
 
 #include <functional>
 #include <gtest/gtest.h>
-#include <simtraffic/VehicleModel.h>
+#include <simtraffic/VehicleModelAdapter.h>
+#include <simcore/testing/SimulationTest.h>
 
-class VehicleModelTest : public testing::Test, protected sim::traffic::VehicleModel {
+class VehicleModelTest : public testing::Test, public sim::testing::SimulationTest<sim::traffic::VehicleModelAdapter> {
 
 protected:
-
-    double preTime{};
-    double time{};
-    double counter{};
-    double dt = 0.01;
-
-    std::function<void()> init{};
-    std::function<void()> setStep{};
-    std::function<void()> checkStep{};
-
-    void run(double endTime) {
-
-        // reset time
-        time = 0.0;
-        preTime = 0.0;
-        counter = 0;
-
-        // init
-        if(init)
-            init();
-
-        // simple simulation loop
-        while(time <= endTime) {
-
-            // set step
-            if(setStep)
-                setStep();
-
-            // run vehicle model step
-            step(time - preTime);
-
-            // check
-            if(checkStep)
-                checkStep();
-
-            // update time
-            preTime = time;
-            time += dt;
-
-            // increment counter
-            counter++;
-
-        }
-
-    }
-
 
     void resetFull() {
 
         // reset
-        reset();
+        Loop::reset();
+        VehicleModel::reset();
 
         // set initial state
         state.xPosition = 0.0;
@@ -130,13 +86,28 @@ protected:
     }
 
 
+    void run(double endTime) {
+
+        // create simulation
+        create(endTime, 0.01);
+
+        // add this as component
+        setTimeStepSize(0.01);
+        addComponent(this);
+
+        // run simulation
+        Loop::run();
+
+    }
+
+
     [[nodiscard]] bool isSimTime(double t) const {
-        return std::abs(time - t) < EPS_SIM_TIME;
+        return std::abs(_timeStep.time - t) < EPS_SIM_TIME;
     }
 
 
     [[nodiscard]] bool isInterval(double t0, double t1) const {
-        return (time > t0 - EPS_SIM_TIME && time < t1 - dt + EPS_SIM_TIME);
+        return (_timeStep.time > t0 - EPS_SIM_TIME && _timeStep.time < t1 - _timeStep.deltaTime + EPS_SIM_TIME);
     }
 
 };
@@ -144,17 +115,18 @@ protected:
 
 TEST_F(VehicleModelTest, SimProcess) {
 
-    checkStep = [this]() {
+
+    _postSteps.emplace_back([this](const sim::testing::TimeStep &) {
          EXPECT_FALSE(_reset);
-    };
+    });
 
     // reset and check
-    reset();
+    VehicleModel::reset();
     EXPECT_TRUE(_reset);
 
     // run
     run(10.0);
-    EXPECT_EQ(1001, counter);
+    EXPECT_EQ(1001, _timeStep.steps);
 
 }
 
@@ -163,13 +135,13 @@ TEST_F(VehicleModelTest, ConstantLongMotion) {
 
 
     // set checker
-    checkStep = [this]() {
+    _postSteps.emplace_back([this](const sim::testing::TimeStep &timeStep) {
 
         // check state
         EXPECT_NEAR(10.0, state.velocity, 1e-3);
-        EXPECT_NEAR(10.0 * time, state.distance, 1e-3);
+        EXPECT_NEAR(10.0 * timeStep.time, state.distance, 1e-3);
 
-    };
+    });
 
     // set dynamic state
     state.xPosition = 100.0;
@@ -192,18 +164,18 @@ TEST_F(VehicleModelTest, MotionAccelerated) {
 
 
     // set checker
-    checkStep = [this]() {
+    _postSteps.emplace_back([this](const sim::testing::TimeStep &timeStep) {
 
         // calculate s and v
-        double s = 0.05 * time * time + 10.0 * time;
-        double v = 10.0 + 0.1 * time;
+        double s = 0.05 * timeStep.time * timeStep.time + 10.0 * timeStep.time;
+        double v = 10.0 + 0.1 * timeStep.time;
 
         // check
         EXPECT_NEAR(0.1, state.acceleration, 1e-6);
         EXPECT_NEAR(v, state.velocity, 1e-6);
         EXPECT_NEAR(s, state.distance, 1e-3);
 
-    };
+    });
 
     // set external force and init state
     resetFull();
@@ -231,10 +203,10 @@ TEST_F(VehicleModelTest, Resistances) {
     state.velocity = 9.999999;
 
     // set checker
-    checkStep = [this]() {
+    _postSteps.emplace_back([this](const sim::testing::TimeStep &timeStep) {
 
         // check until 10 s
-        if(time >= 10.0 + EPS_SIM_TIME) {
+        if(timeStep.time >= 10.0 + EPS_SIM_TIME) {
 
             EXPECT_NEAR( 0.0, state.acceleration, 1e-9);
             EXPECT_NEAR( 0.0, state.velocity, 1e-6);
@@ -245,15 +217,15 @@ TEST_F(VehicleModelTest, Resistances) {
         }
 
         // calculate s and v
-        double s = -0.5 * time * time + 10.0 * time;
-        double v = 10.0 - time;
+        double s = -0.5 * timeStep.time * timeStep.time + 10.0 * timeStep.time;
+        double v = 10.0 - timeStep.time;
 
         // check
         EXPECT_NEAR(-1.0, state.acceleration, 1e-9);
         EXPECT_NEAR(v, state.velocity, 1e-6);
         EXPECT_NEAR(s, state.distance, 1e-3);
 
-    };
+    });
 
     // run, one more step than 10 s
     run(11.0);
@@ -280,10 +252,10 @@ TEST_F(VehicleModelTest, ResistancesBackwards) {
     state.velocity = -9.999999;
 
     // set checker
-    checkStep = [this]() {
+    _postSteps.emplace_back([this](const sim::testing::TimeStep &timeStep) {
 
         // check until 10 s
-        if(time >= 10.0 + EPS_SIM_TIME) {
+        if(timeStep.time >= 10.0 + EPS_SIM_TIME) {
 
             EXPECT_NEAR(  0.0, state.acceleration, 1e-9);
             EXPECT_NEAR(  0.0, state.velocity, 1e-6);
@@ -294,15 +266,15 @@ TEST_F(VehicleModelTest, ResistancesBackwards) {
         }
 
         // calculate s and v
-        double s = -0.5 * time * time + 10.0 * time;
-        double v = 10.0 - time;
+        double s = -0.5 * timeStep.time * timeStep.time + 10.0 * timeStep.time;
+        double v = 10.0 - timeStep.time;
 
         // check
         EXPECT_NEAR(1.0, state.acceleration, 1e-9);
         EXPECT_NEAR(-v, state.velocity, 1e-6);
         EXPECT_NEAR(-s, state.distance, 1e-3);
 
-    };
+    });
 
     // run, one more step than 10 s
     run(11.0);
@@ -457,7 +429,7 @@ TEST_F(VehicleModelTest, DriveCurvesLeft) {
     bool forwards{};
 
     // initialize
-    init = [this, &left, &forwards]() {
+    _preInit.emplace_back([this, &left, &forwards](const sim::testing::TimeStep &timeStep) {
 
         // set state
         state.xPosition = 0.0;
@@ -467,17 +439,17 @@ TEST_F(VehicleModelTest, DriveCurvesLeft) {
         // set steering angle
         setSteering(left ? 0.1 : -0.1);
 
-    };
+    });
 
     // set checker
-    checkStep = [this, &left, &forwards]() {
+    _postSteps.emplace_back([this, &left, &forwards](const sim::testing::TimeStep &timeStep) {
 
         // calculate results
         auto v = forwards ? 10.0 : -10.0;
-        auto p = (forwards ? 1.0 : -1.0) * (left ? 1.0 : -1.0) * time * 0.1;
+        auto p = (forwards ? 1.0 : -1.0) * (left ? 1.0 : -1.0) * timeStep.time * 0.1;
         auto x = sin(p) * (left ?  100.0 : -100.0);
         auto y = cos(p) * (left ? -100.0 :  100.0);
-        auto s = time * v;
+        auto s = timeStep.time * v;
 
         // check state
         EXPECT_NEAR(v, state.velocity, 1e-9);
@@ -486,7 +458,7 @@ TEST_F(VehicleModelTest, DriveCurvesLeft) {
         EXPECT_NEAR(x, state.xPosition, 1e-3);
         EXPECT_NEAR(y, state.yPosition, 1e-3);
 
-    };
+    });
 
 
     // reset, setup and run
@@ -556,7 +528,7 @@ TEST_F(VehicleModelTest, IndicatorStates) {
     indicateRight(3.0);
     EXPECT_EQ(3.0, _indicatorTime);
 
-    reset();
+    VehicleModel::reset();
     EXPECT_EQ(INFINITY, _indicatorTime);
 
 }
@@ -565,7 +537,7 @@ TEST_F(VehicleModelTest, IndicatorStates) {
 TEST_F(VehicleModelTest, IndicatorProzess) {
 
     // set indicators
-    setStep = [this]() {
+    _preSteps.emplace_back([this](const sim::testing::TimeStep &timeStep) {
 
         if(isSimTime(5.0))
             indicateRight(3.0);
@@ -576,10 +548,10 @@ TEST_F(VehicleModelTest, IndicatorProzess) {
         else if(isSimTime(19.0))
             indicatorOff();
 
-    };
+    });
 
     // check indicators
-    checkStep = [this]() {
+    _postSteps.emplace_back([this](const sim::testing::TimeStep &timeStep) {
 
         if(isInterval(0.0, 5.0))
             EXPECT_EQ(IndicatorState::OFF, state.indicatorState);
@@ -596,7 +568,7 @@ TEST_F(VehicleModelTest, IndicatorProzess) {
         else if(isInterval(19.0, 21.0))
             EXPECT_EQ(IndicatorState::OFF, state.indicatorState);
 
-    };
+    });
 
     // run simulation
     run(20.0);
@@ -633,7 +605,7 @@ TEST_F(VehicleModelTest, WrongShiftingForwards) {
     state.velocity = 10.0;
 
     // setting
-    setStep = [this]() {
+    _preSteps.emplace_back([this](const sim::testing::TimeStep &timeStep) {
 
         if(isSimTime(1.0))
             setShifter(ShifterPosition::PARK);
@@ -642,10 +614,10 @@ TEST_F(VehicleModelTest, WrongShiftingForwards) {
         else if(isSimTime(3.0))
             setShifter(ShifterPosition::NEUTRAL);
 
-    };
+    });
 
     // checking
-    checkStep = [this]() {
+    _postSteps.emplace_back([this](const sim::testing::TimeStep &timeStep) {
 
         if(isInterval(0.0, 3.0))
             EXPECT_EQ(ShifterPosition::DRIVE, state.shifterPosition);
@@ -655,7 +627,7 @@ TEST_F(VehicleModelTest, WrongShiftingForwards) {
         // check velocity
         EXPECT_DOUBLE_EQ(10.0, state.velocity);
 
-    };
+    });
 
     // run
     run(4.0);
@@ -671,7 +643,7 @@ TEST_F(VehicleModelTest, WrongShiftingBackwards) {
     state.velocity = -5.0;
 
     // setting
-    setStep = [this]() {
+    _preSteps.emplace_back([this](const sim::testing::TimeStep &timeStep) {
 
         if(isSimTime(1.0))
             setShifter(ShifterPosition::PARK);
@@ -680,10 +652,10 @@ TEST_F(VehicleModelTest, WrongShiftingBackwards) {
         else if(isSimTime(3.0))
             setShifter(ShifterPosition::NEUTRAL);
 
-    };
+    });
 
     // checking
-    checkStep = [this]() {
+    _postSteps.emplace_back([this](const sim::testing::TimeStep &timeStep) {
 
         if(isInterval(0.0, 3.0))
             EXPECT_EQ(ShifterPosition::REVERSE, state.shifterPosition);
@@ -693,7 +665,7 @@ TEST_F(VehicleModelTest, WrongShiftingBackwards) {
         // check velocity
         EXPECT_DOUBLE_EQ(-5.0, state.velocity);
 
-    };
+    });
 
     // run
     run(4.0);
@@ -712,17 +684,17 @@ TEST_F(VehicleModelTest, WrongShiftingReverting) {
     setPedal(-0.5);
 
     // setting
-    setStep = [this]() {
+    _preSteps.emplace_back([this](const sim::testing::TimeStep &timeStep) {
 
         if(isSimTime(2.0))
             setShifter(ShifterPosition::REVERSE);
         else if(isInterval(2.5, 5.0))
             setPedal(0.1);
 
-    };
+    });
 
     // checking
-    checkStep = [this]() {
+    _postSteps.emplace_back([this](const sim::testing::TimeStep &timeStep) {
 
         // check intervals
         if(isInterval(0.0, 2.0)) {
@@ -736,7 +708,7 @@ TEST_F(VehicleModelTest, WrongShiftingReverting) {
             EXPECT_EQ(ShifterPosition::REVERSE, state.shifterPosition);
         }
 
-    };
+    });
 
     // run
     run(5.0);
@@ -779,7 +751,7 @@ TEST_F(VehicleModelTest, WrongShiftingReverting) {
 //    setShifter(ShifterPosition::PARK);
 //
 //    // set step
-//    setStep = [this]() {
+//    _preSteps.emplace_back([this](const sim::testing::TimeStep &timeStep) {
 //
 //        // helpers
 //        auto D = ShifterPosition::DRIVE;
@@ -825,7 +797,7 @@ TEST_F(VehicleModelTest, WrongShiftingReverting) {
 //    };
 //
 //    // check checker
-//    checkStep = [this]() {
+//    _postSteps.emplace_back([this](const sim::testing::TimeStep &timeStep) {
 //
 //    };
 //
