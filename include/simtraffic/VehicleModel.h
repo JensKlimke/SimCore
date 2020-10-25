@@ -104,8 +104,9 @@ namespace sim::traffic {
         /**
          * Sets the shifter position
          * @param shifterPosition Shifter position
+         * @return Flag indicating whether the shifter position has been changed
          */
-        void setShifter(ShifterPosition shifterPosition) {
+        bool setShifter(ShifterPosition shifterPosition) {
 
             using namespace std;
 
@@ -113,24 +114,27 @@ namespace sim::traffic {
             if(_reset) {
 
                 state.shifterPosition = shifterPosition;
-                return;
+                return true;
 
             }
 
             // avoid switching to P when rolling
             if(shifterPosition == ShifterPosition::PARK && abs(state.velocity) > ZERO_VELOCITY)
-                return;
+                return false;
 
             // avoid switching to R when moving forwards
             if(shifterPosition == ShifterPosition::REVERSE && state.velocity > ZERO_VELOCITY)
-                return;
+                return false;
 
             // avoid switching to D when moving backwards
             if(shifterPosition == ShifterPosition::DRIVE && state.velocity < -ZERO_VELOCITY)
-                return;
+                return false;
 
             // set shifter
             state.shifterPosition = shifterPosition;
+
+            // has changed
+            return true;
 
         }
 
@@ -196,11 +200,13 @@ namespace sim::traffic {
             // get state
             auto v0 = state.velocity;
 
-            // drive parameters
-            auto power   = state.shifterPosition == ShifterPosition::REVERSE
+            // drive power
+            auto power = state.shifterPosition == ShifterPosition::REVERSE
                     ? -parameters.maxRelReverseDrivePower
                     : parameters.maxRelDrivePower;
-            auto torque  = parameters.maxRelDriveTorque;
+
+            // drive torque
+            auto torque = parameters.maxRelDriveTorque;
 
             // inputs
             auto drive = state.shifterPosition == ShifterPosition::NEUTRAL ? 0.0 : range(input.drive, 0.0, 1.0);

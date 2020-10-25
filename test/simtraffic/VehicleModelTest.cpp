@@ -722,31 +722,37 @@ TEST_F(VehicleModelTest, ShiftingProcess) {
     /**
      * Process:
      * -------------------------------------------
-     *     init: switch to P        -> P enabled
-     *  0s - 1s: pedal = -0.5       -> v = 0, a = 0
-     *       1s: switch to D        -> D enabled
-     *  1s - 2s: no pedal           -> v = 0, a = 0
-     *  2s - 4s: pedal = 0.1        -> v > 0, a > 0
-     *     2.5s: switch to R        -> no reaction, D enabled
-     *     2.6s: switch to P        -> no reaction, D enabled
-     *     2.7s: switch to N        -> N enabled, a < 0
-     *  4s - 5s: no pedal           -> a < 0
-     *  5s - 8s: pedal = -0.1       -> a < 0 -> a = 0, v = 0
-     *       8s: switch to N        -> N enabled, a = 0, v = 0
-     *     8.5s: switch to R        -> R enabled, a = 0, v = 0
-     *  8s - 9s: pedal = 0.0        -> a = 0, v = 0
-     * 9s - 12s: pedal = 0.1        -> a < 0, v < 0
-     *    10.5s: switch to D        -> no reaction, R
-     *    10.6s: switch to P        -> no reaction, R
-     *    10.7s: switch to N        -> N, deceleration
+     *      init: switch to P       -> P enabled
+     *   0s - 1s: pedal = -0.5      -> v = 0, a = 0
+     *        1s: switch to D       -> D enabled
+     *   1s - 2s: no pedal          -> v = 0, a = 0
+     *   2s - 4s: pedal = 0.5       -> v > 0, a > 0
+     *      2.5s: switch to R       -> no reaction, D enabled
+     *      2.6s: switch to P       -> no reaction, D enabled
+     *      2.7s: switch to N       -> N enabled, a < 0
+     *   4s - 5s: no pedal          -> a < 0
+     *   5s - 8s: pedal = -0.5      -> a < 0 -> a = 0, v = 0
+     *        8s: switch to N       -> N enabled, a = 0, v = 0
+     *      8.5s: switch to R       -> R enabled, a = 0, v = 0
+     *   8s - 9s: pedal = 0.0       -> a = 0, v = 0
+     *  9s - 12s: pedal = 0.1       -> a < 0, v < 0
+     *     10.5s: switch to D       -> no reaction, R
+     *     10.6s: switch to P       -> no reaction, R
+     *     10.7s: switch to N       -> N enabled, v < 0, a > 0
+     * 11s - 13s: pedal = -0.1      -> a = 0, v = 0
      */
 
 
     // reset
     resetFull();
 
+    // set resistance
+    parameters.resistanceParameters[0] = 0.0;
+    parameters.resistanceParameters[1] = 0.1;
+    parameters.resistanceParameters[2] = 0.0;
+
     // set to park
-    setShifter(ShifterPosition::PARK);
+    EXPECT_TRUE(setShifter(ShifterPosition::PARK));
 
     // set step
     addPreStepCallback([this](const sim::testing::TimeStep &timeStep) {
@@ -766,39 +772,43 @@ TEST_F(VehicleModelTest, ShiftingProcess) {
 
         // 1s
         if(isSimTime(1.0))
-            setShifter(D);
+            EXPECT_TRUE(setShifter(D));
 
         // 1s..2s
         if(isInterval(1.0, 2.0))
             setPedal(0.0);
 
         // 2s..4s
-        if(isInterval(1.0, 2.0))
-            setPedal(0.1);
+        if(isInterval(2.0, 4.0))
+            setPedal(0.5);
 
         // 2.5s
         if(isSimTime(2.5))
-            setShifter(R);
+            EXPECT_FALSE(setShifter(R));
 
         // 2.6s
         if(isSimTime(2.6))
-            setShifter(P);
+            EXPECT_FALSE(setShifter(P));
 
         // 2.7s
         if(isSimTime(2.7))
-            setShifter(N);
+            EXPECT_TRUE(setShifter(N));
 
         // 4s..5s
         if(isInterval(4.0, 5.0))
             setPedal(0.0);
 
+        // 5s..8s
+        if(isInterval(5.0, 8.0))
+            setPedal(-0.5);
+
         // 8s
         if(isSimTime(8.0))
-            setShifter(N);
+            EXPECT_TRUE(setShifter(N));
 
         // 8.5s
         if(isSimTime(8.5))
-            setShifter(R);
+            EXPECT_TRUE(setShifter(R));
 
         // 8s..9s
         if(isInterval(8.0, 9.0))
@@ -810,24 +820,75 @@ TEST_F(VehicleModelTest, ShiftingProcess) {
 
         // 10.5s
         if(isSimTime(10.5))
-            setShifter(D);
+            EXPECT_FALSE(setShifter(D));
 
         // 10.6s
         if(isSimTime(10.6))
-            setShifter(P);
+            EXPECT_FALSE(setShifter(P));
 
         // 10.7s
         if(isSimTime(10.7))
-            setShifter(N);
+            EXPECT_TRUE(setShifter(N));
+
+        // 11s..13s
+        if(isInterval(11.0, 13.0))
+            setPedal(-0.1);
+
+    });
+
+    // check step
+    addPostStepCallback([this](const sim::testing::TimeStep &timeStep) {
+
+        // 0s..2s
+        if(isInterval(0.0, 2.0)) {
+            EXPECT_NEAR(0.0, state.velocity, 1e-3);
+            EXPECT_NEAR(0.0, state.acceleration, 1e-3);
+        }
+
+        // 2s..2.7s
+        if(isInterval(2.0, 2.7)) {
+            EXPECT_GT(state.velocity, 0.0);
+            EXPECT_GT(state.acceleration, 0.0);
+        }
+
+        // 2.7s..5s
+        if(isInterval(2.7, 4.0)) {
+            EXPECT_GT(state.velocity, 0.0);
+            EXPECT_LT(state.acceleration, 0.0);
+        }
+
+        // 5s..8s
+        if(isInterval(5.0, 8.0)) {
+            EXPECT_GE(state.velocity, 0.0);
+            EXPECT_LE(state.acceleration, 0.0);
+        }
+
+        // 8s..9s
+        if(isInterval(8.0, 9.0)) {
+            EXPECT_NEAR(state.velocity, 0.0, 1e-3);
+            EXPECT_NEAR(state.acceleration, 0.0, 1e-3);
+        }
+
+        // 9s..10.7s
+        if(isInterval(9.0, 10.7)) {
+            EXPECT_LT(state.velocity, 0.0);
+            EXPECT_LT(state.acceleration, 0.0);
+        }
+
+        // 10.7s..13s
+        if(isInterval(9.0, 10.7)) {
+            EXPECT_LE(state.velocity, 0.0);
+            EXPECT_LE(state.acceleration, 0.0);
+        }
 
     });
 
     // run, one more step than 10 s
-    run(11.0);
+    run(13.0);
 
     // check
-    EXPECT_EQ(0.0, state.velocity);
-    EXPECT_NEAR(0.0, state.distance, 1e-3);
+    EXPECT_NEAR(0.0, state.velocity, 1e-3);
+    EXPECT_NEAR(6.0, state.distance, 1.0);
 
 }
 
