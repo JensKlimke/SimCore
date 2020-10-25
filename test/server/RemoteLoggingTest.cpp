@@ -54,7 +54,7 @@ public:
 
         // set parameters
         timer.setTimeStepSize(0.1);
-        timer.setAcceleration(1.0);
+        timer.setAcceleration(10.0);
         stop.setStopTime(10.0);
         rep.setTimeStepSize(1.0);
         setTimeStepSize(1.0);
