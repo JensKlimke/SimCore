@@ -25,7 +25,7 @@
 #ifndef SIMCORE_SIM_FUNCTIONS_H
 #define SIMCORE_SIM_FUNCTIONS_H
 
-#include "sim_types.h"
+#include "types.h"
 
 #if _WIN32
 #include <windows.h>

@@ -33,7 +33,7 @@
 #include <simcore/timers/TimeIsUp.h>
 #include <simcore/logging/UDPLogger.h>
 #include <simcore/logging/WebsocketLogger.h>
-#include <simcore/utils/sim_functions.h>
+#include <simcore/utils/functions.h>
 #include <gtest/gtest.h>
 
 

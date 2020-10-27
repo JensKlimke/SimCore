@@ -32,7 +32,7 @@
 #include <simcore/timers/BasicTimer.h>
 #include <simcore/timers/TimeIsUp.h>
 #include <simcore/logging/FileLogger.h>
-#include <simcore/utils/sim_functions.h>
+#include <simcore/utils/functions.h>
 #include <nlohmann/json.hpp>
 #include <gtest/gtest.h>
 

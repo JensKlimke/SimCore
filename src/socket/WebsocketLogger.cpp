@@ -22,7 +22,7 @@
 // Created by Jens Klimke on 2019-06-09.
 //
 
-#include <simcore/utils/sim_functions.h>
+#include <simcore/utils/functions.h>
 #include <simcore/logging/WebsocketLogger.h>
 #include "WebSocket.h"
 
