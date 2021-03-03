@@ -22,4 +22,5 @@ include(ModuleCoverage)
 include(ModuleTesting)
 
 # add sources
-add_subdirectory(src/traffic)
+add_subdirectory(src/simtraffic)
+add_subdirectory(include/simtraffic)
