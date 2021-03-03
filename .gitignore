@@ -5,6 +5,8 @@
 # CMake
 cmake-*
 build*
+install/
+third_party/
 
 # artifacts
 docs*

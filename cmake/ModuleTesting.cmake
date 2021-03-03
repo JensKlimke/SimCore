@@ -40,29 +40,8 @@ if(BUILD_TESTING)
     # enable testing
     enable_testing()
 
-
-    # switch (build or use installed lib)
-    if(BUILD_GTEST_LIBRARY)
-
-        # message
-        message(STATUS "ATTENTION: gtest must be cloned into the lib folder (folder name gtest)")
-
-        # set gtest installation off
-        set(INSTALL_GTEST OFF)
-
-        # add gtest sources
-        add_subdirectory(lib/googletest)
-
-        # set variables
-        set(GTEST_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/googletest/googletest/include)
-        set(GTEST_BOTH_LIBRARIES gtest gtest_main)
-
-    else()
-
-        # find gtest
-        find_package(GTest REQUIRED)
-
-    endif(BUILD_GTEST_LIBRARY)
+    # find gtest
+    find_package(GTest REQUIRED)
 
     # add test folder
     add_subdirectory(${PROJECT_SOURCE_DIR}/test)
