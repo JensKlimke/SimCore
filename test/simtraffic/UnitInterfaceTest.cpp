@@ -22,8 +22,8 @@
 //
 
 #include <gtest/gtest.h>
-#include <simcore/traffic/Unit.h>
-#include <simcore/traffic/UnitData.h>
+#include <simtraffic/Unit.h>
+#include <simtraffic/UnitData.h>
 #include <nlohmann/json.hpp>
 
 TEST(TrafficUnitTest, UnitExport) {

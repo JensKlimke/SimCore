@@ -10,6 +10,9 @@ option(ENABLE_COVERAGE "Sets or unsets the option to generate with coverage flag
 # add ./cmake to CMAKE_MODULE_PATH
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
+# for installation
+include(GNUInstallDirs)
+
 # set include directory
 include_directories(include)
 include_directories(lib/json/include)
