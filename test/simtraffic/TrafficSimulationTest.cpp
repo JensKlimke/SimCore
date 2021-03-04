@@ -99,6 +99,8 @@ TEST_F(TrafficSimulationTest, RealTime) {
     EXPECT_NEAR(1.0, _simTime, 1e-6);
     EXPECT_NEAR(2.0, _termTime, 1e-6);
 
+    // TODO: check output
+
 }
 
 

@@ -31,7 +31,7 @@ TEST(TrafficUnitTest, UnitExport) {
     Unit unit{};
     nlohmann::json j = unit;
 
-    std::cout << j.dump() << std::endl;
+    // std::cout << j.dump() << std::endl;
     EXPECT_EQ("{\"id\":1,\"parameters\":{\"driverPosition\":{\"x\":0.5,\"y\":0.5,\"z\":1.1},\"size\":{\"x\":5.0,\"y\":2.2,\"z\":1.5},\"wheelBase\":3.0},\"state\":{\"acceleration\":0.0,\"position\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"velocity\":0.0,\"wheelAngle\":0.0,\"yawAngle\":0.0,\"yawRate\":0.0}}", j.dump());
 
     nlohmann::json ji = {

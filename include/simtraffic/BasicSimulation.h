@@ -24,6 +24,7 @@
 #define SIMCORE_TS_BASICSIMULATION_H
 
 #include <string>
+#include <sstream>
 #include <simcore/Loop.h>
 #include <simcore/data/JsonFileReporter.h>
 #include <simcore/data/TimeReporter.h>
@@ -40,6 +41,7 @@ protected:
     TimeReporter *timeReporter = nullptr;
     TimeIsUp *stopTimer = nullptr;
 
+    std::stringstream out{};
     std::vector<ValueExceed<double>*> stopConditions{};
 
 

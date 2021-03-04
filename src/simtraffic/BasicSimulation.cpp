@@ -80,6 +80,7 @@ void BasicSimulation::create(double endTime, double stepSize, bool realTime,
         // set time reporter
         timeReporter = new TimeReporter();
         timeReporter->setTimeStepSize(1.0);
+        timeReporter->ostream(out);
 
         // add component
         addComponent(timeReporter);
