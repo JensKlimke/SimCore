@@ -16,7 +16,8 @@ if(BUILD_TESTING)
     macro(add_gtest TESTNAME)
 
         # link library
-        target_link_libraries(${TESTNAME} PRIVATE ${GTEST_BOTH_LIBRARIES} pthread)
+        target_link_libraries(${TESTNAME} PRIVATE ${GTEST_BOTH_LIBRARIES})
+        # target_link_libraries(${TESTNAME} PRIVATE ${GTEST_BOTH_LIBRARIES} pthread)
         target_include_directories(${TESTNAME} PRIVATE ${GTEST_INCLUDE_DIRS})
 
         if(GOOGLE_TEST_INDIVIDUAL)
