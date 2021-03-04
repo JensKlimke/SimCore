@@ -2,7 +2,6 @@
 add_library(simtraffic STATIC
         BasicSimulation.cpp
         UnitData.cpp
-        Unit.cpp
         )
 
 # include directories

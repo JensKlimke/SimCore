@@ -32,10 +32,10 @@ TEST(TrafficUnitTest, UnitExport) {
     nlohmann::json j = unit;
 
     // std::cout << j.dump() << std::endl;
-    EXPECT_EQ("{\"id\":1,\"parameters\":{\"driverPosition\":{\"x\":0.5,\"y\":0.5,\"z\":1.1},\"size\":{\"x\":5.0,\"y\":2.2,\"z\":1.5},\"wheelBase\":3.0},\"state\":{\"acceleration\":0.0,\"position\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"velocity\":0.0,\"wheelAngle\":0.0,\"yawAngle\":0.0,\"yawRate\":0.0}}", j.dump());
+    EXPECT_EQ("{\"id\":\"unit-0\",\"parameters\":{\"driverPosition\":{\"x\":0.5,\"y\":0.5,\"z\":1.1},\"size\":{\"x\":5.0,\"y\":2.2,\"z\":1.5},\"wheelBase\":3.0},\"state\":{\"acceleration\":0.0,\"position\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"velocity\":0.0,\"wheelAngle\":0.0,\"yawAngle\":0.0,\"yawRate\":0.0}}", j.dump());
 
     nlohmann::json ji = {
-        {"id", 2},
+        {"id", "unit-0"},
         {"state", {
               {"position", {
                    {"x", 10.0},
@@ -53,7 +53,6 @@ TEST(TrafficUnitTest, UnitExport) {
     j2.merge_patch(ji);
 
     unit2 = j2;
-    EXPECT_EQ(2, unit2.getID());
     EXPECT_DOUBLE_EQ(10.0, unit2.getState()->velocity);
     EXPECT_DOUBLE_EQ(0.5, unit2.getState()->wheelAngle);
 

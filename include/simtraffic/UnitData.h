@@ -27,19 +27,19 @@
 #define UNIT_DATA_H
 
 #include <nlohmann/json.hpp>
-#include "UnitInterface.h"
+#include "Unit.h"
 
 using json = nlohmann::json;
 
-void to_json(json& j, const UnitInterface& o);
-void from_json(const json& j, UnitInterface& o);
+void to_json(json& j, const Unit& o);
+void from_json(const json& j, Unit& o);
 
-void to_json(json& j, const UnitInterface::Vector3& o);
-void from_json(const json& j, UnitInterface::Vector3& o);
-void to_json(json& j, const UnitInterface::State& o);
-void from_json(const json& j, UnitInterface::State& o);
-void to_json(json& j, const UnitInterface::Parameters& o);
-void from_json(const json& j, UnitInterface::Parameters& o);
+void to_json(json& j, const Unit::Vector3& o);
+void from_json(const json& j, Unit::Vector3& o);
+void to_json(json& j, const Unit::State& o);
+void from_json(const json& j, Unit::State& o);
+void to_json(json& j, const Unit::Parameters& o);
+void from_json(const json& j, Unit::Parameters& o);
 
 
 #endif // UNIT_DATA_H

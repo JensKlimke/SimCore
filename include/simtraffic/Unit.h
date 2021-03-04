@@ -1,4 +1,4 @@
-// Copyright (c) 2020 Jens Klimke.
+// Copyright (c) 2020 Jens Klimke <jens.klimke@rwth-aachen.de>. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,30 +18,101 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke on 2020-03-20.
+// 
+// Created by Jens Klimke on 2020-03-22.
 //
 
 
-#ifndef SIMCORE_UNIT_H
-#define SIMCORE_UNIT_H
+#ifndef UNIT_INTERFACE_H
+#define UNIT_INTERFACE_H
 
-#include "UnitInterface.h"
 
-class Unit : public UnitInterface {
-
-    static unsigned int __id_counter;
+/**
+ * @brief A traffic unit interface.
+ */
+class Unit {
 
 public:
 
-    Unit();
-    ~Unit() override = default;
+    /** A class to store a three dimensional value. */
+    struct Vector3 {
+        double x; // The x element (in *m*)
+        double y; // The y element (in *m*)
+        double z; // The z element (in *m*)
+    };
+
+    /** A class to store the states. */
+    struct State {
+        Vector3 position = {0.0, 0.0, 0.0}; // The actual position (in *m*)
+        double velocity = 0.0; // The actual velocity (in *m/s*)
+        double acceleration = 0.0; // The actual acceleration (in *m/s^2*)
+        double yawAngle = 0.0; // The actual yaw angle (in *rad*)
+        double yawRate = 0.0; // The actual yaw rate (in *rad/s*)
+        double wheelAngle = 0.0; // The actual wheel steer angle (in *rad*)
+    };
+
+    /** A class to store the parameters. */
+    struct Parameters {
+        double wheelBase = 3.0; // The wheel base (in *m*)
+        Vector3 size = {5.0, 2.2, 1.5}; // The size of the vehicle
+        Vector3 driverPosition = {0.5, 0.5, 1.1}; // The position of the driver related to the center
+    };
+
 
     /**
-     * Resets the internal unit states
+     * Default constructor
      */
-    void reset() override;
+    Unit() = default;
+
+
+    /**
+     * Default destructor
+     */
+    virtual ~Unit() = default;
+
+
+    /**
+    * Returns the pointer for the state structure of the model
+    * @return The state pointer
+    */
+    virtual State *getState() {
+        return &state;
+    }
+
+
+    /**
+    * Returns the const pointer for the state structure of the model
+    * @return The const state point
+    */
+    virtual const State *getState() const {
+        return &state;
+    }
+
+
+    /**
+    * Returns the pointer for the parameters structure of the model
+    * @return The parameters pointer
+    */
+    virtual Parameters *getParameters() {
+        return &parameters;
+    }
+
+
+    /**
+    * Returns the const pointer for the parameters structure of the model
+    * @return The const parameters point
+    */
+    virtual const Parameters *getParameters() const {
+        return &parameters;
+    }
+
+
+protected:
+
+    State state{}; // The state of the unit.
+    Parameters parameters{}; // The parameters of the unit.
+
 
 };
 
-
-#endif //SIMCORE_UNIT_H
+#endif // UNIT_INTERFACE_H

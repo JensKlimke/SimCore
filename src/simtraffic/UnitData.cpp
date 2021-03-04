@@ -24,14 +24,15 @@
 
 
 #include <simtraffic/UnitData.h>
+#include <map>
 
-void from_json(const json& j, UnitInterface::Vector3& o) {
+void from_json(const json& j, Unit::Vector3& o) {
     j.at("x").get_to(o.x);
     j.at("y").get_to(o.y);
     j.at("z").get_to(o.z);
 }
 
-void to_json(json& j, const UnitInterface::Vector3& o) {
+void to_json(json& j, const Unit::Vector3& o) {
     j = json{
         {"x", o.x},
         {"y", o.y},
@@ -40,7 +41,7 @@ void to_json(json& j, const UnitInterface::Vector3& o) {
 }
 
 
-void from_json(const json& j, UnitInterface::State& o) {
+void from_json(const json& j, Unit::State& o) {
     j.at("position").get_to(o.position);
     j.at("velocity").get_to(o.velocity);
     j.at("acceleration").get_to(o.acceleration);
@@ -49,7 +50,7 @@ void from_json(const json& j, UnitInterface::State& o) {
     j.at("wheelAngle").get_to(o.wheelAngle);
 }
 
-void to_json(json& j, const UnitInterface::State& o) {
+void to_json(json& j, const Unit::State& o) {
     j = json{
         {"position", o.position},
         {"velocity", o.velocity},
@@ -61,13 +62,13 @@ void to_json(json& j, const UnitInterface::State& o) {
 }
 
 
-void from_json(const json& j, UnitInterface::Parameters& o) {
+void from_json(const json& j, Unit::Parameters& o) {
     j.at("wheelBase").get_to(o.wheelBase);
     j.at("size").get_to(o.size);
     j.at("driverPosition").get_to(o.driverPosition);
 }
 
-void to_json(json& j, const UnitInterface::Parameters& o) {
+void to_json(json& j, const Unit::Parameters& o) {
     j = json{
         {"wheelBase", o.wheelBase},
         {"size", o.size},
@@ -76,15 +77,16 @@ void to_json(json& j, const UnitInterface::Parameters& o) {
 }
 
 
-void from_json(const json& j, UnitInterface& o) {
-    j.at("id").get_to(*o.getID_ptr());
+void from_json(const json& j, Unit& o) {
+    std::string id;
+    j.at("id").get_to(id); // TODO
     j.at("state").get_to(*o.getState());
     j.at("parameters").get_to(*o.getParameters());
 }
 
-void to_json(json& j, const UnitInterface& o) {
+void to_json(json& j, const Unit& o) {
     j = json{
-        {"id", *o.getID_ptr()},
+        {"id", "unit-0"}, // TODO
         {"state", *o.getState()},
         {"parameters", *o.getParameters()}
     };
