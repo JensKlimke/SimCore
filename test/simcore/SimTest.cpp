@@ -24,7 +24,6 @@
 
 #include <simcore/IComponent.h>
 #include <simcore/Loop.h>
-#include <simcore/data/DataManager.h>
 #include <simcore/timers/BasicTimer.h>
 #include <simcore/timers/TimeIsUp.h>
 #include <simcore/timers/RealTimeTimer.h>
@@ -133,7 +132,6 @@ TEST_F(SimTest, Model) {
 
     // create loop
     Loop sim;
-    data::DataManager data;
 
     // set timer and stop condition
     sim.setTimer(&timer);

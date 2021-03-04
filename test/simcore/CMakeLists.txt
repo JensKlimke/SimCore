@@ -8,7 +8,6 @@ add_definitions(-DLOG_DIR=\"${PROJECT_LOG_DIR}\")
 add_executable(SimCoreTest
         SimTest.cpp
         SignalTest.cpp
-        DataTest.cpp
         )
 
 
