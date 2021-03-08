@@ -1,5 +1,6 @@
 # create executable
 add_executable(TrafficSimulationTest
+        VehicleModelTest.cpp
         TrafficSimulationTest.cpp
         UnitInterfaceTest.cpp
         )
