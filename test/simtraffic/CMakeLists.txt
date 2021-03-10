@@ -10,10 +10,5 @@ target_link_libraries(TrafficSimulationTest PRIVATE
         simtraffic
         )
 
-# include directories
-target_include_directories(TrafficSimulationTest PRIVATE
-        ${PROJECT_SOURCE_DIR}/include
-        )
-
 # add test
 add_gtest(TrafficSimulationTest)

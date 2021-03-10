@@ -1,2 +1,3 @@
+add_subdirectory(simbasic)
 add_subdirectory(simcore)
 add_subdirectory(simtraffic)

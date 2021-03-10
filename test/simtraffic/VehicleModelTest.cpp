@@ -28,17 +28,28 @@
 #include <gtest/gtest.h>
 #include <simtraffic/VehicleModel.h>
 
-class VehicleModelTest : public ::testing::Test, public VehicleModel {
+class VehicleModelTest : public ::testing::Test, public simcore::traffic::VehicleModel {
+
+protected:
+
+    double maximumRelativePower = 90;
+    double maximumAcceleration = 10.0;
+    double maximumDeceleration = -10.0;
+    double referenceVelocity = 12.0;
+    double maximumVelocity = 70.0;
+    double idleVelocity = 5.0;
+    double idleAcceleration = 0.5;
 
     void SetUp() override {
 
-        parameters.maximumRelativePower = 1e2;
-        parameters.maximumAcceleration = 10.0;
-        parameters.maximumDeceleration = -10.0;
-        parameters.maximumVelocity = 70.0;
-        parameters.idleAcceleration = 0.2;
+        // setup acceleration
+        setup(idleAcceleration, idleVelocity, referenceVelocity, maximumRelativePower, maximumVelocity, maximumAcceleration);
+
+        // setup deceleration
+        parameters.maximumDeceleration = maximumDeceleration;
 
     }
+
 
 };
 
@@ -48,44 +59,33 @@ TEST_F(VehicleModelTest, Standstill) {
     state.velocity = 0.0;
 
     input.pedal = 0.0; step(0.0);
-    EXPECT_NEAR(0.2, state.acceleration, 1e-3);
+    EXPECT_NEAR(idleAcceleration, state.acceleration, 1e-3);
 
     input.pedal = 1.0; step(0.0);
-    EXPECT_NEAR(10.0, state.acceleration, 1e-3);
+    EXPECT_NEAR(maximumAcceleration, state.acceleration, 1e-3);
 
     input.pedal = -1.0; step(0.0);
-    EXPECT_NEAR(-10.0, state.acceleration, 1e-3);
-
-}
-
-
-TEST_F(VehicleModelTest, IntermediateState) {
-
-    state.velocity = 10.0;
-    input.pedal = 1.0; step(0.0);
-    EXPECT_NEAR(10.0, state.acceleration, 1e-3);
-
-    state.velocity = 20.0;
-    input.pedal = 1.0; step(0.0);
-    EXPECT_NEAR(5.067, state.acceleration, 1e-3);
-
-    state.velocity = 40.0;
-    input.pedal = 1.0; step(0.0);
-    EXPECT_NEAR(2.168, state.acceleration, 1e-3);
+    EXPECT_NEAR(maximumDeceleration + idleAcceleration, state.acceleration, 1e-3);
 
 }
 
 
 TEST_F(VehicleModelTest, MaximumSpeed) {
 
+    // get deceleration at max. speed with pedal = 0
+    double a = -maximumRelativePower / maximumVelocity;
+
     // set to maximum velocity
-    state.velocity = parameters.maximumVelocity;
+    state.velocity = maximumVelocity;
 
     input.pedal = 1.0; step(0.0);
     EXPECT_NEAR(0.0, state.acceleration, 1e-3);
 
+    input.pedal = 0.0; step(0.0);
+    EXPECT_NEAR(a, state.acceleration, 1e-3);
+
     input.pedal = -1.0; step(0.0);
-    EXPECT_NEAR(-10.0, state.acceleration, 1e-3);
+    EXPECT_NEAR(maximumDeceleration + a, state.acceleration, 1e-3);
 
 }
 
@@ -103,7 +103,7 @@ TEST_F(VehicleModelTest, Run) {
         step(0.1 * i);
 
     // check results
-    EXPECT_NEAR(parameters.maximumVelocity, state.velocity, 1e-3);
+    EXPECT_NEAR(maximumVelocity, state.velocity, 1e-3);
 
     // set input
     input.pedal = -0.999;

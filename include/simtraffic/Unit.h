@@ -49,6 +49,7 @@ public:
         double yawAngle = 0.0; // The actual yaw angle (in *rad*)
         double yawRate = 0.0; // The actual yaw rate (in *rad/s*)
         double wheelAngle = 0.0; // The actual wheel steer angle (in *rad*)
+        double distance = 0.0; // The actual distance travelled (in *m*)
     };
 
     /** A class to store the parameters. */

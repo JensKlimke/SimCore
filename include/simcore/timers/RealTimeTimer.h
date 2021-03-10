@@ -62,7 +62,7 @@ public:
         _steps++;
 
         // wait until elapsed time
-        auto nextTime = getTimeStepSize() * _steps;
+        auto nextTime = getTimeStepSize() * (double) _steps;
         while (currTime < nextTime / _acceleration) {
 
             // wait a thousandth of a second
