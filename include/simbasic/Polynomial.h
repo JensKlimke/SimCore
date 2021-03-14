@@ -28,6 +28,7 @@
 
 #include <cmath>
 #include <vector>
+#include <float.h>
 
 namespace simbasic {
 
@@ -44,8 +45,36 @@ namespace simbasic {
     struct Polynomial : public PolyDefinition {
         Polynomial() = default;
         explicit Polynomial(std::vector<double> &&parameters);
+        explicit Polynomial(double constant);
+        explicit Polynomial(long order, double parameter);
         double operator()(double x) const;
+        void add(long order, double parameter);
     };
+
+
+    /**
+     * Creates a constant polynomial (order 0)
+     * @param constant Constant value
+     */
+    Polynomial::Polynomial(double constant) {
+
+        // add a single constant value
+        emplace_back(PolyParam{0, constant});
+
+    }
+
+
+    /**
+     * Creates a polynomial with the given order and the given parameter
+     * @param order Order of the element
+     * @param parameter Parameter of the element
+     */
+    Polynomial::Polynomial(long order, double parameter) {
+
+        // add a single parameter
+        add(order, parameter);
+
+    }
 
 
     /**
@@ -55,11 +84,22 @@ namespace simbasic {
     Polynomial::Polynomial(std::vector<double> &&parameters) {
 
         // init counter
-        long i = 0;
+        long i = -1;
 
         // iterate over parameters and set order from 0..n
-        for(auto &p : parameters)
-            this->emplace_back(PolyParam{i, parameters[i++]});
+        for(auto &p : parameters) {
+
+            // increment
+            ++i;
+
+            // ignore when almost zero
+            if(abs(p) <= DBL_EPSILON)
+                continue;
+
+            // add parameter
+            this->emplace_back(PolyParam{i, p});
+
+        }
 
     }
 
@@ -80,6 +120,19 @@ namespace simbasic {
 
         // return result
         return result;
+
+    }
+
+
+    /**
+     * Adds an element to the polynomial
+     * @param order Order of the element
+     * @param parameter Parameter of the element
+     */
+    void Polynomial::add(long order, double parameter) {
+
+        // add a single parameter
+        emplace_back(PolyParam{order, parameter});
 
     }
 
