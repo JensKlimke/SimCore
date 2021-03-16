@@ -89,4 +89,11 @@ TEST_F(SplineTest, Spline) {
 }
 
 
+TEST_F(SplineTest, Create) {
+
+    // TODO
+
+}
+
+
 #pragma clang diagnostic pop

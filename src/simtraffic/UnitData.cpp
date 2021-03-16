@@ -47,7 +47,6 @@ void from_json(const json& j, Unit::State& o) {
     j.at("acceleration").get_to(o.acceleration);
     j.at("yawAngle").get_to(o.yawAngle);
     j.at("yawRate").get_to(o.yawRate);
-    j.at("wheelAngle").get_to(o.wheelAngle);
 }
 
 void to_json(json& j, const Unit::State& o) {
@@ -57,20 +56,17 @@ void to_json(json& j, const Unit::State& o) {
         {"acceleration", o.acceleration},
         {"yawAngle", o.yawAngle},
         {"yawRate", o.yawRate},
-        {"wheelAngle", o.wheelAngle}
     };
 }
 
 
 void from_json(const json& j, Unit::Parameters& o) {
-    j.at("wheelBase").get_to(o.wheelBase);
     j.at("size").get_to(o.size);
     j.at("driverPosition").get_to(o.driverPosition);
 }
 
 void to_json(json& j, const Unit::Parameters& o) {
     j = json{
-        {"wheelBase", o.wheelBase},
         {"size", o.size},
         {"driverPosition", o.driverPosition}
     };

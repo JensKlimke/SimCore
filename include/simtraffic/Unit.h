@@ -48,13 +48,12 @@ public:
         double acceleration = 0.0; // The actual acceleration (in *m/s^2*)
         double yawAngle = 0.0; // The actual yaw angle (in *rad*)
         double yawRate = 0.0; // The actual yaw rate (in *rad/s*)
-        double wheelAngle = 0.0; // The actual wheel steer angle (in *rad*)
+        double curvature = 0.0; // The actual curvature (in *1/m*)
         double distance = 0.0; // The actual distance travelled (in *m*)
     };
 
     /** A class to store the parameters. */
     struct Parameters {
-        double wheelBase = 3.0; // The wheel base (in *m*)
         Vector3 size = {5.0, 2.2, 1.5}; // The size of the vehicle
         Vector3 driverPosition = {0.5, 0.5, 1.1}; // The position of the driver related to the center
     };

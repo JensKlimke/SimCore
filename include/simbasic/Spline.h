@@ -40,8 +40,39 @@ namespace simbasic {
 
     struct Spline : public SplineDefinition {
         Spline() = default;
+        explicit Spline(Polynomial &&polynomial);
+        void add(double position, Polynomial &&polynomial);
         double operator() (double x) const;
     };
+
+
+    /**
+     * Creates a spline by a single polynomial
+     * @param p Polynomial
+     */
+    Spline::Spline(Polynomial &&polynomial) {
+
+        // add segment to spline
+        emplace_back(SplineSegment{INFINITY, polynomial});
+
+    }
+
+
+    /**
+     * Adds a polynomial to the spline
+     * @param position Start position of the polynomial
+     * @param polynomial Polynomial to be added
+     */
+    void Spline::add(double position, Polynomial &&polynomial) {
+
+        // reset end position
+        back().end = position;
+
+        // add last element
+        emplace_back(SplineSegment{INFINITY, polynomial});
+
+    }
+
 
     /**
      * Calculates the spline at the given sample points

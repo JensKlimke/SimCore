@@ -44,17 +44,26 @@ namespace simcore {
             struct {
                 simbasic::Spline high{};
                 simbasic::Spline low{};
-                double maximumDeceleration = -10.0;
+                simbasic::Spline brake{};
+                simbasic::Spline steer{};
             } parameters;
 
             struct {
                 double pedal = 0.0;
+                double steering = 0.0;
             } input;
 
 
+            /**
+             * Constructor
+             */
             VehicleModel() = default;
 
 
+            /**
+             * Resets the vehicle model
+             * @param time Reset time
+             */
             void reset(double time) {
 
                 // set time
@@ -66,59 +75,25 @@ namespace simcore {
             }
 
 
-            void setup(double aIdle, double v0, double v1, double p, double vMax, double aMax) {
-
-                using namespace simbasic;
-
-                // define polynomials
-                Polynomial pLow0({aIdle,
-                                  -3 * aIdle / v0,
-                                   3 * aIdle / (v0 * v0) - p / (vMax * vMax * vMax),
-                                  -aIdle / (v0 * v0 * v0)});
-
-                Polynomial pLow1;
-                pLow1.emplace_back(PolyParam{2, -p / (vMax * vMax * vMax)});
-
-                Polynomial pHigh0({aMax,
-                                    0.0,
-                                   -6 * aMax / (v1 * v1) - p / (vMax * vMax * vMax) + 10 * p / (v1 * v1 * v1),
-                                   (8 * aMax * v1 - 15 * p) / (v1 * v1 * v1 * v1),
-                                   3 * (-aMax * v1 + 2 * p) / (v1 * v1 * v1 * v1 * v1)});
-
-                Polynomial pHigh1;
-                pHigh1.emplace_back(PolyParam{-1, p});
-                pHigh1.emplace_back(PolyParam{2, -p / (vMax * vMax * vMax)});
-
-
-                // define 0..v0
-                parameters.low.emplace_back(simbasic::SplineSegment{v0, std::move(pLow0)});
-                parameters.low.emplace_back(simbasic::SplineSegment{INFINITY, pLow1});
-
-                // define 0..v0
-                parameters.high.emplace_back(simbasic::SplineSegment{v1, std::move(pHigh0)});
-                parameters.high.emplace_back(simbasic::SplineSegment{INFINITY, pHigh1});
-
-            }
-
-
             /**
              * Returns the acceleration resulting from the pedal value
              * @param velocity Velocity state
              * @param pedal Pedal value
              * @return The resulting acceleration
              */
-            double forwards(double velocity, double pedal) const {
+            double longitudinalForwards(double velocity, double pedal) const {
 
                 // get max and min acceleration
                 auto aMin = parameters.low(velocity);
                 auto aMax = parameters.high(velocity);
+                auto aBr  = parameters.brake(velocity);
 
                 // limit pedal value
                 auto drive = std::min(1.0, std::max(0.0, pedal));
                 auto brake = std::min(1.0, std::max(0.0, -pedal));
 
                 // calculate acceleration
-                return drive * aMax + (1.0 - drive) * aMin + brake * parameters.maximumDeceleration;
+                return drive * aMax + (1.0 - drive) * aMin + brake * aBr;
 
             }
 
@@ -129,12 +104,12 @@ namespace simcore {
              * @param acceleration Desired acceleration
              * @return The required pedal value
              */
-            double backwards(double velocity, double acceleration) const {
+            double longitudinalBackwards(double velocity, double acceleration) const {
 
                 // calculate acceleration points
                 auto aMin = parameters.low(velocity);
                 auto aMax = parameters.high(velocity);
-                auto aBr = parameters.maximumDeceleration;
+                auto aBr = parameters.brake(velocity);
 
                 // calculate pedals
                 if (aMin < acceleration)
@@ -146,17 +121,61 @@ namespace simcore {
 
 
             /**
+             * Calculates the curvature based on the velocity state and the steering value
+             * @param velocity Velocity state
+             * @param steering Steering value
+             * @return The curvature resulting from steering and velocity
+             */
+            double lateralForwards(double velocity, double steering) const {
+
+                auto c = parameters.steer(velocity);
+                return std::min(1.0, std::max(-1.0, steering)) * c;
+
+            }
+
+
+            /**
+             * Calculates the steering value based on the velocity state and the curvature value
+             * @param velocity Velocity state
+             * @param curvature Curvature value
+             * @return The steering value resulting from curvature and velocity
+             */
+            double lateralBackwards(double velocity, double curvature) const {
+
+                return curvature / parameters.steer(velocity);
+
+            }
+
+
+            /**
              * Calculates a forward step of the vehicle model
              * @param time Actual time
              */
             void step(double time) {
 
+                // time step
+                auto dt = time - _time;
+
                 // calculate acceleration
-                state.acceleration = forwards(state.velocity, input.pedal);
-                state.velocity += state.acceleration * (time - _time);
+                state.acceleration = longitudinalForwards(state.velocity, input.pedal);
+                state.velocity += state.acceleration * dt;
 
                 // limit velocity
                 state.velocity = state.velocity < 0.0 ? 0.0 : state.velocity;
+
+                // calculate distance
+                auto ds = state.velocity * dt;
+                state.distance += ds;
+
+                // set yaw rate
+                state.curvature = lateralForwards(state.velocity, input.steering);
+                state.yawRate = state.curvature * state.velocity;
+                state.yawAngle += state.yawRate * dt;
+
+                // position
+                state.position.x += cos(state.yawAngle) * ds;
+                state.position.y += sin(state.yawAngle) * ds;
+                state.position.z = 0.0;
 
                 // set time
                 _time = time;

@@ -43,98 +43,118 @@ namespace simbasic {
 
     /*!< Polynomial class */
     struct Polynomial : public PolyDefinition {
+
+
         Polynomial() = default;
-        explicit Polynomial(std::vector<double> &&parameters);
-        explicit Polynomial(double constant);
-        explicit Polynomial(long order, double parameter);
-        double operator()(double x) const;
-        void add(long order, double parameter);
-    };
 
 
-    /**
-     * Creates a constant polynomial (order 0)
-     * @param constant Constant value
-     */
-    Polynomial::Polynomial(double constant) {
+        /**
+         * Creates a constant polynomial (order 0)
+         * @param constant Constant value
+         */
+        explicit Polynomial(double constant) {
 
-        // add a single constant value
-        emplace_back(PolyParam{0, constant});
-
-    }
-
-
-    /**
-     * Creates a polynomial with the given order and the given parameter
-     * @param order Order of the element
-     * @param parameter Parameter of the element
-     */
-    Polynomial::Polynomial(long order, double parameter) {
-
-        // add a single parameter
-        add(order, parameter);
-
-    }
-
-
-    /**
-     * Constructor to create polynomial from 0..n order by given parameters
-     * @param parameters Parameters to be set
-     */
-    Polynomial::Polynomial(std::vector<double> &&parameters) {
-
-        // init counter
-        long i = -1;
-
-        // iterate over parameters and set order from 0..n
-        for(auto &p : parameters) {
-
-            // increment
-            ++i;
-
-            // ignore when almost zero
-            if(abs(p) <= DBL_EPSILON)
-                continue;
-
-            // add parameter
-            this->emplace_back(PolyParam{i, p});
+            // add a single constant value
+            emplace_back(PolyParam{0, constant});
 
         }
 
-    }
+
+        /**
+         * Constructor to create polynomial from 0..n order by given parameters
+         * @param parameters Parameters to be set
+         */
+        explicit Polynomial(std::vector<double> &&parameters) {
+
+            // init counter
+            long i = -1;
+
+            // iterate over parameters and set order from 0..n
+            for (auto &p : parameters) {
+
+                // increment
+                ++i;
+
+                // ignore when almost zero
+                if (abs(p) <= DBL_EPSILON)
+                    continue;
+
+                // add parameter
+                this->emplace_back(PolyParam{i, p});
+
+            }
+
+        }
 
 
-    /**
-     * Calculates the polynomial at the given sample points
-     * @param x Sample point
-     * @return The evaluation of the polynomial
-     */
-    double Polynomial::operator()(double x) const {
+        /**
+         * Calculates the polynomial at the given sample points
+         * @param x Sample point
+         * @return The evaluation of the polynomial
+         */
+        double operator()(double x) const {
 
-        // init result
-        double result = 0.0;
+            // init result
+            double result = 0.0;
 
-        // iterate over elements
-        for (const auto &p : *this)
-            result += p.parameter * std::pow(x, (double) p.order);
+            // iterate over elements
+            for (const auto &p : *this)
+                result += p.parameter * std::pow(x, (double) p.order);
 
-        // return result
-        return result;
+            // return result
+            return result;
 
-    }
+        }
 
 
-    /**
-     * Adds an element to the polynomial
-     * @param order Order of the element
-     * @param parameter Parameter of the element
-     */
-    void Polynomial::add(long order, double parameter) {
+        /**
+         * Adds an element to the polynomial
+         * @param order Order of the element
+         * @param parameter Parameter of the element
+         */
+        void add(long order, double parameter) {
 
-        // add a single parameter
-        emplace_back(PolyParam{order, parameter});
+            // add a single parameter
+            emplace_back(PolyParam{order, parameter});
 
-    }
+        }
+
+
+        /**
+         * Creates the derivative of the polynomial
+         * @return Derivative of the polynomial
+         */
+        Polynomial derivative() const {
+
+            // create polynomial
+            Polynomial p;
+
+            // iterate over parameters
+            for (const auto &param : *this)
+                p.add(param.order - 1, param.parameter * (double) param.order);
+
+            return p;
+
+        }
+
+
+        /**
+         * Calculates the derivative at the given point of given order
+         * @param x Position at which the derivative is evaluated
+         * @param order The order of the derivative
+         * @return Derivative value of the polynomial at the given position
+         */
+        double derivative(double x, int order = 1) const {
+
+            Polynomial p = *this;
+            for(unsigned int i = 0; i < order; ++i)
+                p = p.derivative();
+
+            return p(x);
+
+        }
+
+    };
 
 }
 

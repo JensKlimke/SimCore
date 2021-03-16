@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke on 2020-03-07.
+// Created by Jens Klimke on 2021-03-14.
 //
 
 #pragma clang diagnostic push
@@ -26,40 +26,51 @@
 #pragma ide diagnostic ignored "cert-err58-cpp"
 
 #include <gtest/gtest.h>
-#include <simtraffic/Unit.h>
-#include <simtraffic/UnitData.h>
-#include <nlohmann/json.hpp>
+#include <simbasic/Polynomial.h>
 
-TEST(TrafficUnitTest, UnitExport) {
+class PolynomialTest : public ::testing::Test, public simbasic::Polynomial {
 
-    Unit unit{};
-    nlohmann::json j = unit;
+    void SetUp() override {
 
-    // std::cout << j.dump() << std::endl;
-    EXPECT_EQ("{\"id\":\"unit-0\",\"parameters\":{\"driverPosition\":{\"x\":0.5,\"y\":0.5,\"z\":1.1},\"size\":{\"x\":5.0,\"y\":2.2,\"z\":1.5}},\"state\":{\"acceleration\":0.0,\"position\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"velocity\":0.0,\"yawAngle\":0.0,\"yawRate\":0.0}}", j.dump());
+    }
 
-    nlohmann::json ji = {
-        {"id", "unit-0"},
-        {"state", {
-              {"position", {
-                   {"x", 10.0},
-                   {"y",  0.5},
-                   {"z",  0.0}
-              }},
-              {"velocity", 10.0},
-              {"wheelAngle", 0.5},
-              {"yawAngle", 0.2}
-        }}
-    };
+};
 
-    Unit unit2{};
-    nlohmann::json j2 = unit;
-    j2.merge_patch(ji);
+TEST_F(PolynomialTest, CreateContant) {
 
-    unit2 = j2;
-    EXPECT_DOUBLE_EQ(10.0, unit2.getState()->velocity);
+    auto p = Polynomial(2.0);
+
+    EXPECT_DOUBLE_EQ(2.0, p.front().parameter);
+    EXPECT_EQ(0, p.front().order);
 
 }
 
+
+TEST_F(PolynomialTest, Derivative) {
+
+    // add elements
+    add(-2, 1.0);
+    add(-1, 2.0);
+    add( 0, 3.0);
+    add( 1, 4.0);
+    add( 2, 5.0);
+    add( 3, 6.0);
+
+    // calculate derivative
+    auto der = derivative();
+
+    // check
+    EXPECT_EQ(-3, der[0].order);
+    EXPECT_DOUBLE_EQ(-2.0, der[0].parameter);
+    EXPECT_EQ(-2, der[1].order);
+    EXPECT_DOUBLE_EQ(-2.0, der[1].parameter);
+    EXPECT_EQ( 0, der[3].order);
+    EXPECT_DOUBLE_EQ(4.0, der[3].parameter);
+    EXPECT_EQ( 1, der[4].order);
+    EXPECT_DOUBLE_EQ(10.0, der[4].parameter);
+    EXPECT_EQ( 2, der[5].order);
+    EXPECT_DOUBLE_EQ(18.0, der[5].parameter);
+
+}
 
 #pragma clang diagnostic pop
