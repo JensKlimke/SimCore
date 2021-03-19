@@ -24,7 +24,6 @@
 
 
 #include <simtraffic/UnitData.h>
-#include <map>
 
 void from_json(const json& j, Unit::Vector3& o) {
     j.at("x").get_to(o.x);
@@ -41,51 +40,24 @@ void to_json(json& j, const Unit::Vector3& o) {
 }
 
 
-void from_json(const json& j, Unit::State& o) {
+void from_json(const json& j, Unit& o) {
     j.at("position").get_to(o.position);
+    j.at("distance").get_to(o.distance);
     j.at("velocity").get_to(o.velocity);
     j.at("acceleration").get_to(o.acceleration);
     j.at("yawAngle").get_to(o.yawAngle);
     j.at("yawRate").get_to(o.yawRate);
-}
-
-void to_json(json& j, const Unit::State& o) {
-    j = json{
-        {"position", o.position},
-        {"velocity", o.velocity},
-        {"acceleration", o.acceleration},
-        {"yawAngle", o.yawAngle},
-        {"yawRate", o.yawRate},
-    };
-}
-
-
-void from_json(const json& j, Unit::Parameters& o) {
-    j.at("size").get_to(o.size);
-    j.at("driverPosition").get_to(o.driverPosition);
-}
-
-void to_json(json& j, const Unit::Parameters& o) {
-    j = json{
-        {"size", o.size},
-        {"driverPosition", o.driverPosition}
-    };
-}
-
-
-void from_json(const json& j, Unit& o) {
-    std::string id;
-    j.at("id").get_to(id); // TODO
-    j.at("state").get_to(*o.getState());
-    j.at("parameters").get_to(*o.getParameters());
+    j.at("curvature").get_to(o.curvature);
 }
 
 void to_json(json& j, const Unit& o) {
     j = json{
-        {"id", "unit-0"}, // TODO
-        {"state", *o.getState()},
-        {"parameters", *o.getParameters()}
+        {"position", o.position},
+        {"distance", o.distance},
+        {"velocity", o.velocity},
+        {"acceleration", o.acceleration},
+        {"yawAngle", o.yawAngle},
+        {"yawRate", o.yawRate},
+        {"curvature", o.curvature}
     };
 }
-
-

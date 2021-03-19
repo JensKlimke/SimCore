@@ -1,5 +1,4 @@
-//
-// Copyright (c) 2019-2020 Jens Klimke <jens.klimke@rwth-aachen.de>
+// Copyright (c) 2021 Jens Klimke.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,28 +18,52 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke on 2019-04-17
+// Created by Jens Klimke on 2021-03-17.
+// Contributors:
 //
 
-#ifndef SIMCORE_MODEL_H
-#define SIMCORE_MODEL_H
+
+#ifndef SIMCORE_GENERICCOMPONENT_H
+#define SIMCORE_GENERICCOMPONENT_H
 
 #include "IComponent.h"
-#include "ISynchronized.h"
 
 namespace sim {
 
-    class Model : public ISynchronized {
+    class GenericComponent : public IComponent {
 
     public:
 
-        Model() = default;
-        ~Model() override = default;
+        // step functions to be added manually
+        std::function<void(double)> stepFnc;
+        std::function<void(double)> initFnc;
+        std::function<void(double)> termFnc;
 
-        void terminate(double simTime) override {}
+
+        void initialize(double initTime) override {
+
+            if(initFnc)
+                initFnc(initTime);
+
+        }
+
+        void terminate(double simTime) override {
+
+            if(termFnc)
+                termFnc(simTime);
+
+        }
+
+        void step(double simTime) override {
+
+            // step function
+            if(stepFnc)
+                stepFnc(simTime);
+
+        }
 
     };
 
 }
 
-#endif //SIMCORE_MODEL_H
+#endif //SIMCORE_GENERICCOMPONENT_H

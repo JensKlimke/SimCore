@@ -56,13 +56,11 @@ public:
     }
 
 
-    bool step(double simTime) override {
+    void step(double simTime, double) override {
 
         // the limit has been reached
         if(*_value > _limit)
             stop(_mode);
-
-        return true;
 
     }
 

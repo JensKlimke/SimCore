@@ -23,16 +23,14 @@
 //
 
 
-#ifndef UNIT_INTERFACE_H
-#define UNIT_INTERFACE_H
+#ifndef SIMCORE_UNIT_H
+#define SIMCORE_UNIT_H
 
 
 /**
  * @brief A traffic unit interface.
  */
-class Unit {
-
-public:
+struct Unit {
 
     /** A class to store a three dimensional value. */
     struct Vector3 {
@@ -41,78 +39,15 @@ public:
         double z; // The z element (in *m*)
     };
 
-    /** A class to store the states. */
-    struct State {
-        Vector3 position = {0.0, 0.0, 0.0}; // The actual position (in *m*)
-        double velocity = 0.0; // The actual velocity (in *m/s*)
-        double acceleration = 0.0; // The actual acceleration (in *m/s^2*)
-        double yawAngle = 0.0; // The actual yaw angle (in *rad*)
-        double yawRate = 0.0; // The actual yaw rate (in *rad/s*)
-        double curvature = 0.0; // The actual curvature (in *1/m*)
-        double distance = 0.0; // The actual distance travelled (in *m*)
-    };
 
-    /** A class to store the parameters. */
-    struct Parameters {
-        Vector3 size = {5.0, 2.2, 1.5}; // The size of the vehicle
-        Vector3 driverPosition = {0.5, 0.5, 1.1}; // The position of the driver related to the center
-    };
-
-
-    /**
-     * Default constructor
-     */
-    Unit() = default;
-
-
-    /**
-     * Default destructor
-     */
-    virtual ~Unit() = default;
-
-
-    /**
-    * Returns the pointer for the state structure of the model
-    * @return The state pointer
-    */
-    virtual State *getState() {
-        return &state;
-    }
-
-
-    /**
-    * Returns the const pointer for the state structure of the model
-    * @return The const state point
-    */
-    virtual const State *getState() const {
-        return &state;
-    }
-
-
-    /**
-    * Returns the pointer for the parameters structure of the model
-    * @return The parameters pointer
-    */
-    virtual Parameters *getParameters() {
-        return &parameters;
-    }
-
-
-    /**
-    * Returns the const pointer for the parameters structure of the model
-    * @return The const parameters point
-    */
-    virtual const Parameters *getParameters() const {
-        return &parameters;
-    }
-
-
-protected:
-
-    State state{}; // The state of the unit.
-    Parameters parameters{}; // The parameters of the unit.
-
+    Vector3 position = {0.0, 0.0, 0.0}; // The actual position (in *m*)
+    double velocity = 0.0; // The actual velocity (in *m/s*)
+    double acceleration = 0.0; // The actual acceleration (in *m/s^2*)
+    double yawAngle = 0.0; // The actual yaw angle (in *rad*)
+    double yawRate = 0.0; // The actual yaw rate (in *rad/s*)
+    double curvature = 0.0; // The actual curvature (in *1/m*)
+    double distance = 0.0; // The actual distance travelled (in *m*)
 
 };
 
-#endif // UNIT_INTERFACE_H
+#endif // SIMCORE_UNIT_H
