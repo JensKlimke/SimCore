@@ -55,15 +55,7 @@ public:
 };
 
 
-class ModelNotInitialized : public ProcessException
-{
-
-public:
-
-    explicit ModelNotInitialized(const char* msg)
-        : ProcessException(msg) {}
-
-};
+typedef ProcessException StepNotImplemented;
 
 
 #endif //SIMCORE_SIMULATIONERRORS_H

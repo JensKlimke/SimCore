@@ -66,15 +66,12 @@ public:
     /**
      * Step method
      * @param simTime Simulation time
-     * @return Success flag
      */
-    bool step(double simTime) override {
+    void step(double simTime) override {
 
         // set status to ended if time is reached
         if(simTime >= (_stopTime - EPS_TIME))
             end();
-
-        return true;
 
     }
 

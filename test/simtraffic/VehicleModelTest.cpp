@@ -77,12 +77,12 @@ protected:
         input.steering = 0.0;
 
         // set state
-        state.acceleration = 0.0;
-        state.velocity = idleVelocity;
-        state.curvature = 0.0;
-        state.position = {0.0, 0.0, 0.0};
-        state.yawAngle = 0.0;
-        state.yawRate = 0.0;
+        acceleration = 0.0;
+        velocity = idleVelocity;
+        curvature = 0.0;
+        position = {0.0, 0.0, 0.0};
+        yawAngle = 0.0;
+        yawRate = 0.0;
 
     }
 
@@ -128,26 +128,26 @@ TEST_F(VehicleModelTest, SpecialCases) {
 
 TEST_F(VehicleModelTest, Standstill) {
 
-    state.velocity = 0.0;
+    velocity = 0.0;
 
     input.pedal = 0.0; step(0.0);
-    EXPECT_NEAR(idleAcceleration, state.acceleration, 1e-3);
+    EXPECT_NEAR(idleAcceleration, acceleration, 1e-3);
 
     input.pedal = 1.0; step(0.0);
-    EXPECT_NEAR(maximumAcceleration, state.acceleration, 1e-3);
+    EXPECT_NEAR(maximumAcceleration, acceleration, 1e-3);
 
     input.pedal = -1.0; step(0.0);
-    EXPECT_NEAR(maximumDeceleration + idleAcceleration, state.acceleration, 1e-3);
+    EXPECT_NEAR(maximumDeceleration + idleAcceleration, acceleration, 1e-3);
 
 }
 
 
 TEST_F(VehicleModelTest, Idle) {
 
-    state.velocity = idleVelocity;
+    velocity = idleVelocity;
 
     input.pedal = 0.0; step(0.0);
-    EXPECT_NEAR(0.0, state.acceleration, 1e-3);
+    EXPECT_NEAR(0.0, acceleration, 1e-3);
 
 }
 
@@ -158,16 +158,16 @@ TEST_F(VehicleModelTest, MaximumSpeed) {
     double a = -maximumRelativePower / maximumVelocity;
 
     // set to maximum velocity
-    state.velocity = maximumVelocity;
+    velocity = maximumVelocity;
 
     input.pedal = 1.0; step(0.0);
-    EXPECT_NEAR(0.0, state.acceleration, 1e-3);
+    EXPECT_NEAR(0.0, acceleration, 1e-3);
 
     input.pedal = 0.0; step(0.0);
-    EXPECT_NEAR(a, state.acceleration, 1e-3);
+    EXPECT_NEAR(a, acceleration, 1e-3);
 
     input.pedal = -1.0; step(0.0);
-    EXPECT_NEAR(maximumDeceleration + a, state.acceleration, 1e-3);
+    EXPECT_NEAR(maximumDeceleration + a, acceleration, 1e-3);
 
 }
 
@@ -224,64 +224,64 @@ TEST_F(VehicleModelTest, LatForewardsAndBackwards) {
 
 TEST_F(VehicleModelTest, Steering) {
 
-    state.velocity = 0.0;
+    velocity = 0.0;
 
     input.steering = 0.0; step(0.0);
-    EXPECT_NEAR( 0.0, state.curvature, 1e-5);
+    EXPECT_NEAR( 0.0, curvature, 1e-5);
 
     input.steering = 0.5; step(0.0);
-    EXPECT_NEAR( 0.05, state.curvature, 1e-5);
+    EXPECT_NEAR( 0.05, curvature, 1e-5);
 
     input.steering = 1.0; step(0.0);
-    EXPECT_NEAR( 0.1, state.curvature, 1e-5);
+    EXPECT_NEAR( 0.1, curvature, 1e-5);
 
     input.steering = -0.5; step(0.0);
-    EXPECT_NEAR(-0.05, state.curvature, 1e-5);
+    EXPECT_NEAR(-0.05, curvature, 1e-5);
 
     input.steering = -1.0; step(0.0);
-    EXPECT_NEAR(-0.1, state.curvature, 1e-5);
+    EXPECT_NEAR(-0.1, curvature, 1e-5);
 
-    EXPECT_NEAR( 0.0, state.yawRate, 1e-5);
+    EXPECT_NEAR( 0.0, yawRate, 1e-5);
 
 
-    state.velocity = 70.0;
+    velocity = 70.0;
 
     input.steering = 0.0; step(0.0);
-    EXPECT_NEAR( 0.0, state.curvature, 1e-5);
+    EXPECT_NEAR( 0.0, curvature, 1e-5);
 
     input.steering = 0.5; step(0.0);
-    EXPECT_NEAR( 0.025, state.curvature, 1e-5);
+    EXPECT_NEAR( 0.025, curvature, 1e-5);
 
     input.steering = 1.0; step(0.0);
-    EXPECT_NEAR( 0.05, state.curvature, 1e-5);
+    EXPECT_NEAR( 0.05, curvature, 1e-5);
 
     input.steering = -0.5; step(0.0);
-    EXPECT_NEAR(-0.025, state.curvature, 1e-5);
+    EXPECT_NEAR(-0.025, curvature, 1e-5);
 
     input.steering = -1.0; step(0.0);
-    EXPECT_NEAR(-0.05, state.curvature, 1e-5);
+    EXPECT_NEAR(-0.05, curvature, 1e-5);
 
-    EXPECT_NEAR(-3.5, state.yawRate, 1e-5);
+    EXPECT_NEAR(-3.5, yawRate, 1e-5);
 
 }
 
 
 TEST_F(VehicleModelTest, SteadyTurn) {
 
-    state.velocity = 10.0;
+    velocity = 10.0;
     input.steering = 0.1;
 
     step(0.0);
-    EXPECT_NEAR(0.0, state.yawAngle, 1e-6);
+    EXPECT_NEAR(0.0, yawAngle, 1e-6);
 
     step(0.1);
-    EXPECT_NEAR(0.0098960, state.yawAngle, 1e-6);
+    EXPECT_NEAR(0.0098960, yawAngle, 1e-6);
 
     step(0.2);
-    EXPECT_NEAR(0.0197901, state.yawAngle, 1e-6);
+    EXPECT_NEAR(0.0197901, yawAngle, 1e-6);
 
     step(0.3);
-    EXPECT_NEAR(0.0296823, state.yawAngle, 1e-6);
+    EXPECT_NEAR(0.0296823, yawAngle, 1e-6);
 
 }
 
@@ -300,8 +300,8 @@ TEST_F(VehicleModelTest, RunPosition) {
         step(0.1 * i);
 
     // check results
-    EXPECT_NEAR(maximumVelocity, state.velocity, 1e-3);
-    EXPECT_NEAR(0.0, state.yawRate, 1e-3);
+    EXPECT_NEAR(maximumVelocity, velocity, 1e-3);
+    EXPECT_NEAR(0.0, yawRate, 1e-3);
 
     // set input
     input.pedal = -0.999;
@@ -311,8 +311,8 @@ TEST_F(VehicleModelTest, RunPosition) {
         step(0.1 * i);
 
     // check results
-    EXPECT_NEAR(0.0, state.velocity, 1e-3);
-    EXPECT_NEAR(0.0, state.yawRate, 1e-3);
+    EXPECT_NEAR(0.0, velocity, 1e-3);
+    EXPECT_NEAR(0.0, yawRate, 1e-3);
 
 }
 
@@ -325,96 +325,96 @@ TEST_F(VehicleModelTest, RunPedal) {
     initIdle();
 
     // set yaw angle
-    state.yawAngle = 0.0;
+    yawAngle = 0.0;
     step(0.0); step(1.0);
 
     // check position
-    EXPECT_NEAR(idleVelocity, state.position.x, 1e-3);
-    EXPECT_NEAR(0.0, state.position.y, 1e-3);
+    EXPECT_NEAR(idleVelocity, position.x, 1e-3);
+    EXPECT_NEAR(0.0, position.y, 1e-3);
 
 
     // set idle speed
     initIdle();
 
     // set yaw angle
-    state.yawAngle = M_PI_4;
+    yawAngle = M_PI_4;
     step(0.0); step(1.0);
 
     // check position
-    EXPECT_NEAR(p * idleVelocity, state.position.x, 1e-3);
-    EXPECT_NEAR(p * idleVelocity, state.position.y, 1e-3);
+    EXPECT_NEAR(p * idleVelocity, position.x, 1e-3);
+    EXPECT_NEAR(p * idleVelocity, position.y, 1e-3);
 
 
     // set idle speed
     initIdle();
 
     // set yaw angle
-    state.yawAngle = M_PI_2;
+    yawAngle = M_PI_2;
     step(0.0); step(1.0);
 
     // check position
-    EXPECT_NEAR(0.0, state.position.x, 1e-3);
-    EXPECT_NEAR(idleVelocity, state.position.y, 1e-3);
+    EXPECT_NEAR(0.0, position.x, 1e-3);
+    EXPECT_NEAR(idleVelocity, position.y, 1e-3);
 
 
     // set idle speed
     initIdle();
 
     // set yaw angle
-    state.yawAngle = M_PI_2 + M_PI_4;
+    yawAngle = M_PI_2 + M_PI_4;
     step(0.0); step(1.0);
 
     // check position
-    EXPECT_NEAR(-p * idleVelocity, state.position.x, 1e-3);
-    EXPECT_NEAR( p * idleVelocity, state.position.y, 1e-3);
+    EXPECT_NEAR(-p * idleVelocity, position.x, 1e-3);
+    EXPECT_NEAR( p * idleVelocity, position.y, 1e-3);
 
 
     // set idle speed
     initIdle();
 
     // set yaw angle
-    state.yawAngle = M_PI;
+    yawAngle = M_PI;
     step(0.0); step(1.0);
 
     // check position
-    EXPECT_NEAR(-idleVelocity, state.position.x, 1e-3);
-    EXPECT_NEAR(0.0, state.position.y, 1e-3);
+    EXPECT_NEAR(-idleVelocity, position.x, 1e-3);
+    EXPECT_NEAR(0.0, position.y, 1e-3);
 
 
     // set idle speed
     initIdle();
 
     // set yaw angle
-    state.yawAngle = M_PI + M_PI_4;
+    yawAngle = M_PI + M_PI_4;
     step(0.0); step(1.0);
 
     // check position
-    EXPECT_NEAR(-p * idleVelocity, state.position.x, 1e-3);
-    EXPECT_NEAR(-p * idleVelocity, state.position.y, 1e-3);
+    EXPECT_NEAR(-p * idleVelocity, position.x, 1e-3);
+    EXPECT_NEAR(-p * idleVelocity, position.y, 1e-3);
 
 
     // set idle speed
     initIdle();
 
     // set yaw angle
-    state.yawAngle = M_PI + M_PI_2;
+    yawAngle = M_PI + M_PI_2;
     step(0.0); step(1.0);
 
     // check position
-    EXPECT_NEAR(0.0, state.position.x, 1e-3);
-    EXPECT_NEAR(-idleVelocity, state.position.y, 1e-3);
+    EXPECT_NEAR(0.0, position.x, 1e-3);
+    EXPECT_NEAR(-idleVelocity, position.y, 1e-3);
 
 
     // set idle speed
     initIdle();
 
     // set yaw angle
-    state.yawAngle = M_PI + M_PI_2 + M_PI_4;
+    yawAngle = M_PI + M_PI_2 + M_PI_4;
     step(0.0); step(1.0);
 
     // check position
-    EXPECT_NEAR( p * idleVelocity, state.position.x, 1e-3);
-    EXPECT_NEAR(-p * idleVelocity, state.position.y, 1e-3);
+    EXPECT_NEAR( p * idleVelocity, position.x, 1e-3);
+    EXPECT_NEAR(-p * idleVelocity, position.y, 1e-3);
 
 }
 
@@ -425,10 +425,10 @@ TEST_F(VehicleModelTest, Eight) {
     reset(0.0);
 
     // set initial state
-    state.velocity = 0.0;
-    state.acceleration = 0.0;
-    state.yawAngle = 0.0;
-    state.yawRate = 0.0;
+    velocity = 0.0;
+    acceleration = 0.0;
+    yawAngle = 0.0;
+    yawRate = 0.0;
 
     // iterate over time
     for(unsigned int i = 0; i < 100000; ++i) {

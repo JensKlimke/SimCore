@@ -39,15 +39,13 @@ private:
 public:
 
 
-    /**
-     * Default constructor
-     */
     BasicTimer() = default;
-
-
     ~BasicTimer() override = default;
 
 
+    /**
+     * Perform step
+     */
     void step() override {
 
         _time += _stepSize;
@@ -55,11 +53,22 @@ public:
     }
 
 
+    /**
+     * Starts the timer: does nothing
+     */
     void start() override {}
 
+
+    /**
+     * Stops the timer: does nothing
+     */
     void stop() override {}
 
 
+    /**
+     * Returns the actual time
+     * @return
+     */
     double time() const override {
 
         return _time;
@@ -67,6 +76,9 @@ public:
     }
 
 
+    /**
+     * Resets the timer
+     */
     void reset() override {
 
         _time = 0.0;
@@ -95,8 +107,6 @@ public:
 
     }
 
-
-protected:
 
     /**
      * Sets the current time

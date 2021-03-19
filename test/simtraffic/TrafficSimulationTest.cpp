@@ -26,9 +26,9 @@
 #pragma ide diagnostic ignored "cert-err58-cpp"
 
 #include <gtest/gtest.h>
-#include <simtraffic/BasicSimulation.h>
+#include <simcore/BasicSimulation.h>
 
-class TrafficSimulationTest : public ::testing::Test, public BasicSimulation, public sim::IComponent {
+class TrafficSimulationTest : public ::testing::Test, public sim::BasicSimulation, public sim::IComponent {
 
 public:
 
@@ -48,7 +48,7 @@ public:
 
     }
 
-    bool step(double simTime) override {
+    void step(double simTime) override {
 
         bool valid = _counter == 1000;
 
@@ -56,8 +56,6 @@ public:
             _simTime = simTime;
 
         _counter++;
-
-        return valid;
 
     }
 
@@ -80,7 +78,7 @@ TEST_F(TrafficSimulationTest, NonRealTime) {
     addComponent(this);
 
     // run simulation
-    run();
+    Loop::run();
 
     EXPECT_NEAR(0.0, _initTime, 1e-6);
     EXPECT_NEAR(10.0, _simTime, 1e-6);
@@ -97,7 +95,7 @@ TEST_F(TrafficSimulationTest, RealTime) {
     addComponent(this);
 
     // run simulation
-    run();
+    Loop::run();
 
     EXPECT_NEAR(0.0, _initTime, 1e-6);
     EXPECT_NEAR(1.0, _simTime, 1e-6);

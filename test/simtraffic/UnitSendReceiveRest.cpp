@@ -18,60 +18,51 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke on 2020-03-07.
+// Created by Jens Klimke on 2021-03-19.
 //
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunknown-pragmas"
 #pragma ide diagnostic ignored "cert-err58-cpp"
 
+#include <sys/types.h>
+#include <sys/socket.h>
 #include <gtest/gtest.h>
 #include <simtraffic/Unit.h>
 #include <simtraffic/UnitData.h>
 #include <nlohmann/json.hpp>
 
-TEST(TrafficUnitTest, UnitExport) {
+TEST(UnitSendReceiveTest, SendReceive) {
 
-    // set an empty unit
-    Unit unit;
+    Unit unit{};
     nlohmann::json j = unit;
 
-    // check against empty (elements stored are in alphabetical order)
-    EXPECT_EQ("{\"acceleration\":0.0,\"curvature\":0.0,\"distance\":0.0,\"position\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},"
-              "\"velocity\":0.0,""\"yawAngle\":0.0,\"yawRate\":0.0}",
+    // std::cout << j.dump() << std::endl;
+    EXPECT_EQ("{\"id\":\"unit-0\",\"parameters\":{\"driverPosition\":{\"x\":0.5,\"y\":0.5,\"z\":1.1},"
+              "\"size\":{\"x\":5.0,\"y\":2.2,\"z\":1.5}},\"state\":{\"acceleration\":0.0,"
+              "\"position\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"velocity\":0.0,""\"yawAngle\":0.0,\"yawRate\":0.0}}",
               j.dump());
 
-    // define a sample json
     nlohmann::json ji = {
-      {"acceleration", 0.1},
-      {"curvature", 0.01},
-      {"distance", 120.0},
-      {"position", {
-           {"x", 10.0},
-           {"y",  0.5},
-           {"z",  0.0}
-      }},
-      {"velocity", 10.0},
-      {"yawAngle", 0.2},
-      {"yawRate", 0.02}
+        {"id", "unit-0"},
+        {"state", {
+              {"position", {
+                   {"x", 10.0},
+                   {"y",  0.5},
+                   {"z",  0.0}
+              }},
+              {"velocity", 10.0},
+              {"wheelAngle", 0.5},
+              {"yawAngle", 0.2}
+        }}
     };
 
-    // merge with json
-    j.merge_patch(ji);
+    Unit unit2{};
+    nlohmann::json j2 = unit;
+    j2.merge_patch(ji);
 
-    // create new unit
-    Unit unit2 = j;
-
-    // check data
-    EXPECT_DOUBLE_EQ(  0.1,  unit2.acceleration);
-    EXPECT_DOUBLE_EQ(  0.01, unit2.curvature);
-    EXPECT_DOUBLE_EQ(120.0,  unit2.distance);
-    EXPECT_DOUBLE_EQ( 10.0,  unit2.position.x);
-    EXPECT_DOUBLE_EQ(  0.5,  unit2.position.y);
-    EXPECT_DOUBLE_EQ(  0.0,  unit2.position.z);
-    EXPECT_DOUBLE_EQ( 10.0,  unit2.velocity);
-    EXPECT_DOUBLE_EQ(  0.2,  unit2.yawAngle);
-    EXPECT_DOUBLE_EQ(  0.02, unit2.yawRate);
+    unit2 = j2;
+    EXPECT_DOUBLE_EQ(10.0, unit2.getState()->velocity);
 
 }
 

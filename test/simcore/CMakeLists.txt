@@ -6,8 +6,9 @@ add_definitions(-DLOG_DIR=\"${PROJECT_LOG_DIR}\")
 
 # add sources
 add_executable(SimCoreTest
+        LoopTest.cpp
         SimTest.cpp
-        SignalTest.cpp
+#        SignalTest.cpp
         )
 
 

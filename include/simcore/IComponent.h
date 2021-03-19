@@ -25,14 +25,112 @@
 #ifndef SIMCORE_ICOMPONENT_H
 #define SIMCORE_ICOMPONENT_H
 
+#ifndef EPS_SIM_TIME
+#define EPS_SIM_TIME 1e-9
+#endif
+
+#include <limits>
+#include "exceptions.h"
 
 namespace sim {
 
 
     class IComponent {
 
+    protected:
 
-        double _last_time_step{};
+        friend class Loop;
+
+        double _timeStepSize{};
+        double _deltaStartTime = 0.0;
+
+        double _lastTimeStep = 0.0;
+        double _nextExecTime = 0.0;
+
+        double _initTime{};
+        double _termTime{};
+
+        unsigned long _steps = 0;
+
+
+        /**
+         * Executes a time step and return the time step size. Attention: only run once per simulation step
+         * @param simTime Simulation time
+         * @return Time step size
+         */
+        double timeStep(double simTime) {
+
+            // get time step size
+            double dt = simTime - _lastTimeStep;
+
+            // set next time step
+            _lastTimeStep = simTime;
+
+            // increment steps
+            _steps++;
+
+            // return time step size
+            return dt;
+
+        }
+
+
+        /**
+         * Initializes the component. Increases the nexte execution time by the initialization time
+         * @param initTime Initialization time
+         */
+        virtual void _initialize(double initTime) {
+
+            // reset steps
+            _steps = 0;
+
+            // set times
+            _initTime = initTime;
+            _termTime = -std::numeric_limits<double>::infinity();
+
+            // set this execution time and next execution time
+            _lastTimeStep = initTime;
+            _nextExecTime = _deltaStartTime + initTime;
+
+            // run initialization
+            initialize(_initTime);
+
+        }
+
+
+        /**
+         * Performs a simulation step, when the next execution time is reached
+         * @param simTime Current simulation time
+         * @return Returns a flag whether the step is executed or skipped
+         */
+        virtual void _step(double simTime) {
+
+            if(simTime + EPS_SIM_TIME >= _nextExecTime) {
+
+                // set next execution time
+                _nextExecTime += _timeStepSize;
+
+                // model step
+                step(simTime, timeStep(simTime));
+
+            }
+
+        }
+
+
+        /**
+         * Handles the termination
+         * @param simTime Simulation time at termination
+         */
+        virtual void _terminate(double simTime) {
+
+            // set term time
+            _termTime = simTime;
+
+            // run terminations
+            terminate(_termTime);
+
+        }
 
 
     public:
@@ -58,57 +156,55 @@ namespace sim {
 
 
         /**
-         * Handles a simulation step
-         * @param simTime The current simulation time
-         * @return Success flag
+         * A function to be overloaded
+         * @param simTime Actual simulation time
          */
-        virtual bool step(double simTime) = 0;
+        virtual void step(double simTime) {
+
+            throw StepNotImplemented("step(double simTime) called but not implemented");
+
+        }
+
+
+        /**
+         * Executes a simulation step
+         * @param simTime The actual simulation time
+         * @param deltaTime The actual time step size
+         */
+        virtual void step(double simTime, double deltaTime) {
+
+            // calls without time step size
+            step(simTime);
+
+        }
 
 
         /**
          * Handles the termination
-         * @return Success flag
+         * @param simTime Simulation time at termination
          */
         virtual void terminate(double simTime) = 0;
 
 
-    protected:
-
-
-
         /**
-         * Resets the model timer
-         * @param initTime Initial time
+         * Sets the time step size of the model
+         * @param timeStepSize Time step size
          */
-        void initializeTimer(double initTime) {
+        void setTimeStepSize(double timeStepSize, double firstExecutionAfterStart = 0.0) {
 
-            _last_time_step = initTime;
+            _timeStepSize = timeStepSize;
+            _deltaStartTime = firstExecutionAfterStart;
 
         }
 
 
         /**
-        * Returns the time since the last time step was performed
-        * @return Time passed
-        */
-        double sinceLastTimeStep(double simTime) const {
-
-            return simTime - _last_time_step;
-
-        }
-
-
-        /**
-         * Executes a time step and return the time step size. Attention: only run once per simulation step
-         * @param simTime Simulation time
-         * @return Time step size
+         * Returns the number steps performed since init
+         * @return Number of steps
          */
-        double timeStep(double simTime) {
+        unsigned long getSteps() const {
 
-            double dt = sinceLastTimeStep(simTime);
-            _last_time_step = simTime;
-
-            return dt;
+            return _steps;
 
         }
 

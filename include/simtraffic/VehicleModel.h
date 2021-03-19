@@ -70,7 +70,7 @@ namespace simcore {
                 _time = time;
 
                 // reset distance
-                state.distance = 0.0;
+                distance = 0.0;
 
             }
 
@@ -157,25 +157,25 @@ namespace simcore {
                 auto dt = time - _time;
 
                 // calculate acceleration
-                state.acceleration = longitudinalForwards(state.velocity, input.pedal);
-                state.velocity += state.acceleration * dt;
+                acceleration = longitudinalForwards(velocity, input.pedal);
+                velocity += acceleration * dt;
 
                 // limit velocity
-                state.velocity = state.velocity < 0.0 ? 0.0 : state.velocity;
+                velocity = velocity < 0.0 ? 0.0 : velocity;
 
                 // calculate distance
-                auto ds = state.velocity * dt;
-                state.distance += ds;
+                auto ds = velocity * dt;
+                distance += ds;
 
                 // set yaw rate
-                state.curvature = lateralForwards(state.velocity, input.steering);
-                state.yawRate = state.curvature * state.velocity;
-                state.yawAngle += state.yawRate * dt;
+                curvature = lateralForwards(velocity, input.steering);
+                yawRate = curvature * velocity;
+                yawAngle += yawRate * dt;
 
                 // position
-                state.position.x += cos(state.yawAngle) * ds;
-                state.position.y += sin(state.yawAngle) * ds;
-                state.position.z = 0.0;
+                position.x += cos(yawAngle) * ds;
+                position.y += sin(yawAngle) * ds;
+                position.z = 0.0;
 
                 // set time
                 _time = time;

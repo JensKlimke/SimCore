@@ -36,10 +36,6 @@ void from_json(const json& j, Unit& o);
 
 void to_json(json& j, const Unit::Vector3& o);
 void from_json(const json& j, Unit::Vector3& o);
-void to_json(json& j, const Unit::State& o);
-void from_json(const json& j, Unit::State& o);
-void to_json(json& j, const Unit::Parameters& o);
-void from_json(const json& j, Unit::Parameters& o);
 
 
 #endif // UNIT_DATA_H

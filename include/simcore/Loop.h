@@ -37,16 +37,18 @@ namespace sim {
 
     public:
 
-        enum class Status { INITIALIZED, RUNNING, STOPPED };
+        enum class Status {
+            INITIALIZING, INITIALIZED, RUNNING, TERMINATING, STOPPED
+        };
 
 
     private:
 
         Status _status = Status::STOPPED;
-        bool   _stop   = true;
+        bool _stop = true;
 
-        std::vector<IComponent*> _components{};
-        std::vector<IStopCondition*> _stop_conditions{};
+        std::vector<IComponent *> _components{};
+        std::vector<IStopCondition *> _stop_conditions{};
 
         ITimer *_timer = nullptr;
 
@@ -108,22 +110,25 @@ namespace sim {
             // check status
             initialize();
 
+            // set state to running
+            _status = Status::RUNNING;
+
             // start timer
             _timer->start();
 
             // iterate while stop flag is not set
-            while(!_stop) {
+            while (!_stop) {
 
                 // iterate over components ...
                 for (auto &m : _components) {
 
                     // ... and run component step
-                    m->step(_timer->time());
+                    m->_step(_timer->time());
 
                 }
 
                 // iterate over stop conditions ...
-                for(auto &sc : _stop_conditions) {
+                for (auto &sc : _stop_conditions) {
 
                     // ... and check status
                     if (sc->hasStopped())
@@ -132,7 +137,7 @@ namespace sim {
                 }
 
                 // time step
-                if(!_stop)
+                if (!_stop)
                     _timer->step();
 
             }
@@ -150,10 +155,6 @@ namespace sim {
          * Abort the running simulation
          */
         void stop() {
-
-            // check state
-            if(_status != Status::RUNNING)
-                throw ProcessException("Simulation is not running.");
 
             // set stop flag
             _stop = true;
@@ -173,7 +174,7 @@ namespace sim {
         }
 
 
-    private:
+    protected:
 
 
         /**
@@ -181,20 +182,18 @@ namespace sim {
          */
         void initialize() {
 
-            // check status
-            if(_status != Status::STOPPED)
-                throw ProcessException("Simulation must be stopped to be initialized.");
-
             // check timer
-            if(_timer == nullptr)
+            if (_timer == nullptr)
                 throw ProcessException("A timer must be set.");
+
+            // set status
+            _status = Status::INITIALIZING;
 
             // reset timer
             _timer->reset();
 
-
             // iterate over stop conditions ...
-            for(auto &sc : _stop_conditions) {
+            for (auto &sc : _stop_conditions) {
 
                 // ... and reset
                 sc->reset();
@@ -202,10 +201,10 @@ namespace sim {
             }
 
             // iterate over components ...
-            for(auto &m : _components) {
+            for (auto &m : _components) {
 
                 // ... and initialize models
-                m->initialize(_timer->time());
+                m->_initialize(_timer->time());
 
             }
 
@@ -223,12 +222,14 @@ namespace sim {
          */
         void terminate() {
 
+            // set status
+            _status = Status::TERMINATING;
 
             // iterate over components ...
             for (auto &m : _components) {
 
                 // ... and terminate
-                m->terminate(_timer->time());
+                m->_terminate(_timer->time());
 
             }
 
@@ -241,7 +242,7 @@ namespace sim {
     };
 
 
-}; // namespace ::sim
+}
 
 
 #endif //SIMCORE_LOOP_H

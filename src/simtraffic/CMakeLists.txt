@@ -1,6 +1,5 @@
 # define target
 add_library(simtraffic STATIC
-        BasicSimulation.cpp
         UnitData.cpp
         )
 

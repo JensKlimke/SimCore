@@ -50,12 +50,10 @@ public:
 
     }
 
-    bool step(double simTime) override {
+    void step(double simTime) override {
 
         if(!in(*_x, *_y))
             failed();
-
-        return true;
 
     }
 

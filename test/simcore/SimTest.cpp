@@ -35,53 +35,22 @@ class SimTest : public ::testing::Test, public sim::IComponent {
 
 public:
 
-    double time = 0.0;
-    double finalTime = 0.0;
-
-    bool wasInitialized = false;
-    int steps = 0;
-    bool wasTerminated = false;
-
-
-public:
+    double cumulatedTime = 0.0;
 
 
     SimTest() = default;
-
-
     ~SimTest() override = default;
 
+    void initialize(double initTime) override {}
+    void terminate(double simTime) override {}
 
-    void initialize(double initTime) override {
+    void step(double t, double dt) override {
 
-        IComponent::initializeTimer(initTime);
-
-        time = initTime;
-        steps = 0;
-
-        wasInitialized = true;
+        // cumulate time
+        cumulatedTime += dt;
 
     }
 
-
-    bool step(double simTime) override {
-
-        auto dt = IComponent::timeStep(simTime);
-
-        time += dt;
-        steps++;
-
-        return true;
-
-    }
-
-
-    void terminate(double simTime) override {
-
-        wasTerminated = true;
-        finalTime = simTime;
-
-    }
 
 };
 
@@ -149,26 +118,12 @@ TEST_F(SimTest, Model) {
 
     // check time and steps
     EXPECT_NEAR(10.0, timer.time(), 1e-8);
-    EXPECT_NEAR(10.0, time, 1e-8);
-    EXPECT_NEAR(10.0, finalTime, 1e-8);
-    EXPECT_EQ(1001, this->steps);
+    EXPECT_NEAR(0.0, this->_initTime, 1e-8);
+    EXPECT_NEAR(10.0, cumulatedTime, 1e-8);
+    EXPECT_NEAR(10.0, _termTime, 1e-8);
+    EXPECT_EQ(1001, this->_steps);
 
     // check status
     EXPECT_EQ(Loop::Status::STOPPED, sim.getStatus());
-
-    // check values
-    EXPECT_TRUE(this->wasInitialized);
-    EXPECT_TRUE(this->wasTerminated);
-
-}
-
-TEST_F(SimTest, NotSetProperly) {
-
-    using namespace ::sim;
-
-    // create loop
-    Loop sim;
-    EXPECT_THROW(sim.run(), ProcessException);
-
 
 }
