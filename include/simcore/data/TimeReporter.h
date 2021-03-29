@@ -29,7 +29,7 @@
 #include "../IComponent.h"
 #include <iostream>
 
-class TimeReporter : public sim::IComponent {
+class TimeReporter : public simcore::IComponent {
 
 
     std::ostream *_stream = nullptr;

@@ -21,28 +21,31 @@
 //
 // Created by Jens Klimke.
 
-#ifndef SIMCORE_JSONFILEREPORTER_H
-#define SIMCORE_JSONFILEREPORTER_H
+#ifndef SIMCORE_FILEREPORTER_H
+#define SIMCORE_FILEREPORTER_H
 
-#include "JsonReporter.h"
 #include <fstream>
+#include <memory>
 
 
-class JsonFileReporter : public JsonReporter {
+template<class T>
+class FileReporter : public T {
 
+protected:
 
     std::fstream _fstream;
     std::string _filename;
 
+
 public:
 
-    JsonFileReporter() = default;
-
-    ~JsonFileReporter() override = default;
+    FileReporter() = default;
+    ~FileReporter() override = default;
 
 
     void setFilename(const std::string &name) {
 
+        // set filename
         _filename = name;
 
     }
@@ -51,21 +54,32 @@ public:
 protected:
 
 
-
+    /**
+     * Initialize the reporter
+     * @param initTime Initialization time
+     */
     void initialize(double initTime) override {
 
+        // open file and set as output stream
         _fstream.open(_filename, std::ios::out);
-        setOutstream(_fstream);
+        T::setOutstream(_fstream);
 
-        JsonReporter::initialize(initTime);
+        // initialize
+        T::initialize(initTime);
 
     }
 
 
-    void terminate(double simTime) override {
+    /**
+     * Terminates the reporter
+     * @param termTime Termination time
+     */
+    void terminate(double termTime) override {
 
-        JsonReporter::terminate(simTime);
+        // terminate
+        T::terminate(termTime);
 
+        // close out stream
         _fstream.close();
 
     }
@@ -74,4 +88,4 @@ protected:
 };
 
 
-#endif //SIMCORE_JSONFILEREPORTER_H
+#endif //SIMCORE_FILEREPORTER_H

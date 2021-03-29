@@ -31,7 +31,7 @@
 
 
 
-class LoopTest : public ::testing::Test, public sim::BasicSimulation {
+class LoopTest : public ::testing::Test, public simcore::BasicSimulation {
 
 public:
 
@@ -50,7 +50,7 @@ TEST_F(LoopTest, Status) {
     auto gen = createGenericComponent();
 
     // step function
-    gen->stepFnc = [this] (double t) {
+    gen->stepFnc = [this] (double t, double) {
         EXPECT_EQ(Status::RUNNING, getStatus());
     };
 
@@ -90,7 +90,7 @@ TEST_F(LoopTest, DefaultSteps) {
     };
 
     // step function
-    gen->stepFnc = [gen] (double t) {
+    gen->stepFnc = [gen] (double t, double) {
         auto steps = (unsigned int) (t * 100 + 1.001);
         EXPECT_EQ(steps, gen->getSteps());
     };
@@ -118,7 +118,7 @@ TEST_F(LoopTest, Steps) {
     };
 
     // step function
-    gen->stepFnc = [gen] (double t) {
+    gen->stepFnc = [gen] (double t, double) {
         auto step = (unsigned int) ((t - 2.0) * 10 + 1.001);
         EXPECT_EQ(step, gen->getSteps());
     };
@@ -148,7 +148,7 @@ TEST_F(LoopTest, DifferentSteps) {
     };
 
     // step function
-    gen->stepFnc = [gen] (double t) {
+    gen->stepFnc = [gen] (double t, double) {
         auto step = (unsigned int) ((t - 2.3) / 0.3 + 1.001);
         EXPECT_EQ(step, gen->getSteps());
     };

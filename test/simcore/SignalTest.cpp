@@ -173,14 +173,14 @@ TEST(SignalTestBasic, SignalTube) {
 
 
 
-class SignalTest : public ::testing::Test, public sim::IComponent {
+class SignalTest : public ::testing::Test, public simcore::IComponent {
 
 protected:
 
     // create objects
     BasicTimer timer;
     TimeIsUp stop;
-    ::sim::Loop sim;
+    simcore::Loop sim;
 
     double x     = 0.0;
     double value = 0.0;
@@ -239,7 +239,7 @@ TEST_F(SignalTest, ValueExceed) {
 
     // run sim
     sim.run();
-    EXPECT_EQ(ex.getCode(), ::sim::IStopCondition::StopCode::OBJECTIVES_MISSED);
+    EXPECT_EQ(ex.getCode(), simcore::IStopCondition::StopCode::OBJECTIVES_MISSED);
     EXPECT_DOUBLE_EQ(6.0, timer.time());
     EXPECT_DOUBLE_EQ(49.0, value);
 
@@ -249,7 +249,7 @@ TEST_F(SignalTest, ValueExceed) {
 
     // run sim again
     sim.run();
-    EXPECT_EQ(ex.getCode(), ::sim::IStopCondition::StopCode::SIM_ENDED);
+    EXPECT_EQ(ex.getCode(), simcore::IStopCondition::StopCode::SIM_ENDED);
     EXPECT_EQ(6.0, timer.time());
     EXPECT_DOUBLE_EQ(49.0, value);
 
@@ -259,7 +259,7 @@ TEST_F(SignalTest, ValueExceed) {
 
     // run sim again
     sim.run();
-    EXPECT_EQ(ex.getCode(), ::sim::IStopCondition::StopCode::NONE);
+    EXPECT_EQ(ex.getCode(), simcore::IStopCondition::StopCode::NONE);
     EXPECT_EQ(10.0, timer.time());
     EXPECT_DOUBLE_EQ(121.0, value);
 
@@ -286,7 +286,7 @@ TEST_F(SignalTest, OutOfTube) {
 
     // run sim
     sim.run();
-    EXPECT_EQ(tube.getCode(), ::sim::IStopCondition::StopCode::OBJECTIVES_MISSED);
+    EXPECT_EQ(tube.getCode(), simcore::IStopCondition::StopCode::OBJECTIVES_MISSED);
     EXPECT_EQ(2.0, timer.time());
     EXPECT_DOUBLE_EQ(9.0, value);
 
@@ -297,7 +297,7 @@ TEST_F(SignalTest, OutOfTube) {
 
     // run sim again
     sim.run();
-    EXPECT_EQ(tube.getCode(), ::sim::IStopCondition::StopCode::NONE);
+    EXPECT_EQ(tube.getCode(), simcore::IStopCondition::StopCode::NONE);
     EXPECT_EQ(10.0, timer.time());
     EXPECT_DOUBLE_EQ(121.0, value);
 

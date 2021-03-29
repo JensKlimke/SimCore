@@ -1,5 +1,4 @@
-//
-// Copyright (c) 2019-2020 Jens Klimke <jens.klimke@rwth-aachen.de>
+// Copyright (c) 2021 Jens Klimke.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,76 +18,83 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke on 2019-03-16
+// Created by Jens Klimke on 2021-03-27.
+// Contributors:
 //
 
-#ifndef SIMCORE_JSONREPORTER_H
-#define SIMCORE_JSONREPORTER_H
 
-#include <cmath>
-#include "DataReporter.h"
+#ifndef SIMCORE_DATAREPORTER_H
+#define SIMCORE_DATAREPORTER_H
 
+#include <map>
+#include <string>
+#include <iostream>
+#include "../IComponent.h"
+#include "../exceptions.h"
 
-class JsonReporter : public DataReporter {
+class DataReporter : public simcore::IComponent {
+
+protected:
+
+    std::ostream *_outstream = nullptr;
+    std::map<std::string, const double*> _values{};
+
 
 public:
 
     /**
      * Constructor
      */
-    JsonReporter() = default;
+    DataReporter() = default;
 
 
-protected:
+    /**
+     * Adds an double value to be added to the
+     * @param val Pointer to the value
+     * @param key Key to be used in json
+     */
+    void addValue(const std::string &key, const double *val) {
 
-
-    void step(double t, double dt) override {
-
-        // save time and open object brackets
-        (*_outstream) << "\t" << R"({"time":)" << t << "," << R"("timeStepSize":)" << dt << ",";
-
-        // write data
-        for(auto &p : _values) {
-
-            // stream field name
-            (*_outstream) << ",\"" << p.first << "\":";
-
-            // check for inf and nan
-            if(std::isinf(*p.second) || std::isnan(*p.second))
-                (*_outstream) << "null";
-            else
-                (*_outstream) << *p.second;
-
-        }
-
-        // close object brackets
-        (*_outstream) << "}";
+        _values[key] = val;
 
     }
 
 
+    /**
+     * Sets the stream in which the data shall be written
+     * @param os Output stream
+     */
+    void setOutstream(std::ostream &os) {
+
+        _outstream = &os;
+
+    }
+
+
+    /**
+     * Initializes the reporter
+     * @param initTime Init time
+     */
     void initialize(double initTime) override {
 
-        // init data reporter
-        DataReporter::initialize(initTime);
-
-        (*_outstream) << "[" << std::endl;
+        if(_outstream == nullptr)
+            throw std::runtime_error("Output stream is not initialized.");
 
     }
 
 
+    /**
+     * Terminates the reporter
+     * @param simTime Termination time
+     */
     void terminate(double simTime) override {
 
-        // close brackets
-        (*_outstream) << "]" << std::endl;
-
-        // terminate data reporter
-        DataReporter::terminate(simTime);
+        // flush
+        _outstream->flush();
 
     }
 
 
 };
 
-
-#endif //SIMCORE_JSONREPORTER_H
+#endif //SIMCORE_DATAREPORTER_H

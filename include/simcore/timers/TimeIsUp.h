@@ -35,7 +35,7 @@
 #endif
 
 
-class TimeIsUp : public ::sim::IStopCondition, public ::sim::IComponent {
+class TimeIsUp : public simcore::IStopCondition, public simcore::IComponent {
 
 
 private:

@@ -30,162 +30,160 @@
 #include <simbasic/Spline.h>
 #include "Unit.h"
 
-namespace simcore {
-    namespace traffic {
+namespace simtraffic {
 
-        class VehicleModel : public Unit {
+    class VehicleModel : public Unit {
 
-        protected:
+    protected:
 
-            double _time{};
+        double _time{};
 
-        public:
+    public:
 
-            struct {
-                simbasic::Spline high{};
-                simbasic::Spline low{};
-                simbasic::Spline brake{};
-                simbasic::Spline steer{};
-            } parameters;
+        struct {
+            simbasic::Spline high{};
+            simbasic::Spline low{};
+            simbasic::Spline brake{};
+            simbasic::Spline steer{};
+        } parameters;
 
-            struct {
-                double pedal = 0.0;
-                double steering = 0.0;
-            } input;
-
-
-            /**
-             * Constructor
-             */
-            VehicleModel() = default;
+        struct {
+            double pedal = 0.0;
+            double steering = 0.0;
+        } input;
 
 
-            /**
-             * Resets the vehicle model
-             * @param time Reset time
-             */
-            void reset(double time) {
-
-                // set time
-                _time = time;
-
-                // reset distance
-                distance = 0.0;
-
-            }
+        /**
+         * Constructor
+         */
+        VehicleModel() = default;
 
 
-            /**
-             * Returns the acceleration resulting from the pedal value
-             * @param velocity Velocity state
-             * @param pedal Pedal value
-             * @return The resulting acceleration
-             */
-            double longitudinalForwards(double velocity, double pedal) const {
+        /**
+         * Resets the vehicle model
+         * @param time Reset time
+         */
+        void reset(double time) {
 
-                // get max and min acceleration
-                auto aMin = parameters.low(velocity);
-                auto aMax = parameters.high(velocity);
-                auto aBr  = parameters.brake(velocity);
+            // set time
+            _time = time;
 
-                // limit pedal value
-                auto drive = std::min(1.0, std::max(0.0, pedal));
-                auto brake = std::min(1.0, std::max(0.0, -pedal));
+            // reset distance
+            distance = 0.0;
 
-                // calculate acceleration
-                return drive * aMax + (1.0 - drive) * aMin + brake * aBr;
-
-            }
+        }
 
 
-            /**
-             * Returns the pedal value needed to accelerate as desired
-             * @param velocity Velocity state
-             * @param acceleration Desired acceleration
-             * @return The required pedal value
-             */
-            double longitudinalBackwards(double velocity, double acceleration) const {
+        /**
+         * Returns the acceleration resulting from the pedal value
+         * @param velocity Velocity state
+         * @param pedal Pedal value
+         * @return The resulting acceleration
+         */
+        double longitudinalForwards(double velocity, double pedal) const {
 
-                // calculate acceleration points
-                auto aMin = parameters.low(velocity);
-                auto aMax = parameters.high(velocity);
-                auto aBr = parameters.brake(velocity);
+            // get max and min acceleration
+            auto aMin = parameters.low(velocity);
+            auto aMax = parameters.high(velocity);
+            auto aBr  = parameters.brake(velocity);
 
-                // calculate pedals
-                if (aMin < acceleration)
-                    return (acceleration - aMin) / (aMax - aMin);
-                else
-                    return (2.0 * aMin - acceleration) / (aBr - aMin);
+            // limit pedal value
+            auto drive = std::min(1.0, std::max(0.0, pedal));
+            auto brake = std::min(1.0, std::max(0.0, -pedal));
 
-            }
+            // calculate acceleration
+            return drive * aMax + (1.0 - drive) * aMin + brake * aBr;
 
-
-            /**
-             * Calculates the curvature based on the velocity state and the steering value
-             * @param velocity Velocity state
-             * @param steering Steering value
-             * @return The curvature resulting from steering and velocity
-             */
-            double lateralForwards(double velocity, double steering) const {
-
-                auto c = parameters.steer(velocity);
-                return std::min(1.0, std::max(-1.0, steering)) * c;
-
-            }
+        }
 
 
-            /**
-             * Calculates the steering value based on the velocity state and the curvature value
-             * @param velocity Velocity state
-             * @param curvature Curvature value
-             * @return The steering value resulting from curvature and velocity
-             */
-            double lateralBackwards(double velocity, double curvature) const {
+        /**
+         * Returns the pedal value needed to accelerate as desired
+         * @param velocity Velocity state
+         * @param acceleration Desired acceleration
+         * @return The required pedal value
+         */
+        double longitudinalBackwards(double velocity, double acceleration) const {
 
-                return curvature / parameters.steer(velocity);
+            // calculate acceleration points
+            auto aMin = parameters.low(velocity);
+            auto aMax = parameters.high(velocity);
+            auto aBr = parameters.brake(velocity);
 
-            }
+            // calculate pedals
+            if (aMin < acceleration)
+                return (acceleration - aMin) / (aMax - aMin);
+            else
+                return (2.0 * aMin - acceleration) / (aBr - aMin);
 
-
-            /**
-             * Calculates a forward step of the vehicle model
-             * @param time Actual time
-             */
-            void step(double time) {
-
-                // time step
-                auto dt = time - _time;
-
-                // calculate acceleration
-                acceleration = longitudinalForwards(velocity, input.pedal);
-                velocity += acceleration * dt;
-
-                // limit velocity
-                velocity = velocity < 0.0 ? 0.0 : velocity;
-
-                // calculate distance
-                auto ds = velocity * dt;
-                distance += ds;
-
-                // set yaw rate
-                curvature = lateralForwards(velocity, input.steering);
-                yawRate = curvature * velocity;
-                yawAngle += yawRate * dt;
-
-                // position
-                position.x += cos(yawAngle) * ds;
-                position.y += sin(yawAngle) * ds;
-                position.z = 0.0;
-
-                // set time
-                _time = time;
-
-            }
+        }
 
 
-        };
+        /**
+         * Calculates the curvature based on the velocity state and the steering value
+         * @param velocity Velocity state
+         * @param steering Steering value
+         * @return The curvature resulting from steering and velocity
+         */
+        double lateralForwards(double velocity, double steering) const {
 
-    }
+            auto c = parameters.steer(velocity);
+            return std::min(1.0, std::max(-1.0, steering)) * c;
+
+        }
+
+
+        /**
+         * Calculates the steering value based on the velocity state and the curvature value
+         * @param velocity Velocity state
+         * @param curvature Curvature value
+         * @return The steering value resulting from curvature and velocity
+         */
+        double lateralBackwards(double velocity, double curvature) const {
+
+            return curvature / parameters.steer(velocity);
+
+        }
+
+
+        /**
+         * Calculates a forward step of the vehicle model
+         * @param time Actual time
+         */
+        void step(double time) {
+
+            // time step
+            auto dt = time - _time;
+
+            // calculate acceleration
+            acceleration = longitudinalForwards(velocity, input.pedal);
+            velocity += acceleration * dt;
+
+            // limit velocity
+            velocity = velocity < 0.0 ? 0.0 : velocity;
+
+            // calculate distance
+            auto ds = velocity * dt;
+            distance += ds;
+
+            // set yaw rate
+            curvature = lateralForwards(velocity, input.steering);
+            yawRate = curvature * velocity;
+            yawAngle += yawRate * dt;
+
+            // position
+            position.x += cos(yawAngle) * ds;
+            position.y += sin(yawAngle) * ds;
+            position.z = 0.0;
+
+            // set time
+            _time = time;
+
+        }
+
+
+    };
+
 }
 
 

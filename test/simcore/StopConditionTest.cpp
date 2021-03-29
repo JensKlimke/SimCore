@@ -31,7 +31,7 @@
 #include <simcore/timers/TimeIsUp.h>
 
 
-class StopConditionTest : public ::testing::Test, public sim::StopCondition {
+class StopConditionTest : public ::testing::Test, public simcore::StopCondition {
 
 
 public:

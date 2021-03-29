@@ -30,7 +30,7 @@
 #include <gtest/gtest.h>
 
 
-class SimTest : public ::testing::Test, public sim::IComponent {
+class SimTest : public ::testing::Test, public simcore::IComponent {
 
 
 public:
@@ -57,7 +57,7 @@ public:
 
 TEST(SimTestBasic, SimpleProcess) {
 
-    using namespace ::sim;
+    using namespace simcore;
 
     // create objects
     BasicTimer timer;
@@ -86,7 +86,7 @@ TEST(SimTestBasic, SimpleProcess) {
 
 TEST_F(SimTest, Model) {
 
-    using namespace ::sim;
+    using namespace simcore;
 
     // create objects
     RealTimeTimer timer;

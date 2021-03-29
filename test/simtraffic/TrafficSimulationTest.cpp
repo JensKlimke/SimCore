@@ -28,7 +28,7 @@
 #include <gtest/gtest.h>
 #include <simcore/BasicSimulation.h>
 
-class TrafficSimulationTest : public ::testing::Test, public sim::BasicSimulation, public sim::IComponent {
+class TrafficSimulationTest : public ::testing::Test, public simcore::BasicSimulation, public simcore::IComponent {
 
 public:
 

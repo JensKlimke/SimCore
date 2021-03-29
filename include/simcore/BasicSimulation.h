@@ -29,16 +29,17 @@
 #include <memory>
 #include "Loop.h"
 #include "GenericComponent.h"
-#include "data/JsonFileReporter.h"
+#include "data/FileReporter.h"
+#include "data/CSVReporter.h"
 #include "data/TimeReporter.h"
 #include "timers/BasicTimer.h"
 #include "timers/RealTimeTimer.h"
 #include "timers/TimeIsUp.h"
 #include "value/ValueExceed.h"
 
-namespace sim {
+namespace simcore {
 
-    class BasicSimulation : public sim::Loop {
+    class BasicSimulation : public simcore::Loop {
 
     protected:
 
@@ -46,6 +47,7 @@ namespace sim {
         std::unique_ptr<BasicTimer> timer{};
         std::unique_ptr<TimeReporter> timeReporter{};
         std::unique_ptr<TimeIsUp> stopTimer{};
+        std::unique_ptr<FileReporter<CSVReporter>> logger{};
 
         std::stringstream out{};
         std::vector<std::unique_ptr<ValueExceed<double>>> stopConditions{};
@@ -114,6 +116,30 @@ namespace sim {
 
             }
 
+
+        }
+
+
+        /**
+         * Enables a file logger component
+         * @param filename File name of the log file
+         * @param timeStepSize Time step size
+         * @return Logging component
+         */
+        FileReporter<CSVReporter> *enableLogging(const std::string &filename, double timeStepSize = 0.0) {
+
+            // create logger
+            logger = std::make_unique<FileReporter<CSVReporter>>();
+
+            // setup
+            logger->setFilename(filename);
+            logger->setTimeStepSize(timeStepSize);
+
+            // add logger
+            addComponent(logger.get());
+
+            // return
+            return logger.get();
 
         }
 

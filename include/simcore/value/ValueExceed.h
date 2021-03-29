@@ -29,7 +29,7 @@
 #include "../IComponent.h"
 
 template<typename T>
-class ValueExceed : public ::sim::IStopCondition, public ::sim::IComponent {
+class ValueExceed : public simcore::IStopCondition, public simcore::IComponent {
 
     IStopCondition::StopCode _mode = IStopCondition::StopCode::SIM_ENDED;
 

@@ -1,3 +1,4 @@
+//
 // Copyright (c) 2019-2020 Jens Klimke <jens.klimke@rwth-aachen.de>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -18,64 +19,64 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke on 2019-03-19.
+// Created by Jens Klimke on 2019-03-16
 //
 
-#ifndef SIMCORE_ITIMER_H
-#define SIMCORE_ITIMER_H
+#ifndef SIMCORE_JSONREPORTER_H
+#define SIMCORE_JSONREPORTER_H
 
-namespace simcore {
+#include <cmath>
+#include "DataReporter.h"
 
-    class ITimer {
+class CSVReporter : public DataReporter {
 
-    public:
+public:
 
-
-        /**
-         * Default constructor
-         */
-        ITimer() = default;
+    CSVReporter() = default;
+    ~CSVReporter() override = default;
 
 
-        /**
-         * Default deconstructor
-         */
-        virtual ~ITimer() = default;
+protected:
 
 
-        /**
-         * Performs a step
-         */
-        virtual void step() = 0;
+    void step(double t, double dt) override {
+
+        // save time and open object brackets
+        (*_outstream) << std::endl << t << "," << dt;
+
+        // write data
+        for(auto &p : _values) {
+
+            // check for inf and nan
+            if(std::isinf(*p.second) || std::isnan(*p.second))
+                (*_outstream) << ",";
+            else
+                (*_outstream) << "," << *p.second;
+
+        }
+
+    }
 
 
-        /**
-         * Resets the timer
-         */
-        virtual void start() = 0;
+    void initialize(double initTime) override {
+
+        DataReporter::initialize(initTime);
+
+        // write header
+        (*_outstream) << "time,timeStepSize";
+
+        // iterate over fields
+        for(auto &p : _values) {
+
+            // check for inf and nan
+            (*_outstream) << "," << p.first;
+
+        }
+
+    }
 
 
-        /**
-         * Stops the timer
-         */
-        virtual void stop() = 0;
+};
 
 
-        /**
-         * Returns the current simulation time
-         * @return
-         */
-        virtual double time() const = 0;
-
-
-        /**
-         * Resets the timer
-         */
-        virtual void reset() = 0;
-
-    };
-
-} // namespace simcore
-
-
-#endif //SIMCORE_TIMER_H
+#endif // SIMCORE_JSONREPORTER_H

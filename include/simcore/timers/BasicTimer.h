@@ -28,7 +28,7 @@
 #include "../ITimer.h"
 
 
-class BasicTimer : public ::sim::ITimer {
+class BasicTimer : public simcore::ITimer {
 
 private:
 

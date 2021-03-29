@@ -27,7 +27,7 @@
 
 #include <string>
 
-namespace sim {
+namespace simcore {
 
 
 

@@ -28,14 +28,14 @@
 
 #include "IComponent.h"
 
-namespace sim {
+namespace simcore {
 
     class GenericComponent : public IComponent {
 
     public:
 
         // step functions to be added manually
-        std::function<void(double)> stepFnc;
+        std::function<void(double, double)> stepFnc;
         std::function<void(double)> initFnc;
         std::function<void(double)> termFnc;
 
@@ -54,11 +54,11 @@ namespace sim {
 
         }
 
-        void step(double simTime) override {
+        void step(double simTime, double timeStepSize) override {
 
             // step function
             if(stepFnc)
-                stepFnc(simTime);
+                stepFnc(simTime, timeStepSize);
 
         }
 

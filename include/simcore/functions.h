@@ -27,7 +27,7 @@
 
 #include <string>
 
-namespace sim {
+namespace simcore {
 namespace fnc {
 
     /**
@@ -46,6 +46,6 @@ namespace fnc {
     }
 
 
-}} // namespace ::sim::fnc
+}} // namespace simcore::fnc
 
 #endif //SIMCORE_FUNCTIONS_H

@@ -29,7 +29,7 @@
 #include <simtraffic/VehicleModel.h>
 #include <simtraffic/SetupVehicleModel.h>
 
-class VehicleModelTest : public ::testing::Test, public simcore::traffic::VehicleModel {
+class VehicleModelTest : public ::testing::Test, public simtraffic::VehicleModel {
 
 protected:
 
@@ -46,7 +46,7 @@ protected:
     void SetUp() override {
 
         // setup longitudinal vehicle parameters
-        simcore::traffic::setupVehicleByVelocityAndAccelerationStates(
+        simtraffic::setupVehicleByVelocityAndAccelerationStates(
                 this,
                 idleAcceleration,
                 idleVelocity,
@@ -58,7 +58,7 @@ protected:
         );
 
         // setup lateral vehicle parameters
-        simcore::traffic::setupVehicleByCurvature(
+        simtraffic::setupVehicleByCurvature(
                 this,
                 minimumCurvature,
                 maximumCurvature,

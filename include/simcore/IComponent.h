@@ -32,7 +32,7 @@
 #include <limits>
 #include "exceptions.h"
 
-namespace sim {
+namespace simcore {
 
 
     class IComponent {
@@ -213,7 +213,7 @@ namespace sim {
 
 
 
-} // namespace sim::model;
+} // namespace simcore::model;
 
 
 #endif //SIMCORE_IPLUGIN_H

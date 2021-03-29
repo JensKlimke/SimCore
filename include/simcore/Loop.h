@@ -31,7 +31,7 @@
 #include "IComponent.h"
 #include <vector>
 
-namespace sim {
+namespace simcore {
 
     class Loop {
 
@@ -95,7 +95,7 @@ namespace sim {
          * @param name Name of the model
          * @param comp Model to be set
          */
-        void addComponent(sim::IComponent *comp) {
+        void addComponent(simcore::IComponent *comp) {
 
             _components.push_back(comp);
 

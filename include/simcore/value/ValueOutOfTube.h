@@ -30,7 +30,7 @@
 #include "../exceptions.h"
 #include "SignalTube.h"
 
-class ValueOutOfTube : public SignalTube, public sim::IStopCondition, public sim::IComponent {
+class ValueOutOfTube : public SignalTube, public simcore::IStopCondition, public simcore::IComponent {
 
     IStopCondition::StopCode _mode = IStopCondition::StopCode::OBJECTIVES_MISSED;
 
