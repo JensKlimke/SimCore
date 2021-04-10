@@ -25,9 +25,6 @@
 #ifndef SIMCORE_ICOMPONENT_H
 #define SIMCORE_ICOMPONENT_H
 
-#ifndef EPS_SIM_TIME
-#define EPS_SIM_TIME 1e-9
-#endif
 
 #include <limits>
 #include "exceptions.h"
@@ -38,6 +35,8 @@ namespace simcore {
     class IComponent {
 
     protected:
+
+        constexpr static const double EPS_SIM_TIME = 1e-9;
 
         friend class Loop;
 
@@ -152,7 +151,7 @@ namespace simcore {
          * Handles the initialization
          * @return Success flag
          */
-        virtual void initialize(double initTime) = 0;
+        virtual void initialize(double initTime) {}
 
 
         /**
@@ -183,7 +182,7 @@ namespace simcore {
          * Handles the termination
          * @param simTime Simulation time at termination
          */
-        virtual void terminate(double simTime) = 0;
+        virtual void terminate(double simTime) {}
 
 
         /**
@@ -205,6 +204,19 @@ namespace simcore {
         unsigned long getSteps() const {
 
             return _steps;
+
+        }
+
+
+        /**
+         * Returns true if the time equals the reference time in the global set accuracy
+         * @param time Time to be checked
+         * @param reference Reference time
+         * @return True if equal, false if not
+         */
+        static bool timeEq(double time, double reference) {
+
+            return abs(time - reference) < EPS_SIM_TIME;
 
         }
 

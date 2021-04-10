@@ -30,21 +30,16 @@
 #include <cmath>
 
 
-#ifndef EPS_TIME
-#define EPS_TIME 1e-12
-#endif
-
-
 class TimeIsUp : public simcore::IStopCondition, public simcore::IComponent {
-
-
-private:
-
 
     double _stopTime = INFINITY;
 
 
 public:
+
+
+    double EPS_TIME = 1e-12;
+
 
     /**
      * Default constructor

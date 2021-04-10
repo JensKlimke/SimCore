@@ -29,9 +29,10 @@
 #include <simcore/Loop.h>
 #include <simcore/timers/BasicTimer.h>
 #include <simcore/timers/TimeIsUp.h>
+#include <simcore/BasicSimulation.h>
 
 
-class StopConditionTest : public ::testing::Test, public simcore::StopCondition {
+class StopConditionTest : public ::testing::Test, public simcore::IStopCondition, public simcore::BasicSimulation {
 
 
 public:
@@ -43,8 +44,8 @@ public:
     // step function
     std::function<void (double)> stepFnc;
 
-    LoopTest() = default;
-    ~LoopTest() override = default;
+    StopConditionTest() = default;
+    ~StopConditionTest() override = default;
 
     void SetUp() override {
 

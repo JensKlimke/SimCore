@@ -52,7 +52,7 @@ namespace simcore {
         std::stringstream out{};
         std::vector<std::unique_ptr<ValueExceed<double>>> stopConditions{};
 
-        std::unique_ptr<GenericComponent> genericComponent{};
+        std::vector<std::unique_ptr<GenericComponent>> genericComponent{};
 
     public:
 
@@ -167,13 +167,16 @@ namespace simcore {
         GenericComponent *createGenericComponent() {
 
             // create generic component
-            genericComponent = std::make_unique<GenericComponent>();
+            genericComponent.emplace_back(std::make_unique<GenericComponent>());
+
+            // get component pointer
+            auto comp = genericComponent.back().get();
 
             // add component
-            addComponent(genericComponent.get());
+            addComponent(comp);
 
             // return component
-            return genericComponent.get();
+            return comp;
 
         }
 

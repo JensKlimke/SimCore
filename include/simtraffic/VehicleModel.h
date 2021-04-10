@@ -28,15 +28,12 @@
 
 #include <algorithm>
 #include <simbasic/Spline.h>
+#include <simcore/IComponent.h>
 #include "Unit.h"
 
 namespace simtraffic {
 
-    class VehicleModel : public Unit {
-
-    protected:
-
-        double _time{};
+    class VehicleModel : public Unit, public simcore::IComponent {
 
     public:
 
@@ -47,31 +44,11 @@ namespace simtraffic {
             simbasic::Spline steer{};
         } parameters;
 
-        struct {
-            double pedal = 0.0;
-            double steering = 0.0;
-        } input;
-
 
         /**
          * Constructor
          */
         VehicleModel() = default;
-
-
-        /**
-         * Resets the vehicle model
-         * @param time Reset time
-         */
-        void reset(double time) {
-
-            // set time
-            _time = time;
-
-            // reset distance
-            distance = 0.0;
-
-        }
 
 
         /**
@@ -147,37 +124,67 @@ namespace simtraffic {
 
 
         /**
+         * Initializes the vehicle
+         * @param initTime Init time
+         */
+        void initialize(double initTime) override {
+
+            // reset distance
+            distance = 0.0;
+
+            // reset distance counter
+            getDistance();
+
+        }
+
+
+        /**
          * Calculates a forward step of the vehicle model
          * @param time Actual time
+         * @param dt Time step size
          */
-        void step(double time) {
-
-            // time step
-            auto dt = time - _time;
+        void step(double time, double dt) override {
 
             // calculate acceleration
-            acceleration = longitudinalForwards(velocity, input.pedal);
+            acceleration = longitudinalForwards(velocity, pedal);
             velocity += acceleration * dt;
 
             // limit velocity
-            velocity = velocity < 0.0 ? 0.0 : velocity;
+            if(velocity <= 0.0)
+                velocity = 0.0;
+
+            // limit acceleration
+            if(velocity <= 0.0 && acceleration <= 0.0)
+                acceleration = 0.0;
 
             // calculate distance
             auto ds = velocity * dt;
             distance += ds;
 
             // set yaw rate
-            curvature = lateralForwards(velocity, input.steering);
+            curvature = lateralForwards(velocity, steering);
             yawRate = curvature * velocity;
-            yawAngle += yawRate * dt;
+
+            // calculate change in position
+            auto dSin = sin(yawRate * dt);
+            auto dCos = cos(yawRate * dt);
+
+            // calculate heading
+            heading = {
+                    heading.x * dCos - heading.y * dSin,
+                    heading.y * dCos + heading.x * dSin,
+                    0.0
+            };
+
+            // normalize (to avoid cumulated accuracy errors)
+            auto l = 1.0 / sqrt(heading.x * heading.x + heading.y * heading.y);
+            heading.x *= l;
+            heading.y *= l;
 
             // position
-            position.x += cos(yawAngle) * ds;
-            position.y += sin(yawAngle) * ds;
+            position.x += heading.x * ds;
+            position.y += heading.y * ds;
             position.z = 0.0;
-
-            // set time
-            _time = time;
 
         }
 

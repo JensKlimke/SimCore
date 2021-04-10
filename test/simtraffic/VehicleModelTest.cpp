@@ -70,18 +70,18 @@ protected:
     void initIdle() {
 
         // reset
-        reset(0.0);
+        initialize(0.0);
 
         // set input
-        input.pedal = 0.0;
-        input.steering = 0.0;
+        pedal = 0.0;
+        steering = 0.0;
 
         // set state
         acceleration = 0.0;
         velocity = idleVelocity;
         curvature = 0.0;
         position = {0.0, 0.0, 0.0};
-        yawAngle = 0.0;
+        heading = {1.0, 0.0, 0.0};
         yawRate = 0.0;
 
     }
@@ -130,23 +130,24 @@ TEST_F(VehicleModelTest, Standstill) {
 
     velocity = 0.0;
 
-    input.pedal = 0.0; step(0.0);
+    pedal = 0.0; step(0.0, 0.0);
     EXPECT_NEAR(idleAcceleration, acceleration, 1e-3);
 
-    input.pedal = 1.0; step(0.0);
+    pedal = 1.0; step(0.0, 0.0);
     EXPECT_NEAR(maximumAcceleration, acceleration, 1e-3);
 
-    input.pedal = -1.0; step(0.0);
-    EXPECT_NEAR(maximumDeceleration + idleAcceleration, acceleration, 1e-3);
+    pedal = -1.0; step(0.0, 0.0);
+    EXPECT_NEAR(0.0, acceleration, 1e-3);
 
 }
+
 
 
 TEST_F(VehicleModelTest, Idle) {
 
     velocity = idleVelocity;
 
-    input.pedal = 0.0; step(0.0);
+    pedal = 0.0; step(0.0, 0.0);
     EXPECT_NEAR(0.0, acceleration, 1e-3);
 
 }
@@ -160,13 +161,13 @@ TEST_F(VehicleModelTest, MaximumSpeed) {
     // set to maximum velocity
     velocity = maximumVelocity;
 
-    input.pedal = 1.0; step(0.0);
+    pedal = 1.0; step(0.0, 0.0);
     EXPECT_NEAR(0.0, acceleration, 1e-3);
 
-    input.pedal = 0.0; step(0.0);
+    pedal = 0.0; step(0.0, 0.0);
     EXPECT_NEAR(a, acceleration, 1e-3);
 
-    input.pedal = -1.0; step(0.0);
+    pedal = -1.0; step(0.0, 0.0);
     EXPECT_NEAR(maximumDeceleration + a, acceleration, 1e-3);
 
 }
@@ -226,19 +227,19 @@ TEST_F(VehicleModelTest, Steering) {
 
     velocity = 0.0;
 
-    input.steering = 0.0; step(0.0);
+    steering = 0.0; step(0.0, 0.0);
     EXPECT_NEAR( 0.0, curvature, 1e-5);
 
-    input.steering = 0.5; step(0.0);
+    steering = 0.5; step(0.0, 0.0);
     EXPECT_NEAR( 0.05, curvature, 1e-5);
 
-    input.steering = 1.0; step(0.0);
+    steering = 1.0; step(0.0, 0.0);
     EXPECT_NEAR( 0.1, curvature, 1e-5);
 
-    input.steering = -0.5; step(0.0);
+    steering = -0.5; step(0.0, 0.0);
     EXPECT_NEAR(-0.05, curvature, 1e-5);
 
-    input.steering = -1.0; step(0.0);
+    steering = -1.0; step(0.0, 0.0);
     EXPECT_NEAR(-0.1, curvature, 1e-5);
 
     EXPECT_NEAR( 0.0, yawRate, 1e-5);
@@ -246,19 +247,19 @@ TEST_F(VehicleModelTest, Steering) {
 
     velocity = 70.0;
 
-    input.steering = 0.0; step(0.0);
+    steering = 0.0; step(0.0, 0.0);
     EXPECT_NEAR( 0.0, curvature, 1e-5);
 
-    input.steering = 0.5; step(0.0);
+    steering = 0.5; step(0.0, 0.0);
     EXPECT_NEAR( 0.025, curvature, 1e-5);
 
-    input.steering = 1.0; step(0.0);
+    steering = 1.0; step(0.0, 0.0);
     EXPECT_NEAR( 0.05, curvature, 1e-5);
 
-    input.steering = -0.5; step(0.0);
+    steering = -0.5; step(0.0, 0.0);
     EXPECT_NEAR(-0.025, curvature, 1e-5);
 
-    input.steering = -1.0; step(0.0);
+    steering = -1.0; step(0.0, 0.0);
     EXPECT_NEAR(-0.05, curvature, 1e-5);
 
     EXPECT_NEAR(-3.5, yawRate, 1e-5);
@@ -269,19 +270,19 @@ TEST_F(VehicleModelTest, Steering) {
 TEST_F(VehicleModelTest, SteadyTurn) {
 
     velocity = 10.0;
-    input.steering = 0.1;
+    steering = 0.1;
 
-    step(0.0);
-    EXPECT_NEAR(0.0, yawAngle, 1e-6);
+    step(0.0, 0.0);
+    EXPECT_NEAR(0.0, heading2angle(heading), 1e-6);
 
-    step(0.1);
-    EXPECT_NEAR(0.0098960, yawAngle, 1e-6);
+    step(0.1, 0.1);
+    EXPECT_NEAR(0.0098960, heading2angle(heading), 1e-6);
 
-    step(0.2);
-    EXPECT_NEAR(0.0197901, yawAngle, 1e-6);
+    step(0.2, 0.1);
+    EXPECT_NEAR(0.0197901, heading2angle(heading), 1e-6);
 
-    step(0.3);
-    EXPECT_NEAR(0.0296823, yawAngle, 1e-6);
+    step(0.3, 0.1);
+    EXPECT_NEAR(0.0296823, heading2angle(heading), 1e-6);
 
 }
 
@@ -289,26 +290,26 @@ TEST_F(VehicleModelTest, SteadyTurn) {
 TEST_F(VehicleModelTest, RunPosition) {
 
     // reset
-    reset(0.0);
+    initialize(0.0);
 
     // set input
-    input.pedal = 1.0;
-    input.steering = 0.0;
+    pedal = 1.0;
+    steering = 0.0;
 
     // iterate over time
     for(unsigned int i = 0; i < 10000; ++i)
-        step(0.1 * i);
+        step(0.1 * i, 0.1);
 
     // check results
     EXPECT_NEAR(maximumVelocity, velocity, 1e-3);
     EXPECT_NEAR(0.0, yawRate, 1e-3);
 
     // set input
-    input.pedal = -0.999;
+    pedal = -0.999;
 
     // iterate over time
     for(unsigned int i = 0; i < 10000; ++i)
-        step(0.1 * i);
+        step(0.1 * i, 0.1);
 
     // check results
     EXPECT_NEAR(0.0, velocity, 1e-3);
@@ -325,8 +326,9 @@ TEST_F(VehicleModelTest, RunPedal) {
     initIdle();
 
     // set yaw angle
-    yawAngle = 0.0;
-    step(0.0); step(1.0);
+    heading = {1.0, 0.0, 0.0};
+    step(0.0, 0.0);
+    step(1.0, 1.0);
 
     // check position
     EXPECT_NEAR(idleVelocity, position.x, 1e-3);
@@ -337,8 +339,9 @@ TEST_F(VehicleModelTest, RunPedal) {
     initIdle();
 
     // set yaw angle
-    yawAngle = M_PI_4;
-    step(0.0); step(1.0);
+    heading = angle2heading(M_PI_4);
+    step(0.0, 0.0);
+    step(1.0, 1.0);
 
     // check position
     EXPECT_NEAR(p * idleVelocity, position.x, 1e-3);
@@ -349,8 +352,9 @@ TEST_F(VehicleModelTest, RunPedal) {
     initIdle();
 
     // set yaw angle
-    yawAngle = M_PI_2;
-    step(0.0); step(1.0);
+    heading = angle2heading(M_PI_2);
+    step(0.0, 0.0);
+    step(1.0, 1.0);
 
     // check position
     EXPECT_NEAR(0.0, position.x, 1e-3);
@@ -361,8 +365,9 @@ TEST_F(VehicleModelTest, RunPedal) {
     initIdle();
 
     // set yaw angle
-    yawAngle = M_PI_2 + M_PI_4;
-    step(0.0); step(1.0);
+    heading = angle2heading(M_PI_2 + M_PI_4);
+    step(0.0, 0.0);
+    step(1.0, 1.0);
 
     // check position
     EXPECT_NEAR(-p * idleVelocity, position.x, 1e-3);
@@ -373,8 +378,9 @@ TEST_F(VehicleModelTest, RunPedal) {
     initIdle();
 
     // set yaw angle
-    yawAngle = M_PI;
-    step(0.0); step(1.0);
+    heading = angle2heading(M_PI);
+    step(0.0, 0.0);
+    step(1.0, 1.0);
 
     // check position
     EXPECT_NEAR(-idleVelocity, position.x, 1e-3);
@@ -385,8 +391,9 @@ TEST_F(VehicleModelTest, RunPedal) {
     initIdle();
 
     // set yaw angle
-    yawAngle = M_PI + M_PI_4;
-    step(0.0); step(1.0);
+    heading = angle2heading(M_PI + M_PI_4);
+    step(0.0, 0.0);
+    step(1.0, 1.0);
 
     // check position
     EXPECT_NEAR(-p * idleVelocity, position.x, 1e-3);
@@ -397,8 +404,9 @@ TEST_F(VehicleModelTest, RunPedal) {
     initIdle();
 
     // set yaw angle
-    yawAngle = M_PI + M_PI_2;
-    step(0.0); step(1.0);
+    heading = angle2heading(M_PI + M_PI_2);
+    step(0.0, 0.0);
+    step(1.0, 1.0);
 
     // check position
     EXPECT_NEAR(0.0, position.x, 1e-3);
@@ -409,8 +417,9 @@ TEST_F(VehicleModelTest, RunPedal) {
     initIdle();
 
     // set yaw angle
-    yawAngle = M_PI + M_PI_2 + M_PI_4;
-    step(0.0); step(1.0);
+    heading = angle2heading(M_PI + M_PI_2 + M_PI_4);
+    step(0.0, 0.0);
+    step(1.0, 1.0);
 
     // check position
     EXPECT_NEAR( p * idleVelocity, position.x, 1e-3);
@@ -422,27 +431,140 @@ TEST_F(VehicleModelTest, RunPedal) {
 TEST_F(VehicleModelTest, Eight) {
 
     // reset
-    reset(0.0);
+    initialize(0.0);
 
     // set initial state
     velocity = 0.0;
     acceleration = 0.0;
-    yawAngle = 0.0;
+    heading = {1.0, 0.0, 0.0};
     yawRate = 0.0;
+
+    // delta
+    double dt = 0.01;
 
     // iterate over time
     for(unsigned int i = 0; i < 100000; ++i) {
 
         // get time
-        auto t = 0.01 * i;
+        auto t = dt * i;
 
         // set steering
-        input.steering = sin(t * 0.01);
+        steering = sin(t * 0.01);
 
         // run step
-        step(t);
+        step(t, dt);
 
     }
+
+}
+
+
+TEST_F(VehicleModelTest, Distance) {
+
+    velocity = 10.0;
+    pedal = longitudinalBackwards(velocity, 0.0);
+
+
+    step(0.0, 0.0);
+    EXPECT_NEAR(0.0, distance, 1e-3);
+    EXPECT_NEAR(0.0, acceleration, 1e-3);
+    EXPECT_NEAR(10.0, velocity, 1e-3);
+
+    step(0.1, 0.1);
+    EXPECT_NEAR(1.0, distance, 1e-3);
+    EXPECT_NEAR(0.0, acceleration, 1e-3);
+    EXPECT_NEAR(10.0, velocity, 1e-3);
+
+    auto d = getDistance();
+    EXPECT_NEAR(1.0, d, 1e-3);
+
+    step(0.2, 0.1);
+    EXPECT_NEAR(2.0, distance, 1e-3);
+    EXPECT_NEAR(0.0, acceleration, 1e-3);
+    EXPECT_NEAR(10.0, velocity, 1e-3);
+
+    step(0.3, 0.1);
+    EXPECT_NEAR(3.0, distance, 1e-3);
+    EXPECT_NEAR(0.0, acceleration, 1e-3);
+    EXPECT_NEAR(10.0, velocity, 1e-3);
+
+    d = getDistance();
+    EXPECT_NEAR(2.0, d, 1e-3);
+
+    step(0.4, 0.1);
+    EXPECT_NEAR(4.0, distance, 1e-3);
+    EXPECT_NEAR(0.0, acceleration, 1e-3);
+    EXPECT_NEAR(10.0, velocity, 1e-3);
+
+    d = getDistance();
+    EXPECT_NEAR(1.0, d, 1e-3);
+
+
+}
+
+
+TEST_F(VehicleModelTest, Rotation) {
+
+    Vector3 absolut;
+
+    // position ahead, vehicle in origin, heading east
+    position = {0.0, 0.0, 1.0};
+    heading  = {1.0, 0.0, 0.0};
+    absolut  = {1.0, 0.0, 0.0};
+
+    // transform (no rotation)
+    auto v = toLocal(absolut);
+    EXPECT_NEAR( 1.0, v.x, 1e-12);
+    EXPECT_NEAR( 0.0, v.y, 1e-12);
+    EXPECT_NEAR(-1.0, v.z, 1e-12);
+
+
+    // moved position, vehicle moved, heading east
+    position = { 1.0, 0.0, 0.0};
+    heading  = { 1.0, 0.0, 0.0};
+    absolut  = {11.0, 2.0, 1.0};
+
+    // transform (no rotation)
+    v = toLocal(absolut);
+    EXPECT_NEAR(10.0, v.x, 1e-12);
+    EXPECT_NEAR( 2.0, v.y, 1e-12);
+    EXPECT_NEAR( 1.0, v.z, 1e-12);
+
+
+    // position ahead, vehicle in origin, heading north
+    position = {0.0, 0.0, 1.0};
+    heading  = {0.0, 1.0, 0.0};
+    absolut  = {1.0, 0.0, 0.0};
+
+    // transform (no rotation)
+    v = toLocal(absolut);
+    EXPECT_NEAR( 0.0, v.x, 1e-12);
+    EXPECT_NEAR(-1.0, v.y, 1e-12);
+    EXPECT_NEAR(-1.0, v.z, 1e-12);
+
+
+    // vehicle on position, heading north
+    position = {1.0, 0.0, 1.0};
+    heading  = {0.0, 1.0, 0.0};
+    absolut  = {1.0, 0.0, 0.0};
+
+    // transform (no rotation)
+    v = toLocal(absolut);
+    EXPECT_NEAR( 0.0, v.x, 1e-12);
+    EXPECT_NEAR( 0.0, v.y, 1e-12);
+    EXPECT_NEAR(-1.0, v.z, 1e-12);
+
+
+    // position ahead, vehicle in origin, heading east
+    position = {1.0, 0.0, 1.0};
+    heading  = {0.0, 1.0, 0.0};
+    absolut  = {1.0, 0.0, 0.0};
+
+    // transform (no rotation)
+    v = toLocal(absolut);
+    EXPECT_NEAR( 0.0, v.x, 1e-12);
+    EXPECT_NEAR( 0.0, v.y, 1e-12);
+    EXPECT_NEAR(-1.0, v.z, 1e-12);
 
 }
 

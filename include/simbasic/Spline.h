@@ -39,63 +39,63 @@ namespace simbasic {
     typedef std::vector<SplineSegment> SplineDefinition;
 
     struct Spline : public SplineDefinition {
+
+
         Spline() = default;
-        explicit Spline(Polynomial &&polynomial);
-        void add(double position, Polynomial &&polynomial);
-        double operator() (double x) const;
-    };
 
 
-    /**
-     * Creates a spline by a single polynomial
-     * @param p Polynomial
-     */
-    Spline::Spline(Polynomial &&polynomial) {
+        /**
+         * Creates a spline by a single polynomial
+         * @param p Polynomial
+         */
+        Spline(Polynomial &&polynomial) {
 
-        // add segment to spline
-        emplace_back(SplineSegment{INFINITY, polynomial});
-
-    }
-
-
-    /**
-     * Adds a polynomial to the spline
-     * @param position Start position of the polynomial
-     * @param polynomial Polynomial to be added
-     */
-    void Spline::add(double position, Polynomial &&polynomial) {
-
-        // reset end position
-        back().end = position;
-
-        // add last element
-        emplace_back(SplineSegment{INFINITY, polynomial});
-
-    }
-
-
-    /**
-     * Calculates the spline at the given sample points
-     * @param x Sample point
-     * @return The evaluation of the polynomial
-     */
-    double Spline::operator()(double x) const {
-
-        // iterate over segments
-        for(const auto &s : *this) {
-
-            // check if x is not in this segment
-            if(x > s.end)
-                continue;
-
-            // evaluate polynomial
-            return s.polynomial(x);
+            // add segment to spline
+            emplace_back(SplineSegment{INFINITY, polynomial});
 
         }
 
-        throw std::invalid_argument("Could not find valid element");
 
-    }
+        /**
+         * Adds a polynomial to the spline
+         * @param position Start position of the polynomial
+         * @param polynomial Polynomial to be added
+         */
+        void add(double position, Polynomial &&polynomial) {
+
+            // reset end position
+            back().end = position;
+
+            // add last element
+            emplace_back(SplineSegment{INFINITY, polynomial});
+
+        }
+
+
+        /**
+         * Calculates the spline at the given sample points
+         * @param x Sample point
+         * @return The evaluation of the polynomial
+         */
+        double operator()(double x) const {
+
+            // iterate over segments
+            for (const auto &s : *this) {
+
+                // check if x is not in this segment
+                if (x > s.end)
+                    continue;
+
+                // evaluate polynomial
+                return s.polynomial(x);
+
+            }
+
+            throw std::invalid_argument("Could not find valid element");
+
+        }
+
+    };
 
 }
 

@@ -37,9 +37,8 @@ TEST(TrafficUnitTest, UnitExport) {
     nlohmann::json j = unit;
 
     // check against empty (elements stored are in alphabetical order)
-    EXPECT_EQ("{\"acceleration\":0.0,\"curvature\":0.0,\"distance\":0.0,\"position\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},"
-              "\"velocity\":0.0,""\"yawAngle\":0.0,\"yawRate\":0.0}",
-              j.dump());
+    std::string res = R"({"acceleration":0.0,"curvature":0.0,"distance":0.0,"heading":{"x":1.0,"y":0.0,"z":0.0},"position":{"x":0.0,"y":0.0,"z":0.0},"velocity":0.0,"yawRate":0.0})";
+    EXPECT_EQ(res, j.dump());
 
     // define a sample json
     nlohmann::json ji = {
@@ -70,7 +69,9 @@ TEST(TrafficUnitTest, UnitExport) {
     EXPECT_DOUBLE_EQ(  0.5,  unit2.position.y);
     EXPECT_DOUBLE_EQ(  0.0,  unit2.position.z);
     EXPECT_DOUBLE_EQ( 10.0,  unit2.velocity);
-    EXPECT_DOUBLE_EQ(  0.2,  unit2.yawAngle);
+    EXPECT_DOUBLE_EQ(  1.0,  unit2.heading.x);
+    EXPECT_DOUBLE_EQ(  0.0,  unit2.heading.y);
+    EXPECT_DOUBLE_EQ(  0.0,  unit2.heading.z);
     EXPECT_DOUBLE_EQ(  0.02, unit2.yawRate);
 
 }

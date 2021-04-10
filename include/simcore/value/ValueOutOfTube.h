@@ -46,7 +46,7 @@ public:
     void initialize(double initTime) override {
 
         if(!isSet())
-            throw ModelNotInitialized("Band is not initialized.");
+            throw ProcessException("Band is not initialized.");
 
     }
 

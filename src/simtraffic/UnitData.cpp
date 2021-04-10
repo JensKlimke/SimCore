@@ -45,7 +45,7 @@ void from_json(const json& j, Unit& o) {
     j.at("distance").get_to(o.distance);
     j.at("velocity").get_to(o.velocity);
     j.at("acceleration").get_to(o.acceleration);
-    j.at("yawAngle").get_to(o.yawAngle);
+    j.at("heading").get_to(o.heading);
     j.at("yawRate").get_to(o.yawRate);
     j.at("curvature").get_to(o.curvature);
 }
@@ -56,7 +56,7 @@ void to_json(json& j, const Unit& o) {
         {"distance", o.distance},
         {"velocity", o.velocity},
         {"acceleration", o.acceleration},
-        {"yawAngle", o.yawAngle},
+        {"heading", o.heading},
         {"yawRate", o.yawRate},
         {"curvature", o.curvature}
     };

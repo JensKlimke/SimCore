@@ -25,13 +25,11 @@
 #ifndef SIMCORE_SIGNALPROGRESS_H
 #define SIMCORE_SIGNALPROGRESS_H
 
-#ifndef EPS_DISTANCE
-#define EPS_DISTANCE 1e-9
-#endif
-
 #include <vector>
 #include <stdexcept>
 #include <cmath>
+
+#define SIG_EPS_DISTANCE 1e-9
 
 class SignalCurve {
 
@@ -89,7 +87,7 @@ public:
     double interpolate(double x) const {
 
         // check if x is out of bounds
-        if(x < _x.front() - EPS_DISTANCE || x > _x.back() + EPS_DISTANCE)
+        if(x < _x.front() - SIG_EPS_DISTANCE || x > _x.back() + SIG_EPS_DISTANCE)
             throw std::invalid_argument("x out of bounds");
 
         auto w = where(x);
@@ -106,7 +104,7 @@ public:
     double previous(double x) const {
 
         // check if x is out of bounds
-        if(x < _x.front() - EPS_DISTANCE)
+        if(x < _x.front() - SIG_EPS_DISTANCE)
             throw std::invalid_argument("x out of bounds");
 
         auto w = where(x);
@@ -127,7 +125,7 @@ public:
     double next(double x) const {
 
         // check if x is out of bounds
-        if(x > _x.back() + EPS_DISTANCE)
+        if(x > _x.back() + SIG_EPS_DISTANCE)
             throw std::invalid_argument("x out of bounds");
 
         auto w = where(x);
@@ -183,7 +181,7 @@ public:
      * @param eps Tolerance (in y-direction, half band width)
      * @return Flag
      */
-    bool hit(double x, double y, double eps = EPS_DISTANCE) const {
+    bool hit(double x, double y, double eps = SIG_EPS_DISTANCE) const {
 
         return fabs(interpolate(x) - y) < eps;
 
