@@ -84,12 +84,35 @@ struct Unit {
     /**
      * Calculates the given global position into the vehicle coordinate system
      * @param global Global position to be transferred into vehicle CS
-     * @return
+     * @return The coordinate in the local coordinate system
      */
     Vector3 toLocal(const Vector3 &global) const {
 
         // transform
         return coordinateTransform(global, position, heading);
+
+    }
+
+
+    /**
+     * Calculates the given global angle into the vehicle coordinate system
+     * @param global Global heading angle
+     * @return The angle in the local coordinate system
+     */
+    double toLocalAngle(double angle) const {
+
+        // get heading of point
+        auto h = angle2heading(angle);
+
+        // move to vehicle's origin
+        h.x += position.x;
+        h.y += position.y;
+
+        // rotate into local CS
+        h = toLocal(h);
+
+        // calculate angle
+        return heading2angle(h);
 
     }
 

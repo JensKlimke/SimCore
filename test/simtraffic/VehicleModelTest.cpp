@@ -25,6 +25,7 @@
 #pragma clang diagnostic ignored "-Wunknown-pragmas"
 #pragma ide diagnostic ignored "cert-err58-cpp"
 
+#include <math.h>
 #include <gtest/gtest.h>
 #include <simtraffic/VehicleModel.h>
 #include <simtraffic/SetupVehicleModel.h>
@@ -503,14 +504,12 @@ TEST_F(VehicleModelTest, Distance) {
 }
 
 
-TEST_F(VehicleModelTest, Rotation) {
-
-    Vector3 absolut;
+TEST_F(VehicleModelTest, Transpose) {
 
     // position ahead, vehicle in origin, heading east
     position = {0.0, 0.0, 1.0};
     heading  = {1.0, 0.0, 0.0};
-    absolut  = {1.0, 0.0, 0.0};
+    Vector3 absolut  = {1.0, 0.0, 0.0};
 
     // transform (no rotation)
     auto v = toLocal(absolut);
@@ -556,15 +555,110 @@ TEST_F(VehicleModelTest, Rotation) {
 
 
     // position ahead, vehicle in origin, heading east
-    position = {1.0, 0.0, 1.0};
-    heading  = {0.0, 1.0, 0.0};
+    position = {0.0, 0.0, 1.0};
+    heading  = angle2heading(M_PI_4);
     absolut  = {1.0, 0.0, 0.0};
 
     // transform (no rotation)
     v = toLocal(absolut);
-    EXPECT_NEAR( 0.0, v.x, 1e-12);
-    EXPECT_NEAR( 0.0, v.y, 1e-12);
-    EXPECT_NEAR(-1.0, v.z, 1e-12);
+    EXPECT_NEAR( 0.707, v.x, 1e-3);
+    EXPECT_NEAR(-0.707, v.y, 1e-3);
+    EXPECT_NEAR(-1.0,   v.z, 1e-3);
+
+
+    // position ahead, vehicle in origin, heading east
+    position = {-0.5, -1.0, 1.0};
+    heading  = angle2heading(M_PI_4);
+    absolut  = {0.5, 0.0, 0.0};
+
+    // transform (no rotation)
+    v = toLocal(absolut);
+    EXPECT_NEAR( 1.414, v.x, 1e-3);
+    EXPECT_NEAR( 0.0,   v.y, 1e-3);
+    EXPECT_NEAR(-1.0,   v.z, 1e-3);
+
+
+    // position ahead, vehicle in origin, heading east
+    position = {0.0, 0.0, 1.0};
+    heading  = angle2heading(M_PI + M_PI_4);
+    absolut  = {1.0, 0.0, 0.0};
+
+    // transform (no rotation)
+    v = toLocal(absolut);
+    EXPECT_NEAR(-0.707, v.x, 1e-3);
+    EXPECT_NEAR( 0.707, v.y, 1e-3);
+    EXPECT_NEAR(-1.0,   v.z, 1e-3);
+
+
+    // position ahead, vehicle in origin, heading east
+    position = {102.836, -90.35, 0.284};
+    heading  = angle2heading(1.29568);
+    absolut  = {-892.910, 2022.346, 2.983};
+
+    // transform (no rotation)
+    v = toLocal(absolut);
+    EXPECT_NEAR(1762.741, v.x, 1e-3);
+    EXPECT_NEAR(1532.232, v.y, 1e-3);
+    EXPECT_NEAR(  2.699,  v.z, 1e-3);
+
+}
+
+
+TEST_F(VehicleModelTest, Heading) {
+
+    position = {-1.0, 2.0, 5.0};
+
+    // vehicle heading east, angle = 0.0
+    heading  = {1.0, 0.0, 0.0};
+    EXPECT_NEAR(0.0, toLocalAngle(0.0), 1e-12);
+
+    // vehicle heading east, angle = pi/2
+    heading  = {1.0, 0.0, 0.0};
+    EXPECT_NEAR(M_PI_2, toLocalAngle(M_PI_2), 1e-12);
+
+    // vehicle heading east, angle = pi
+    heading  = {1.0, 0.0, 0.0};
+    EXPECT_NEAR(M_PI, toLocalAngle(M_PI), 1e-12);
+
+    // vehicle heading north, angle = 0.0
+    heading  = {0.0, 1.0, 0.0};
+    EXPECT_NEAR(-M_PI_2, toLocalAngle(0.0), 1e-12);
+
+    // vehicle heading north, angle = pi
+    heading  = {0.0, 1.0, 0.0};
+    EXPECT_NEAR(M_PI_2, toLocalAngle(M_PI), 1e-12);
+
+    // vehicle heading north, angle = 3/2 * pi
+    heading  = {0.0, 1.0, 0.0};
+    EXPECT_NEAR(M_PI, toLocalAngle(3.0 * M_PI_2), 1e-12);
+
+    // quadrants
+    heading = angle2heading(1.0);
+    EXPECT_NEAR(1.0, toLocalAngle(2.0), 1e-3);
+
+    // quadrant: < pi/2
+    heading = angle2heading(1.0);
+    EXPECT_NEAR(2.0, toLocalAngle(3.0), 1e-3);
+
+    // quadrant: < pi
+    heading = angle2heading(1.0);
+    EXPECT_NEAR(3.0, toLocalAngle(4.0), 1e-3);
+
+    // quadrant: > pi
+    heading = angle2heading(1.0);
+    EXPECT_NEAR(4.0 - 2.0 * M_PI, toLocalAngle(5.0), 1e-3);
+
+    // quadrant: > pi
+    heading = angle2heading(1.0);
+    EXPECT_NEAR(5.0 - 2.0 * M_PI, toLocalAngle(6.0), 1e-3);
+
+    // quadrant: > 2 * pi
+    heading = angle2heading(1.0);
+    EXPECT_NEAR(7.0 - 2.0 * M_PI, toLocalAngle(8.0), 1e-3);
+
+    // random
+    heading = angle2heading(-2.3456789);
+    EXPECT_NEAR(-0.136, toLocalAngle(-8.76543), 1e-3);
 
 }
 
