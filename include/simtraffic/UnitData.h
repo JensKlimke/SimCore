@@ -34,8 +34,8 @@ using json = nlohmann::json;
 void to_json(json& j, const Unit& o);
 void from_json(const json& j, Unit& o);
 
-void to_json(json& j, const Unit::Vector3& o);
-void from_json(const json& j, Unit::Vector3& o);
+void to_json(json& j, const Unit::Vector2& o);
+void from_json(const json& j, Unit::Vector2& o);
 
 
 #endif // UNIT_DATA_H

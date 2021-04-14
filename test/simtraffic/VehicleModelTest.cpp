@@ -81,8 +81,8 @@ protected:
         acceleration = 0.0;
         velocity = idleVelocity;
         curvature = 0.0;
-        position = {0.0, 0.0, 0.0};
-        heading = {1.0, 0.0, 0.0};
+        position = {0.0, 0.0};
+        heading = {1.0, 0.0};
         yawRate = 0.0;
 
     }
@@ -327,7 +327,7 @@ TEST_F(VehicleModelTest, RunPedal) {
     initIdle();
 
     // set yaw angle
-    heading = {1.0, 0.0, 0.0};
+    heading = {1.0, 0.0};
     step(0.0, 0.0);
     step(1.0, 1.0);
 
@@ -437,7 +437,7 @@ TEST_F(VehicleModelTest, Eight) {
     // set initial state
     velocity = 0.0;
     acceleration = 0.0;
-    heading = {1.0, 0.0, 0.0};
+    heading = {1.0, 0.0};
     yawRate = 0.0;
 
     // delta
@@ -507,129 +507,121 @@ TEST_F(VehicleModelTest, Distance) {
 TEST_F(VehicleModelTest, Transpose) {
 
     // position ahead, vehicle in origin, heading east
-    position = {0.0, 0.0, 1.0};
-    heading  = {1.0, 0.0, 0.0};
-    Vector3 absolut  = {1.0, 0.0, 0.0};
+    position = {0.0, 0.0};
+    heading  = {1.0, 0.0};
+    Vector2 absolut  = {1.0, 0.0};
 
     // transform (no rotation)
     auto v = toLocal(absolut);
     EXPECT_NEAR( 1.0, v.x, 1e-12);
     EXPECT_NEAR( 0.0, v.y, 1e-12);
-    EXPECT_NEAR(-1.0, v.z, 1e-12);
 
 
     // moved position, vehicle moved, heading east
-    position = { 1.0, 0.0, 0.0};
-    heading  = { 1.0, 0.0, 0.0};
-    absolut  = {11.0, 2.0, 1.0};
+    position = { 1.0, 0.0};
+    heading  = { 1.0, 0.0};
+    absolut  = {11.0, 2.0};
 
     // transform (no rotation)
     v = toLocal(absolut);
     EXPECT_NEAR(10.0, v.x, 1e-12);
     EXPECT_NEAR( 2.0, v.y, 1e-12);
-    EXPECT_NEAR( 1.0, v.z, 1e-12);
 
 
     // position ahead, vehicle in origin, heading north
-    position = {0.0, 0.0, 1.0};
-    heading  = {0.0, 1.0, 0.0};
-    absolut  = {1.0, 0.0, 0.0};
+    position = {0.0, 0.0};
+    heading  = {0.0, 1.0};
+    absolut  = {1.0, 0.0};
 
     // transform (no rotation)
     v = toLocal(absolut);
     EXPECT_NEAR( 0.0, v.x, 1e-12);
     EXPECT_NEAR(-1.0, v.y, 1e-12);
-    EXPECT_NEAR(-1.0, v.z, 1e-12);
 
 
     // vehicle on position, heading north
-    position = {1.0, 0.0, 1.0};
-    heading  = {0.0, 1.0, 0.0};
-    absolut  = {1.0, 0.0, 0.0};
+    position = {1.0, 0.0};
+    heading  = {0.0, 1.0};
+    absolut  = {1.0, 0.0};
 
     // transform (no rotation)
     v = toLocal(absolut);
     EXPECT_NEAR( 0.0, v.x, 1e-12);
     EXPECT_NEAR( 0.0, v.y, 1e-12);
-    EXPECT_NEAR(-1.0, v.z, 1e-12);
 
 
     // position ahead, vehicle in origin, heading east
-    position = {0.0, 0.0, 1.0};
+    position = {0.0, 0.0};
     heading  = angle2heading(M_PI_4);
-    absolut  = {1.0, 0.0, 0.0};
+    absolut  = {1.0, 0.0};
 
     // transform (no rotation)
     v = toLocal(absolut);
     EXPECT_NEAR( 0.707, v.x, 1e-3);
     EXPECT_NEAR(-0.707, v.y, 1e-3);
-    EXPECT_NEAR(-1.0,   v.z, 1e-3);
 
 
     // position ahead, vehicle in origin, heading east
-    position = {-0.5, -1.0, 1.0};
+    position = {-0.5, -1.0};
     heading  = angle2heading(M_PI_4);
-    absolut  = {0.5, 0.0, 0.0};
+    absolut  = {0.5, 0.0};
 
     // transform (no rotation)
     v = toLocal(absolut);
     EXPECT_NEAR( 1.414, v.x, 1e-3);
     EXPECT_NEAR( 0.0,   v.y, 1e-3);
-    EXPECT_NEAR(-1.0,   v.z, 1e-3);
 
 
     // position ahead, vehicle in origin, heading east
-    position = {0.0, 0.0, 1.0};
+    position = {0.0, 0.0};
     heading  = angle2heading(M_PI + M_PI_4);
-    absolut  = {1.0, 0.0, 0.0};
+    absolut  = {1.0, 0.0};
 
     // transform (no rotation)
     v = toLocal(absolut);
     EXPECT_NEAR(-0.707, v.x, 1e-3);
     EXPECT_NEAR( 0.707, v.y, 1e-3);
-    EXPECT_NEAR(-1.0,   v.z, 1e-3);
 
 
     // position ahead, vehicle in origin, heading east
-    position = {102.836, -90.35, 0.284};
+    position = {102.836, -90.35};
     heading  = angle2heading(1.29568);
-    absolut  = {-892.910, 2022.346, 2.983};
+    absolut  = {-892.910, 2022.346};
 
     // transform (no rotation)
     v = toLocal(absolut);
     EXPECT_NEAR(1762.741, v.x, 1e-3);
     EXPECT_NEAR(1532.232, v.y, 1e-3);
-    EXPECT_NEAR(  2.699,  v.z, 1e-3);
 
 }
 
 
 TEST_F(VehicleModelTest, Heading) {
 
-    position = {-1.0, 2.0, 5.0};
+    position = {-1.0, 2.0};
 
     // vehicle heading east, angle = 0.0
-    heading  = {1.0, 0.0, 0.0};
+    heading  = {1.0, 0.0};
     EXPECT_NEAR(0.0, toLocalAngle(0.0), 1e-12);
 
     // vehicle heading east, angle = pi/2
-    heading  = {1.0, 0.0, 0.0};
+    heading  = {1.0, 0.0};
     EXPECT_NEAR(M_PI_2, toLocalAngle(M_PI_2), 1e-12);
 
     // vehicle heading east, angle = pi
-    heading  = {1.0, 0.0, 0.0};
+    heading  = {1.0, 0.0};
     EXPECT_NEAR(M_PI, toLocalAngle(M_PI), 1e-12);
 
     // vehicle heading north, angle = 0.0
-    heading  = {0.0, 1.0, 0.0};
+    heading  = {0.0, 1.0};
     EXPECT_NEAR(-M_PI_2, toLocalAngle(0.0), 1e-12);
 
     // vehicle heading north, angle = pi
-    heading  = {0.0, 1.0, 0.0};
+    heading  = {0.0, 1.0};
     EXPECT_NEAR(M_PI_2, toLocalAngle(M_PI), 1e-12);
 
     // vehicle heading north, angle = 3/2 * pi
-    heading  = {0.0, 1.0, 0.0};
+    heading  = {0.0, 1.0};
     EXPECT_NEAR(M_PI, toLocalAngle(3.0 * M_PI_2), 1e-12);
 
     // quadrants

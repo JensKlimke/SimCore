@@ -33,21 +33,64 @@
 struct Unit {
 
     /** A class to store a three dimensional value. */
-    struct Vector3 {
+    struct Vector2 {
         double x; // The x element (in *m*)
         double y; // The y element (in *m*)
-        double z; // The z element (in *m*)
     };
 
-    Vector3 position = {0.0, 0.0, 0.0}; // The actual position (in *m*)
-    Vector3 heading = {1.0, 0.0, 0.0}; // The actual heading (in *m*)
+    Vector2 position = {0.0, 0.0}; // The actual position (in *m*)
+    Vector2 heading = {1.0, 0.0}; // The actual heading (in *m*)
     double velocity = 0.0; // The actual velocity (in *m/s*)
     double acceleration = 0.0; // The actual acceleration (in *m/s^2*)
     double yawRate = 0.0; // The actual yaw rate (in *rad/s*)
     double curvature = 0.0; // The actual curvature (in *1/m*)
     double distance = 0.0; // The actual distance travelled (in *m*)
-    double steering = 0.0; // The actual steering (no unit, -1: full right, 0: straight, 1: full left)
-    double pedal = 0.0; // The actual pedal value (no unit, -1..0: braking, 0..1 throttle)
+
+
+    /**
+     * Integrates the curvature and acceleration
+     * @param dt
+     */
+    void integrate(double dt) {
+
+        // velocity
+        velocity += acceleration * dt;
+
+        // limit velocity
+        if(velocity <= 0.0)
+            velocity = 0.0;
+
+        // limit acceleration
+        if(velocity <= 0.0 && acceleration <= 0.0)
+            acceleration = 0.0;
+
+        // calculate distance
+        auto ds = velocity * dt;
+        distance += ds;
+
+        // set yaw rate
+        yawRate = curvature * velocity;
+
+        // calculate change in position
+        auto dSin = sin(yawRate * dt);
+        auto dCos = cos(yawRate * dt);
+
+        // calculate heading
+        heading = {
+                heading.x * dCos - heading.y * dSin,
+                heading.y * dCos + heading.x * dSin
+        };
+
+        // normalize (to avoid cumulated accuracy errors)
+        auto l = 1.0 / sqrt(heading.x * heading.x + heading.y * heading.y);
+        heading.x *= l;
+        heading.y *= l;
+
+        // position
+        position.x += heading.x * ds;
+        position.y += heading.y * ds;
+
+    }
 
 
     /**
@@ -55,8 +98,8 @@ struct Unit {
      * @param angle Angle to be converted (east is 0, to north is positive, in rad)
      * @return The heading vector normalized to a length of 1
      */
-    static Vector3 angle2heading(double angle) {
-        return {cos(angle), sin(angle), 0.0};
+    static Vector2 angle2heading(double angle) {
+        return {cos(angle), sin(angle)};
     }
 
 
@@ -65,7 +108,7 @@ struct Unit {
      * @param heading Heading vector
      * @return The angle (east is 0, to north is positive, in rad)
      */
-    static double heading2angle(const Vector3 &heading) {
+    static double heading2angle(const Vector2 &heading) {
         return atan2(heading.y, heading.x);
     }
 
@@ -86,7 +129,7 @@ struct Unit {
      * @param global Global position to be transferred into vehicle CS
      * @return The coordinate in the local coordinate system
      */
-    Vector3 toLocal(const Vector3 &global) const {
+    Vector2 toLocal(const Vector2 &global) const {
 
         // transform
         return coordinateTransform(global, position, heading);
@@ -124,24 +167,25 @@ struct Unit {
      * @param toHeading Heading of the target coordinate system
      * @return The position in the local coordinate system
      */
-    static Vector3 coordinateTransform(const Vector3 &fromPosition, const Vector3 &toOrigin, const Vector3 &toHeading) {
+    static Vector2 coordinateTransform(const Vector2 &fromPosition, const Vector2 &toOrigin, const Vector2 &toHeading) {
 
         // create target position
-        Vector3 toPosition = fromPosition;
+        Vector2 toPosition = fromPosition;
 
         // transpose
         toPosition.x -= toOrigin.x;
         toPosition.y -= toOrigin.y;
-        toPosition.z -= toOrigin.z;
 
         // rotate
         return {
              toHeading.x * toPosition.x + toHeading.y * toPosition.y,
-            -toHeading.y * toPosition.x + toHeading.x * toPosition.y,
-             toPosition.z
+            -toHeading.y * toPosition.x + toHeading.x * toPosition.y
         };
 
     }
+
+
+
 
 
 protected:

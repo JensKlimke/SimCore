@@ -25,17 +25,15 @@
 
 #include <simtraffic/UnitData.h>
 
-void from_json(const json& j, Unit::Vector3& o) {
+void from_json(const json& j, Unit::Vector2& o) {
     j.at("x").get_to(o.x);
     j.at("y").get_to(o.y);
-    j.at("z").get_to(o.z);
 }
 
-void to_json(json& j, const Unit::Vector3& o) {
+void to_json(json& j, const Unit::Vector2& o) {
     j = json{
         {"x", o.x},
-        {"y", o.y},
-        {"z", o.z}
+        {"y", o.y}
     };
 }
 

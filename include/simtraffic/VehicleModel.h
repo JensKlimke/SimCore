@@ -45,6 +45,11 @@ namespace simtraffic {
         } parameters;
 
 
+        double steering = 0.0; // The actual steering (no unit, -1: full right, 0: straight, 1: full left)
+        double pedal = 0.0; // The actual pedal value (no unit, -1..0: braking, 0..1 throttle)
+
+
+
         /**
          * Constructor
          */
@@ -53,20 +58,20 @@ namespace simtraffic {
 
         /**
          * Returns the acceleration resulting from the pedal value
-         * @param velocity Velocity state
-         * @param pedal Pedal value
+         * @param v Velocity state
+         * @param p Pedal value
          * @return The resulting acceleration
          */
-        double longitudinalForwards(double velocity, double pedal) const {
+        double longitudinalForwards(double v, double p) const {
 
             // get max and min acceleration
-            auto aMin = parameters.low(velocity);
-            auto aMax = parameters.high(velocity);
-            auto aBr  = parameters.brake(velocity);
+            auto aMin = parameters.low(v);
+            auto aMax = parameters.high(v);
+            auto aBr  = parameters.brake(v);
 
             // limit pedal value
-            auto drive = std::min(1.0, std::max(0.0, pedal));
-            auto brake = std::min(1.0, std::max(0.0, -pedal));
+            auto drive = std::min(1.0, std::max(0.0,  p));
+            auto brake = std::min(1.0, std::max(0.0, -p));
 
             // calculate acceleration
             return drive * aMax + (1.0 - drive) * aMin + brake * aBr;
@@ -76,49 +81,49 @@ namespace simtraffic {
 
         /**
          * Returns the pedal value needed to accelerate as desired
-         * @param velocity Velocity state
-         * @param acceleration Desired acceleration
+         * @param v Velocity state
+         * @param a Desired acceleration
          * @return The required pedal value
          */
-        double longitudinalBackwards(double velocity, double acceleration) const {
+        double longitudinalBackwards(double v, double a) const {
 
             // calculate acceleration points
-            auto aMin = parameters.low(velocity);
-            auto aMax = parameters.high(velocity);
-            auto aBr = parameters.brake(velocity);
+            auto aMin = parameters.low(v);
+            auto aMax = parameters.high(v);
+            auto aBr = parameters.brake(v);
 
             // calculate pedals
-            if (aMin < acceleration)
-                return (acceleration - aMin) / (aMax - aMin);
+            if (aMin < a)
+                return (a - aMin) / (aMax - aMin);
             else
-                return (2.0 * aMin - acceleration) / (aBr - aMin);
+                return (2.0 * aMin - a) / (aBr - aMin);
 
         }
 
 
         /**
          * Calculates the curvature based on the velocity state and the steering value
-         * @param velocity Velocity state
-         * @param steering Steering value
+         * @param v Velocity state
+         * @param s Steering value
          * @return The curvature resulting from steering and velocity
          */
-        double lateralForwards(double velocity, double steering) const {
+        double lateralForwards(double v, double s) const {
 
-            auto c = parameters.steer(velocity);
-            return std::min(1.0, std::max(-1.0, steering)) * c;
+            auto c = parameters.steer(v);
+            return std::min(1.0, std::max(-1.0, s)) * c;
 
         }
 
 
         /**
          * Calculates the steering value based on the velocity state and the curvature value
-         * @param velocity Velocity state
-         * @param curvature Curvature value
+         * @param v Velocity state
+         * @param c Curvature value
          * @return The steering value resulting from curvature and velocity
          */
-        double lateralBackwards(double velocity, double curvature) const {
+        double lateralBackwards(double v, double c) const {
 
-            return curvature / parameters.steer(velocity);
+            return c / parameters.steer(v);
 
         }
 
@@ -147,44 +152,10 @@ namespace simtraffic {
 
             // calculate acceleration
             acceleration = longitudinalForwards(velocity, pedal);
-            velocity += acceleration * dt;
-
-            // limit velocity
-            if(velocity <= 0.0)
-                velocity = 0.0;
-
-            // limit acceleration
-            if(velocity <= 0.0 && acceleration <= 0.0)
-                acceleration = 0.0;
-
-            // calculate distance
-            auto ds = velocity * dt;
-            distance += ds;
-
-            // set yaw rate
             curvature = lateralForwards(velocity, steering);
-            yawRate = curvature * velocity;
 
-            // calculate change in position
-            auto dSin = sin(yawRate * dt);
-            auto dCos = cos(yawRate * dt);
-
-            // calculate heading
-            heading = {
-                    heading.x * dCos - heading.y * dSin,
-                    heading.y * dCos + heading.x * dSin,
-                    0.0
-            };
-
-            // normalize (to avoid cumulated accuracy errors)
-            auto l = 1.0 / sqrt(heading.x * heading.x + heading.y * heading.y);
-            heading.x *= l;
-            heading.y *= l;
-
-            // position
-            position.x += heading.x * ds;
-            position.y += heading.y * ds;
-            position.z = 0.0;
+            // integration
+            Unit::integrate(dt);
 
         }
 
