@@ -25,9 +25,7 @@
 #pragma clang diagnostic ignored "-Wunknown-pragmas"
 #pragma ide diagnostic ignored "cert-err58-cpp"
 
-#include <math.h>
 #include <gtest/gtest.h>
-#include <simtraffic/VehicleModel.h>
 #include <simtraffic/SetupVehicleModel.h>
 
 class VehicleModelTest : public ::testing::Test, public simtraffic::VehicleModel {

@@ -27,6 +27,7 @@
 #define SIMCORE_SETUP_VEHICLE_MODEL_H
 
 #include "VehicleModel.h"
+#include <simbasic/Polynomial.h>
 
 namespace simtraffic {
 

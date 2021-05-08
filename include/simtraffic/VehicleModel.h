@@ -28,12 +28,11 @@
 
 #include <algorithm>
 #include <simbasic/Spline.h>
-#include <simcore/IComponent.h>
-#include "Unit.h"
+#include "UnitModel.h"
 
 namespace simtraffic {
 
-    class VehicleModel : public Unit, public simcore::IComponent {
+    class VehicleModel : public UnitModel {
 
     public:
 
@@ -128,34 +127,20 @@ namespace simtraffic {
         }
 
 
-        /**
-         * Initializes the vehicle
-         * @param initTime Init time
-         */
-        void initialize(double initTime) override {
-
-            // reset distance
-            distance = 0.0;
-
-            // reset distance counter
-            getDistance();
-
-        }
-
 
         /**
          * Calculates a forward step of the vehicle model
          * @param time Actual time
-         * @param dt Time step size
+         * @param deltaTime Time step size
          */
-        void step(double time, double dt) override {
+        void step(double time, double deltaTime) override {
 
             // calculate acceleration
             acceleration = longitudinalForwards(velocity, pedal);
             curvature = lateralForwards(velocity, steering);
 
             // integration
-            Unit::integrate(dt);
+            UnitModel::step(time, deltaTime);
 
         }
 
