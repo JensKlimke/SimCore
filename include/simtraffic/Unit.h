@@ -26,6 +26,7 @@
 #ifndef SIMCORE_UNIT_H
 #define SIMCORE_UNIT_H
 
+#include <cmath>
 
 /**
  * @brief A traffic unit interface.
@@ -178,8 +179,8 @@ struct Unit {
 
         // rotate
         return {
-             toHeading.x * toPosition.x + toHeading.y * toPosition.y,
-            -toHeading.y * toPosition.x + toHeading.x * toPosition.y
+                toHeading.x * toPosition.x + toHeading.y * toPosition.y,
+                -toHeading.y * toPosition.x + toHeading.x * toPosition.y
         };
 
     }
