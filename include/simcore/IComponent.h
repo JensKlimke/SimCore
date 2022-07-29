@@ -53,7 +53,7 @@ namespace simcore {
 
 
         /**
-         * Executes a time step and return the time step size. Attention: only run once per simulation step
+         * Executes a time step and return the time step size. Attention: only createAndRun once per simulation step
          * @param simTime Simulation time
          * @return Time step size
          */

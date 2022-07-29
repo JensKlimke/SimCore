@@ -101,7 +101,7 @@ TEST_F(LoopTest, DefaultSteps) {
     };
 
     // init timers
-    run(10.0, 0.01);
+    createAndRun(10.0, 0.01);
 
 }
 
@@ -129,7 +129,7 @@ TEST_F(LoopTest, Steps) {
     };
 
     // create and run
-    run(10.0, 0.01);
+    createAndRun(10.0, 0.01);
 
 }
 
@@ -159,6 +159,6 @@ TEST_F(LoopTest, DifferentSteps) {
     };
 
     // create and run
-    run(10.0, 0.01);
+    createAndRun(10.0, 0.01);
 
 }

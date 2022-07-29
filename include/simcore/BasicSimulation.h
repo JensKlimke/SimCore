@@ -149,7 +149,7 @@ namespace simcore {
          * @param endTime End time
          * @param stepSize Time step size
          */
-        void run(double endTime, double stepSize) {
+        void createAndRun(double endTime, double stepSize) {
 
             // create simulation
             create(endTime, stepSize);
