@@ -35,13 +35,11 @@
 
 class DataReporter : public simcore::IComponent {
 
-protected:
-
-    std::map<std::string, const double*> _values{};
-    std::vector<std::map<std::string, double>> _valueLog{};
-
 
 public:
+
+    typedef std::map<std::string, double> DataMap;
+    typedef std::vector<DataMap> DataContainer;
 
     /**
      * Constructor
@@ -74,8 +72,21 @@ public:
         for(auto &e : _values)
             map[e.first] = *e.second;
         // create new value
-        _valueLog.emplace_back(map);
+        _data.emplace_back(map);
     }
+
+
+    DataContainer filter(const std::function<bool(const DataMap &)> &fnc) const {
+        DataContainer data{};
+        std::copy_if (_data.begin(), _data.end(), std::back_inserter(data), fnc);
+        return data;
+    }
+
+
+protected:
+
+    std::map<std::string, const double*> _values{};
+    std::vector<std::map<std::string, double>> _data{};
 
 
 };

@@ -37,49 +37,76 @@ public:
     DataReporterTest() = default;
     ~DataReporterTest() override = default;
 
+    void SetUp() override {
+
+        // create sub
+        auto a = simulation.createGenericComponent();
+        a->stepFnc = [this] (double t, double dt) {
+            valueA = 2.0 * t;
+            valueB = dt;
+        };
+
+        // create reporter
+        DataReporter::setTimeStepSize(1.0);
+
+        // set values
+        addValue("a", &valueA);
+        addValue("b", &valueB);
+
+        // add reporter
+        simulation.addComponent(this);
+
+        // run
+        simulation.createAndRun(3.0, 0.1);
+
+    }
+
 };
 
-TEST_F(DataReporterTest, writeCSV) {
-
-    // create sub
-    auto a = simulation.createGenericComponent();
-    a->stepFnc = [this] (double t, double dt) {
-        valueA = 2.0 * t;
-        valueB = dt;
-    };
-
-    // create reporter
-    DataReporter::setTimeStepSize(1.0);
-
-    // set values
-    addValue("a", &valueA);
-    addValue("b", &valueB);
-
-    // add reporter
-    simulation.addComponent(this);
-
-    // run
-    simulation.createAndRun(3.0, 0.1);
+TEST_F(DataReporterTest, WriteData) {
 
     // check elements
-    EXPECT_NEAR(0.0, _valueLog[0].at("time"), 1e-9);
-    EXPECT_NEAR(0.0, _valueLog[0].at("timeStepSize"), 1e-9);
-    EXPECT_NEAR(0.0, _valueLog[0].at("a"), 1e-9);
-    EXPECT_NEAR(0.0, _valueLog[0].at("b"), 1e-9);
+    EXPECT_NEAR(0.0, _data[0].at("time"), 1e-9);
+    EXPECT_NEAR(0.0, _data[0].at("timeStepSize"), 1e-9);
+    EXPECT_NEAR(0.0, _data[0].at("a"), 1e-9);
+    EXPECT_NEAR(0.0, _data[0].at("b"), 1e-9);
 
-    EXPECT_NEAR(1.0, _valueLog[1].at("time"), 1e-9);
-    EXPECT_NEAR(1.0, _valueLog[1].at("timeStepSize"), 1e-9);
-    EXPECT_NEAR(2.0, _valueLog[1].at("a"), 1e-9);
-    EXPECT_NEAR(0.1, _valueLog[1].at("b"), 1e-9);
+    EXPECT_NEAR(1.0, _data[1].at("time"), 1e-9);
+    EXPECT_NEAR(1.0, _data[1].at("timeStepSize"), 1e-9);
+    EXPECT_NEAR(2.0, _data[1].at("a"), 1e-9);
+    EXPECT_NEAR(0.1, _data[1].at("b"), 1e-9);
 
-    EXPECT_NEAR(2.0, _valueLog[2].at("time"), 1e-9);
-    EXPECT_NEAR(1.0, _valueLog[2].at("timeStepSize"), 1e-9);
-    EXPECT_NEAR(4.0, _valueLog[2].at("a"), 1e-9);
-    EXPECT_NEAR(0.1, _valueLog[2].at("b"), 1e-9);
+    EXPECT_NEAR(2.0, _data[2].at("time"), 1e-9);
+    EXPECT_NEAR(1.0, _data[2].at("timeStepSize"), 1e-9);
+    EXPECT_NEAR(4.0, _data[2].at("a"), 1e-9);
+    EXPECT_NEAR(0.1, _data[2].at("b"), 1e-9);
 
-    EXPECT_NEAR(3.0, _valueLog[3].at("time"), 1e-9);
-    EXPECT_NEAR(1.0, _valueLog[3].at("timeStepSize"), 1e-9);
-    EXPECT_NEAR(6.0, _valueLog[3].at("a"), 1e-9);
-    EXPECT_NEAR(0.1, _valueLog[3].at("b"), 1e-9);
+    EXPECT_NEAR(3.0, _data[3].at("time"), 1e-9);
+    EXPECT_NEAR(1.0, _data[3].at("timeStepSize"), 1e-9);
+    EXPECT_NEAR(6.0, _data[3].at("a"), 1e-9);
+    EXPECT_NEAR(0.1, _data[3].at("b"), 1e-9);
+
+}
+
+TEST_F(DataReporterTest, FilterData) {
+
+    // filter
+    auto data = filter([] (const DataMap &element) {
+        return (element.at("time") < 2.5 && element.at("a") > 1.0);
+    });
+
+    // check size
+    EXPECT_EQ(2, data.size());
+
+    // check elements
+    EXPECT_NEAR(1.0, data[0].at("time"), 1e-9);
+    EXPECT_NEAR(1.0, data[0].at("timeStepSize"), 1e-9);
+    EXPECT_NEAR(2.0, data[0].at("a"), 1e-9);
+    EXPECT_NEAR(0.1, data[0].at("b"), 1e-9);
+
+    EXPECT_NEAR(2.0, data[1].at("time"), 1e-9);
+    EXPECT_NEAR(1.0, data[1].at("timeStepSize"), 1e-9);
+    EXPECT_NEAR(4.0, data[1].at("a"), 1e-9);
+    EXPECT_NEAR(0.1, data[1].at("b"), 1e-9);
 
 }
