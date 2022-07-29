@@ -40,6 +40,7 @@ public:
 
     typedef std::map<std::string, double> DataMap;
     typedef std::vector<DataMap> DataContainer;
+    typedef std::function<bool(const DataMap &)> FilterFunction;
 
     /**
      * Constructor
@@ -76,7 +77,7 @@ public:
     }
 
 
-    DataContainer filter(const std::function<bool(const DataMap &)> &fnc) const {
+    DataContainer filter(const FilterFunction &fnc) const {
         DataContainer data{};
         std::copy_if (_data.begin(), _data.end(), std::back_inserter(data), fnc);
         return data;
