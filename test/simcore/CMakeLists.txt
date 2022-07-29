@@ -6,6 +6,7 @@ add_executable(SimCoreTest
 #       StopConditionTest.cpp
         SignalTest.cpp
         LogginTest.cpp
+        DataReporterTest.cpp
         )
 
 

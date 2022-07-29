@@ -26,7 +26,7 @@
 #define SIMCORE_JSONREPORTER_H
 
 #include <cmath>
-#include "DataReporter.h"
+#include "StreamReporter.h"
 
 
 class JsonReporter : public DataReporter {

@@ -23,22 +23,21 @@
 //
 
 
-#ifndef SIMCORE_DATA_REPORTER_H
-#define SIMCORE_DATA_REPORTER_H
+#ifndef SIMCORE_STREAMREPORTER_H
+#define SIMCORE_STREAMREPORTER_H
 
 #include <map>
-#include <vector>
 #include <string>
 #include <iostream>
 #include "../IComponent.h"
 #include "../exceptions.h"
 
-class DataReporter : public simcore::IComponent {
+class StreamReporter : public simcore::IComponent {
 
 protected:
 
+    std::ostream *_outstream = nullptr;
     std::map<std::string, const double*> _values{};
-    std::vector<std::map<std::string, double>> _valueLog{};
 
 
 public:
@@ -46,7 +45,7 @@ public:
     /**
      * Constructor
      */
-    DataReporter() = default;
+    StreamReporter() = default;
 
 
     /**
@@ -55,29 +54,47 @@ public:
      * @param key Key to be used in json
      */
     void addValue(const std::string &key, const double *val) {
+
         _values[key] = val;
+
     }
 
 
     /**
-     * Stores the values to the value vector
-     * @param simTime
-     * @param deltaTime
+     * Sets the stream in which the data shall be written
+     * @param os Output stream
      */
-    void step(double simTime, double deltaTime) override {
-        // create map
-        std::map<std::string, double> map;
-        // add time and time step size
-        map["time"] = simTime;
-        map["timeStepSize"] = deltaTime;
-        // iterate over values
-        for(auto &e : _values)
-            map[e.first] = *e.second;
-        // create new value
-        _valueLog.emplace_back(map);
+    void setOutstream(std::ostream &os) {
+
+        _outstream = &os;
+
+    }
+
+
+    /**
+     * Initializes the reporter
+     * @param initTime Init time
+     */
+    void initialize(double initTime) override {
+
+        if(_outstream == nullptr)
+            throw std::runtime_error("Output stream is not initialized.");
+
+    }
+
+
+    /**
+     * Terminates the reporter
+     * @param simTime Termination time
+     */
+    void terminate(double simTime) override {
+
+        // flush
+        _outstream->flush();
+
     }
 
 
 };
 
-#endif //SIMCORE_DATA_REPORTER_H
+#endif //SIMCORE_STREAMREPORTER_H

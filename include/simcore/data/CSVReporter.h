@@ -26,9 +26,9 @@
 #define SIMCORE_JSONREPORTER_H
 
 #include <cmath>
-#include "DataReporter.h"
+#include "StreamReporter.h"
 
-class CSVReporter : public DataReporter {
+class CSVReporter : public StreamReporter {
 
 public:
 
@@ -60,7 +60,7 @@ protected:
 
     void initialize(double initTime) override {
 
-        DataReporter::initialize(initTime);
+        StreamReporter::initialize(initTime);
 
         // write header
         (*_outstream) << "time,timeStepSize";
