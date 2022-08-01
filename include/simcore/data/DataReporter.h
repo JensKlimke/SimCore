@@ -83,6 +83,11 @@ public:
         return data;
     }
 
+    DataContainer getData() const {
+        DataContainer data{};
+        std::copy (_data.begin(), _data.end(), std::back_inserter(data));
+        return data;
+    }
 
 protected:
 

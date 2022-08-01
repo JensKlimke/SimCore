@@ -88,6 +88,37 @@ TEST_F(DataReporterTest, WriteData) {
 
 }
 
+TEST_F(DataReporterTest, getData) {
+
+    // filter
+    auto data = getData();
+
+    // check size
+    EXPECT_EQ(4, data.size());
+
+    // check elements
+    EXPECT_NEAR(0.0, data[0].at("time"), 1e-9);
+    EXPECT_NEAR(0.0, data[0].at("timeStepSize"), 1e-9);
+    EXPECT_NEAR(0.0, data[0].at("a"), 1e-9);
+    EXPECT_NEAR(0.0, data[0].at("b"), 1e-9);
+
+    EXPECT_NEAR(1.0, data[1].at("time"), 1e-9);
+    EXPECT_NEAR(1.0, data[1].at("timeStepSize"), 1e-9);
+    EXPECT_NEAR(2.0, data[1].at("a"), 1e-9);
+    EXPECT_NEAR(0.1, data[1].at("b"), 1e-9);
+
+    EXPECT_NEAR(2.0, data[2].at("time"), 1e-9);
+    EXPECT_NEAR(1.0, data[2].at("timeStepSize"), 1e-9);
+    EXPECT_NEAR(4.0, data[2].at("a"), 1e-9);
+    EXPECT_NEAR(0.1, data[2].at("b"), 1e-9);
+
+    EXPECT_NEAR(3.0, data[3].at("time"), 1e-9);
+    EXPECT_NEAR(1.0, data[3].at("timeStepSize"), 1e-9);
+    EXPECT_NEAR(6.0, data[3].at("a"), 1e-9);
+    EXPECT_NEAR(0.1, data[3].at("b"), 1e-9);
+
+}
+
 TEST_F(DataReporterTest, FilterData) {
 
     // filter
