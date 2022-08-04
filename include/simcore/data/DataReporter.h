@@ -76,6 +76,11 @@ public:
         _data.emplace_back(map);
     }
 
+    DataContainer last() const {
+        DataContainer data{};
+        std::copy (_data.end() - 1, _data.end(), std::back_inserter(data));
+        return data;
+    }
 
     DataContainer filter(const FilterFunction &fnc) const {
         DataContainer data{};

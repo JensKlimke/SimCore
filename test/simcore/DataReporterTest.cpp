@@ -141,3 +141,19 @@ TEST_F(DataReporterTest, FilterData) {
     EXPECT_NEAR(0.1, data[1].at("b"), 1e-9);
 
 }
+
+TEST_F(DataReporterTest, LastElement) {
+
+    // filter
+    auto data = last();
+
+    // check size
+    EXPECT_EQ(1, data.size());
+
+    // check elements
+    EXPECT_NEAR(3.0, data[0].at("time"), 1e-9);
+    EXPECT_NEAR(1.0, data[0].at("timeStepSize"), 1e-9);
+    EXPECT_NEAR(6.0, data[0].at("a"), 1e-9);
+    EXPECT_NEAR(0.1, data[0].at("b"), 1e-9);
+
+}
