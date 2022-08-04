@@ -88,10 +88,10 @@ TEST_F(DataReporterTest, WriteData) {
 
 }
 
-TEST_F(DataReporterTest, getData) {
+TEST_F(DataReporterTest, all) {
 
     // filter
-    auto data = getData();
+    auto data = all();
 
     // check size
     EXPECT_EQ(4, data.size());
