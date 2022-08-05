@@ -38,6 +38,7 @@ class DataReporter : public simcore::IComponent {
 
 public:
 
+    typedef std::vector<std::string> KeyVector;
     typedef std::map<std::string, double> DataMap;
     typedef std::vector<DataMap> DataContainer;
     typedef std::function<bool(const DataMap &)> FilterFunction;
@@ -45,7 +46,10 @@ public:
     /**
      * Constructor
      */
-    DataReporter() = default;
+    DataReporter() {
+        _keys.emplace_back("time");
+        _keys.emplace_back("timeStepSize");
+    };
 
 
     /**
@@ -54,6 +58,7 @@ public:
      * @param key Key to be used in json
      */
     void addValue(const std::string &key, const double *val) {
+        _keys.emplace_back(key);
         _values[key] = val;
     }
 
@@ -94,10 +99,32 @@ public:
         return data;
     }
 
+    void exportToCSV(std::ostream &out) {
+        exportDataContainerToCSV(_data, _keys, out);
+    }
+
+    static void exportDataContainerToCSV(const DataContainer &container, const KeyVector &keys, std::ostream &out) {
+        // export header line
+        for(unsigned int i = 0; i < keys.size(); ++i)
+            out << (i > 0 ? "," : "") << "\"" << keys[i] << "\"";
+        // add new line
+        out << std::endl;
+        // export values
+        for(auto &entry : container) {
+            // create line of values
+            for (unsigned int i = 0; i < keys.size(); ++i) {
+                out << (i > 0 ? "," : "") << entry.at(keys[i]);
+            }
+            // add new line
+            out << std::endl;
+        }
+    }
+
 protected:
 
     std::map<std::string, const double*> _values{};
-    std::vector<std::map<std::string, double>> _data{};
+    KeyVector _keys{};
+    DataContainer _data{};
 
 
 };

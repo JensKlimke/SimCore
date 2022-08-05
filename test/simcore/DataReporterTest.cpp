@@ -33,6 +33,7 @@ public:
 
     double valueA{};
     double valueB{};
+    std::string csvString;
 
     DataReporterTest() = default;
     ~DataReporterTest() override = default;
@@ -58,6 +59,9 @@ public:
 
         // run
         simulation.createAndRun(3.0, 0.1);
+
+        // set csv string
+        csvString = "\"time\",\"timeStepSize\",\"a\",\"b\"\n0,0,0,0\n1,1,2,0.1\n2,1,4,0.1\n3,1,6,0.1\n";
 
     }
 
@@ -156,4 +160,14 @@ TEST_F(DataReporterTest, LastElement) {
     EXPECT_NEAR(6.0, data[0].at("a"), 1e-9);
     EXPECT_NEAR(0.1, data[0].at("b"), 1e-9);
 
+}
+
+
+TEST_F(DataReporterTest, Export) {
+    // get export
+    std::stringstream stream{};
+    exportToCSV(stream);
+    // to string
+    std::string str = stream.str();
+    EXPECT_EQ(csvString, str);
 }
