@@ -41,7 +41,7 @@ endif (BUILD_FOR_COVERAGE)
 # traffic simulation target
 if(BUILD_TRAFFIC_SIMULATION)
 
-    message("-- Traffic simulation target enabled")
+    message(STATUS "Traffic simulation target enabled")
 
     # include json parser
     include_directories(lib/json/include)
@@ -56,7 +56,7 @@ endif(BUILD_TRAFFIC_SIMULATION)
 ## Enable google testing of SimCore
 if(BUILD_TESTS)
 
-    message("-- Testing of SimCore enabled")
+    message(STATUS "Testing of SimCore enabled")
 
     # enable testing
     enable_testing()
@@ -95,7 +95,7 @@ endif()
 # websocket
 if(BUILD_WEBSOCKET)
 
-    message("-- Websocket functionality enabled")
+    message(STATUS "Websocket functionality enabled")
 
     # find boost
     find_package(Boost 1.69)
