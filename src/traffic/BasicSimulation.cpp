@@ -18,6 +18,7 @@
  * date: 2020-03-07
  */
 
+#include <memory>
 #include <simcore/traffic/BasicSimulation.h>
 
 
@@ -30,14 +31,13 @@ BasicSimulation::~BasicSimulation() {
 
 void BasicSimulation::destroy() {
 
-    // timers
-    delete timer;
-    delete stopTimer;
-    delete timeReporter;
+    // reset owned objects
+    timer.reset();
+    stopTimer.reset();
+    timeReporter.reset();
 
-    // delete stop conditions
-    for(auto e : stopConditions)
-        delete e;
+    // clear stop conditions
+    stopConditions.clear();
 
 }
 
@@ -46,43 +46,43 @@ void BasicSimulation::create(double endTime, double stepSize, bool realTime,
         const std::vector<std::pair<double*, double>> &stopValues) {
 
     // create timer
-    timer = realTime ? new RealTimeTimer : new BasicTimer;
+    timer = realTime ? std::make_unique<RealTimeTimer>() : std::make_unique<BasicTimer>();
 
     // set timer
     timer->setTimeStepSize(stepSize);
-    setTimer(timer);
+    setTimer(timer.get());
 
     // stop condition (time)
-    stopTimer = new TimeIsUp();
+    stopTimer = std::make_unique<TimeIsUp>();
     stopTimer->setStopTime(endTime);
 
     // stop condition (distance) TODO: test
     for(auto e : stopValues) {
 
         // create stop condition
-        auto b = new ValueExceed<double>();
+        auto b = std::make_unique<ValueExceed<double>>();
         b->setValueAndLimit(e.first, e.second);
 
         // add stop condition
-        stopConditions.push_back(b);
-        addComponent(b);
-        addStopCondition(b);
+        addComponent(b.get());
+        addStopCondition(b.get());
+        stopConditions.push_back(std::move(b));
 
     }
 
     // add component and stop condition
-    addComponent(stopTimer);
-    addStopCondition(stopTimer);
+    addComponent(stopTimer.get());
+    addStopCondition(stopTimer.get());
 
     // only when real time, set time reporter
     if(realTime) {
 
         // set time reporter
-        timeReporter = new TimeReporter();
+        timeReporter = std::make_unique<TimeReporter>();
         timeReporter->setTimeStepSize(1.0);
 
         // add component
-        addComponent(timeReporter);
+        addComponent(timeReporter.get());
 
     }
 

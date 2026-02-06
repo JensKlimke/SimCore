@@ -24,6 +24,7 @@
 #define SIMCORE_TS_BASICSIMULATION_H
 
 #include <string>
+#include <memory>
 #include <simcore/Loop.h>
 #include <simcore/data/JsonFileReporter.h>
 #include <simcore/data/TimeReporter.h>
@@ -37,11 +38,11 @@ class BasicSimulation : public sim::Loop {
 
 protected:
 
-    BasicTimer *timer = nullptr;
-    TimeReporter *timeReporter = nullptr;
-    TimeIsUp *stopTimer = nullptr;
+    std::unique_ptr<BasicTimer> timer;
+    std::unique_ptr<TimeReporter> timeReporter;
+    std::unique_ptr<TimeIsUp> stopTimer;
 
-    std::vector<ValueExceed<double>*> stopConditions{};
+    std::vector<std::unique_ptr<ValueExceed<double>>> stopConditions;
 
 
 public:

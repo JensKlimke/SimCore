@@ -111,31 +111,8 @@ namespace sim {
             // start timer
             _timer->start();
 
-            // iterate while stop flag is not set
-            while(!_stop) {
-
-                // iterate over components ...
-                for (auto &m : _components) {
-
-                    // ... and run component step
-                    m->step(_timer->time());
-
-                }
-
-                // iterate over stop conditions ...
-                for(auto &sc : _stop_conditions) {
-
-                    // ... and check status
-                    if (sc->hasStopped())
-                        _stop = true;
-
-                }
-
-                // time step
-                if(!_stop)
-                    _timer->step();
-
-            }
+            // run main loop
+            runLoop();
 
             // stop timer
             _timer->stop();
@@ -214,6 +191,43 @@ namespace sim {
 
             // set status
             _status = Status::INITIALIZED;
+
+        }
+
+
+        /**
+         * Run main loop body (called by run after initialize)
+         */
+        void runLoop() {
+
+            // set status to running
+            _status = Status::RUNNING;
+
+            // iterate while stop flag is not set
+            while(!_stop) {
+
+                // iterate over components ...
+                for (auto &m : _components) {
+
+                    // ... and run component step
+                    m->step(_timer->time());
+
+                }
+
+                // iterate over stop conditions ...
+                for(auto &sc : _stop_conditions) {
+
+                    // ... and check status
+                    if (sc->hasStopped())
+                        _stop = true;
+
+                }
+
+                // time step
+                if(!_stop)
+                    _timer->step();
+
+            }
 
         }
 

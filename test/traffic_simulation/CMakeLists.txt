@@ -4,14 +4,9 @@ add_executable(TrafficSimulationTest
         UnitInterfaceTest.cpp
         )
 
-# link libs
+# link libs (traffic_simulation transitively provides simcore_headers + nlohmann_json)
 target_link_libraries(TrafficSimulationTest PRIVATE
         traffic_simulation
-        )
-
-# include directories
-target_include_directories(TrafficSimulationTest PRIVATE
-        ${PROJECT_SOURCE_DIR}/include
         )
 
 # add test

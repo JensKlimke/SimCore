@@ -26,6 +26,7 @@
 #define SIMCORE_FUNCTIONS_H
 
 #include <string>
+#include <vector>
 
 namespace sim {
 namespace fnc {
@@ -40,9 +41,9 @@ namespace fnc {
     template<typename ... Args>
     std::string string_format(const std::string &format, Args ... args) {
         auto size = snprintf(nullptr, 0, format.c_str(), args ...) + 1; // Extra space for '\0'
-        char *buf(new char[size]);
-        snprintf(buf, size, format.c_str(), args ...);
-        return std::string(buf, buf + size - 1); // We don't want the '\0' inside
+        std::vector<char> buf(size);
+        snprintf(buf.data(), size, format.c_str(), args ...);
+        return std::string(buf.data(), buf.data() + size - 1); // We don't want the '\0' inside
     }
 
 

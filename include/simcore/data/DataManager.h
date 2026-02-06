@@ -29,6 +29,7 @@
 #include <list>
 #include <iostream>
 #include <sstream>
+#include <nlohmann/json.hpp>
 #include "../functions.h"
 #include "../IStorable.h"
 
@@ -120,12 +121,29 @@ namespace data {
          * @param name Name of the value
          * @return Pointer to the value
          */
-        const void* getValue(const std::string &name) {
+        const void* getValue(const std::string &name) const {
 
             if(_index.find(name) == _index.end())
                 throw std::invalid_argument(sim::fnc::string_format("No value \"%s\" defined", name.c_str()));
 
-            return _index[name]->value->v();
+            return _index.at(name)->value->v();
+
+        }
+
+
+        /**
+         * Returns a typed reference to the value
+         * @tparam T Type of the value
+         * @param name Name of the value
+         * @return Const reference to the value
+         */
+        template<typename T>
+        const T& getValue(const std::string &name) const {
+
+            if(_index.find(name) == _index.end())
+                throw std::invalid_argument(sim::fnc::string_format("No value \"%s\" defined", name.c_str()));
+
+            return *static_cast<const T*>(_index.at(name)->value->v());
 
         }
 
@@ -146,7 +164,7 @@ namespace data {
          */
         std::ostream &streamTo(std::ostream &os) const {
 
-            nodeToStream(os, _root);
+            os << nodeToJson(_root);
 
             return os;
 
@@ -205,47 +223,35 @@ namespace data {
 
 
         /**
-         * Recursive function to create a json string from a data node
-         * @param os Stream to be streamed in
+         * Recursive function to create a json object from a data node
          * @param node Data node
-         * @return The stream itself
+         * @return JSON object
          */
-        static std::ostream &nodeToStream(std::ostream &os, const DataNode &node) {
+        static nlohmann::json nodeToJson(const DataNode &node) {
 
             if(node.value) { // value (leaf)
 
-                // add value to stream
-                return node.value->s(os);
+                // serialize leaf via existing ostream interface
+                std::ostringstream os;
+                node.value->s(os);
+                // parse back to get proper JSON type (number vs string)
+                return nlohmann::json::parse(os.str());
 
             } else if(!node.nodeMap.empty()) { // map
 
-                os << "{";
-
-                // iterate over map elements
-                unsigned long i = 0;
-                for (auto &p : node.nodeMap) {
-                    os << (i++ > 0 ? "," : "") << "\"" << p.first << "\":";
-                    nodeToStream(os, p.second);
-                }
-
-                os << "}";
+                nlohmann::json obj = nlohmann::json::object();
+                for(auto &p : node.nodeMap)
+                    obj[p.first] = nodeToJson(p.second);
+                return obj;
 
             } else { // array
 
-                os << "[";
-
-                // iterate over array element
-                unsigned long i = 0;
-                for (auto &p : node.nodeArray) {
-                    os << (i++ > 0 ? "," : "");
-                    nodeToStream(os, p);
-                }
-
-                os << "]";
+                nlohmann::json arr = nlohmann::json::array();
+                for(auto &p : node.nodeArray)
+                    arr.push_back(nodeToJson(p));
+                return arr;
 
             }
-
-            return os;
 
         }
 

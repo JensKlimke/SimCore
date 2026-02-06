@@ -1,30 +1,39 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.14)
 
 project(SimCore CXX)
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # set options
 option(BUILD_TESTS "Sets or unsets the option to generate the test target" OFF)
-option(BUILD_GTEST "Sets or unsets the option to build gtest" OFF)
 option(BUILD_FOR_COVERAGE "Sets or unsets the option to generate with coverage flags" OFF)
-option(BUILD_WEBSOCKET "Activates or deactivates the websocket module of the SimCore" OFF)
 option(BUILD_TRAFFIC_SIMULATION "Activates or deactivates the traffic simulation library target to be generated." ON)
-option(CREATE_INTERFACE_GENERATOR_TARGETS "Activates or deactivates the interface generator targets to be generated." OFF)
 
 # add ./cmake to CMAKE_MODULE_PATH
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
-# set include directory
-include_directories(include)
+# fetch nlohmann/json
+include(FetchContent)
+FetchContent_Declare(
+        json
+        GIT_REPOSITORY https://github.com/nlohmann/json.git
+        GIT_TAG        v3.11.3
+        GIT_SHALLOW    TRUE
+)
+FetchContent_MakeAvailable(json)
 
+# header-only interface library for SimCore
+add_library(simcore_headers INTERFACE)
+target_include_directories(simcore_headers INTERFACE
+        ${PROJECT_SOURCE_DIR}/include
+        )
+target_link_libraries(simcore_headers INTERFACE nlohmann_json::nlohmann_json)
 
 # code coverage
 if (BUILD_FOR_COVERAGE)
 
-    # message
-    message("-- Coverage option is enabled")
+    message(STATUS "Coverage option is enabled")
 
-    # gnu or clang
     if (CMAKE_COMPILER_IS_GNUCXX)
         set(CMAKE_CXX_FLAGS "--coverage")
     elseif ("${CMAKE_C_COMPILER_ID}" MATCHES "(Apple)?[Cc]lang"
@@ -32,10 +41,7 @@ if (BUILD_FOR_COVERAGE)
         set(CMAKE_CXX_FLAGS "-fprofile-instr-generate -fcoverage-mapping")
     endif ()
 
-    # from: https://blog.jetbrains.com/clion/2019/10/clion-2019-3-eap-coverage-cmake-defaults-lldb/
-
-endif (BUILD_FOR_COVERAGE)
-
+endif ()
 
 
 # traffic simulation target
@@ -43,39 +49,28 @@ if(BUILD_TRAFFIC_SIMULATION)
 
     message(STATUS "Traffic simulation target enabled")
 
-    # include json parser
-    include_directories(lib/json/include)
-
     # add sources
     add_subdirectory(src/traffic)
 
-endif(BUILD_TRAFFIC_SIMULATION)
+endif()
 
 
-
-## Enable google testing of SimCore
+# testing
 if(BUILD_TESTS)
 
     message(STATUS "Testing of SimCore enabled")
 
-    # enable testing
     enable_testing()
 
-    # switch (build or use installed lib)
-    if(BUILD_GTEST)
-
-        # add subdirectory
-        add_subdirectory(googletest)
-        set(GTEST_BOTH_LIBRARIES gtest_main)
-        include_directories(${PROJECT_SOURCE_DIR}/googletest/googletest/include)
-
-    else()
-
-        # find gtest
-        find_package(GTest REQUIRED)
-        include_directories(${GTEST_INCLUDE_DIRS})
-
-    endif()
+    # fetch GTest
+    include(FetchContent)
+    FetchContent_Declare(
+            googletest
+            GIT_REPOSITORY https://github.com/google/googletest.git
+            GIT_TAG        v1.14.0
+            GIT_SHALLOW    TRUE
+    )
+    FetchContent_MakeAvailable(googletest)
 
     # load macros for tests
     include(AddGoogleTest)
@@ -89,19 +84,3 @@ if(BUILD_TESTS)
     endif()
 
 endif()
-
-
-
-# websocket
-if(BUILD_WEBSOCKET)
-
-    message(STATUS "Websocket functionality enabled")
-
-    # find boost
-    find_package(Boost 1.69)
-
-    # include folders
-    add_subdirectory(src/socket)
-
-endif()
-

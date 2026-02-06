@@ -60,7 +60,7 @@ public:
      */
     void define(std::vector<double> &&x, std::vector<double> &&y) {
 
-        if(_x.size() != _y.size())
+        if(x.size() != y.size())
             throw std::invalid_argument("sizes must be equal");
 
         _x = std::move(x);

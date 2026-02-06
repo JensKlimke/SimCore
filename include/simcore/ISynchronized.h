@@ -35,9 +35,9 @@ namespace sim {
 
     class ISynchronized : public sim::IComponent {
 
-        double _timeStepSize;
-        double _deltaStartTime;
-        double _nextExecTime;
+        double _timeStepSize{};
+        double _deltaStartTime{};
+        double _nextExecTime{};
 
 
     public:

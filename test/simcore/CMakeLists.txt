@@ -11,17 +11,7 @@ set(SOURCE_FILES
         PlotTest.cpp
     )
 
-# websocket
-set(WEBSOCKET_SOURCE_FILES
-        PublishTest.cpp
-        ../model_generation/ModelClass.h)
-
-# only test publisher, when websocket is active
-if(BUILD_WEBSOCKET)
-    add_executable(SimCoreTest ${SOURCE_FILES} ${WEBSOCKET_SOURCE_FILES})
-    target_link_libraries(SimCoreTest PRIVATE simcore_publisher)
-else()
-    add_executable(SimCoreTest ${SOURCE_FILES})
-endif()
+add_executable(SimCoreTest ${SOURCE_FILES})
+target_link_libraries(SimCoreTest PRIVATE simcore_headers)
 
 add_gtest(SimCoreTest)

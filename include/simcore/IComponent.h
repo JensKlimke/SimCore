@@ -52,7 +52,6 @@ namespace sim {
 
         /**
          * Handles the initialization
-         * @return Success flag
          */
         virtual void initialize(double initTime) = 0;
 
@@ -67,7 +66,6 @@ namespace sim {
 
         /**
          * Handles the termination
-         * @return Success flag
          */
         virtual void terminate(double simTime) = 0;
 

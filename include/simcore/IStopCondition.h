@@ -55,7 +55,7 @@ namespace sim {
         /**
          * Default destructor
          */
-        ~IStopCondition() = default;
+        virtual ~IStopCondition() = default;
 
 
         /**

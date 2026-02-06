@@ -30,6 +30,7 @@
 #include <sstream>
 #include <fstream>
 #include <utility>
+#include <memory>
 #include <map>
 #include <vector>
 #include "../ISynchronized.h"
@@ -57,7 +58,7 @@ class PlotLogger : public sim::ISynchronized {
     std::string _title;
     std::string _filename;
     std::fstream _file;
-    std::vector<Figure*> _figures{};
+    std::vector<std::unique_ptr<Figure>> _figures{};
     std::map<std::string, Figure*> _figureIndex;
     std::vector<std::string> _fields{};
     std::string _dataFile{};
@@ -71,13 +72,7 @@ public:
 
     PlotLogger() = default;
 
-    ~PlotLogger() override {
-
-        // delete all figures
-        for(auto f : _figures)
-            delete f;
-
-    }
+    ~PlotLogger() override = default;
 
     void create(std::string fname, std::string title) {
 
@@ -89,10 +84,10 @@ public:
     Figure *createFigure(const std::string& label) {
 
         // create figure
-        _figures.emplace_back(new Figure);
+        _figures.push_back(std::make_unique<Figure>());
 
         // get figure and add to index
-        Figure *fig = _figures.back();
+        Figure *fig = _figures.back().get();
         _figureIndex[label] = fig;
 
         return fig;
@@ -236,16 +231,13 @@ public:
                       << R"({"name":")" << tr->name << "\""
                       << R"(,"x":)" << (tr->x.empty() ? xRef.str() : xData.str())
                       << R"(,"y":)" << (tr->y.empty() ? yRef.str() : yData.str())
-                      << R"(,"type":"scatter"})";
+                      << R"(,"type":"scatter")"
+                      << R"(,"line":{"width":)" << tr->lineWidth
+                      << R"(,"color":")" << tr->color << R"("}})";
 
             }
 
             _file << "]}";
-
-            // TODO: equal axis
-            // TODO: line width
-            // TODO: color
-            // TODO: line groups
 
             first = false;
 

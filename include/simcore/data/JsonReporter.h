@@ -29,14 +29,16 @@
 #include <string>
 #include <cmath>
 #include <iostream>
+#include <memory>
 #include "../ISynchronized.h"
+#include "../IStorable.h"
 #include "../exceptions.h"
 
 
 class JsonReporter : public sim::ISynchronized {
 
     std::ostream *_outstream = nullptr;
-    std::map<std::string, const double*> _values{};
+    std::map<std::string, std::shared_ptr<sim::data::IDataSet>> _values{};
 
     bool _hasContent = false;
 
@@ -50,16 +52,18 @@ public:
 
 
     /**
-     * Adds an double value to be added to the
-     * @param val Pointer to the value
+     * Adds a value to be logged
+     * @tparam T Type of the value
      * @param key Key to be used in json
+     * @param val Pointer to the value
      */
-    void addValue(const std::string &key, const double *val) {
+    template<typename T>
+    void addValue(const std::string &key, const T *val) {
 
         if(key == "time")
             throw std::invalid_argument("time key word is reserved.");
 
-        _values[key] = val;
+        _values[key] = std::make_shared<sim::data::DataValue<T>>(val);
 
     }
 
@@ -90,16 +94,8 @@ protected:
         // write data
         unsigned int i = 0;
         for(auto &p : _values) {
-
-            // stream field name
             (*_outstream) << (i++ == 0 ? "" : ",") << "\"" << p.first << "\":";
-
-            // check for inf and nan
-            if(std::isinf(*p.second) || std::isnan(*p.second))
-                (*_outstream) << "null";
-            else
-                (*_outstream) << *p.second;
-
+            p.second->s(*_outstream);
         }
 
         // close object brackets

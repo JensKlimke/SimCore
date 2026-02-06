@@ -26,7 +26,6 @@
 #define SIMCORE_MODEL_H
 
 #include "IComponent.h"
-#include "data_access_macros.h"
 #include "ISynchronized.h"
 
 namespace sim {

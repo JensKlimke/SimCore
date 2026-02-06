@@ -170,9 +170,9 @@ public:
 
 
     // accessors
-    PARAM_ACCESS(Parameters, _param)
-    INPUT_ACCESS(Input, _input)
-    STATE_ACCESS(State, _state)
+    Parameters* getParameters() { return &_param; }
+    Input* getInputs() { return &_input; }
+    State* getStates() { return &_state; }
 
 };
 
@@ -219,16 +219,16 @@ TEST_F(DataTest, DataManager) {
     loop.run();
 
     // check data in data manager
-    EXPECT_NEAR(0.1,  *((double*) data.getValue("Test.state.sa")),     1e-9);
-    EXPECT_NEAR(10.0, *((double*) data.getValue("Test.state.sb")),     1e-9);
-    EXPECT_NEAR(10.0, *((double*) data.getValue("Test.state.time")),   1e-9);
-    EXPECT_NEAR(2.0,  *((double*) data.getValue("Test.input.ia")),     1e-9);
-    EXPECT_NEAR(3.0,  *((double*) data.getValue("Test.input.ib")),     1e-9);
-    EXPECT_NEAR(4.0,  *((double*) data.getValue("Test.parameter.pa")), 1e-9);
-    EXPECT_NEAR(5.0,  *((double*) data.getValue("Test.parameter.pb")), 1e-9);
-    EXPECT_EQ("DataTest",  *((std::string*) data.getValue("Test.parameter.name")));
+    EXPECT_NEAR(0.1,  data.getValue<double>("Test.state.sa"),     1e-9);
+    EXPECT_NEAR(10.0, data.getValue<double>("Test.state.sb"),     1e-9);
+    EXPECT_NEAR(10.0, data.getValue<double>("Test.state.time"),   1e-9);
+    EXPECT_NEAR(2.0,  data.getValue<double>("Test.input.ia"),     1e-9);
+    EXPECT_NEAR(3.0,  data.getValue<double>("Test.input.ib"),     1e-9);
+    EXPECT_NEAR(4.0,  data.getValue<double>("Test.parameter.pa"), 1e-9);
+    EXPECT_NEAR(5.0,  data.getValue<double>("Test.parameter.pb"), 1e-9);
+    EXPECT_EQ("DataTest", data.getValue<std::string>("Test.parameter.name"));
 
-    std::string json(R"({"Test":{"parameter":{"pa":4,"pb":5,"name":"DataTest"},"input":{"ia":2,"ib":3},"state":{"sa":0.1,"sb":10,"time":10}}})");
+    std::string json(R"({"Test":{"input":{"ia":2,"ib":3},"parameter":{"name":"DataTest","pa":4,"pb":5},"state":{"sa":0.1,"sb":10,"time":10}}})");
     std::stringstream ss;
     data.streamTo(ss);
 
