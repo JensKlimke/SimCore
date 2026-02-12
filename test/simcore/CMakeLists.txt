@@ -15,3 +15,8 @@ add_executable(SimCoreTest ${SOURCE_FILES})
 target_link_libraries(SimCoreTest PRIVATE simcore_headers)
 
 add_gtest(SimCoreTest)
+
+# Registry unit tests
+add_executable(RegistryTest RegistryTest.cpp)
+target_link_libraries(RegistryTest PRIVATE simcore_headers)
+add_gtest(RegistryTest)
